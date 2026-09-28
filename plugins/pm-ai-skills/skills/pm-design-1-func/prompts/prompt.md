@@ -1,0 +1,162 @@
+# PM 功能详细设计 执行步骤
+
+> 执行前必须 Read `${CLAUDE_SKILL_DIR}/../pm-common/project-management.md` 了解项目管理规范。
+
+## 步骤 -1：定位项目根
+
+> 本技能装在 pm-ai-skills 插件里，但产物落在含 `output/` 目录的 products 仓库（本机 `D:\pm-ai\pm-ai-projects`）。
+> 若当前 cwd 不在 products 仓库，`output/` 相对路径会写错地方。先定位 products 仓库根再拼绝对路径；
+> 定位不到就问用户，不要猜。
+
+## 步骤 0：判定项目性质与输入来源
+
+两个正交维度，先判定清楚再动手：
+
+### 0.1 输入来源
+
+| 模式 | 判定 | 说明 |
+|------|------|------|
+| 模式 A（有 PRD） | `output/[项目名]/prd/*-PRD-*.md` 存在，或用户 `--prd <路径>` | 消费 PRD 已分配的 F/R |
+| 模式 B（只有需求） | 用户 `--requirement` 或对话内贴需求 | 自行推导功能/接口/实体，自分配 F/R |
+
+### 0.2 项目性质
+
+| 性质 | 判定 | 行为 |
+|------|------|------|
+| 新项目 | 目标目录无 `backend/`、无 `design/db/*-schema.sql`、无历史 devPipeline 批次 | 全量设计，从零起 |
+| 迭代项目 | 已有 `backend/` 或 `schema.sql` 或 `.pm-state.json` 有 devPipeline 历史，或用户 `--iterate` | 先盘点现状，增量变更 |
+
+### 0.3 初始化骨架（如缺）
+
+若 `output/[项目名]/` 下无 README.md / project-spec.md / .pm-state.json，按 project-management.md §一 创建最小骨架：
+- `.pm-state.json` 写入 `devProjectType`（new/iteration）+ 空 `devPipeline[]` + `counters`（继承现有或初始 `{F:0,T:0,R:0,P:0,C:0}`）
+- 时间戳一律 UTC ISO-8601 带 `Z`
+
+## 步骤 1：读取上下文 + 历史参考
+
+按顺序读取（未读完不得进入步骤 2）：
+
+1. 【强制】`output/[项目名]/project-spec.md`：已有技术决策、接口清单、术语表
+2. `output/[项目名]/.pm-state.json`：批次、counters、devPipeline 状态
+3. 模式 A：`prd/*-PRD-*.md`（ch6 接口表、3.2 字段说明表 + 校验矩阵、ch5 实体树）
+4. 佐证（存在则读）：`prototypes/[端]/*.html`（读 `const MOCK_DATA` 的真实字段名）；`analysis/analysis-report.md`
+5. 【历史参考 · 软参考】扫描参考目录（默认 `D:/pm-ai/pm-ai-projects/output/`，可 `--ref <路径>`）：
+   历史 `design/db/*-schema.sql`、`design/*-功能详细设计.md`、`backend/` controller/entity、`project-spec.md`，
+   建立「可复用资产基线」：表/字段命名、错误码分段、`Result<T>`/分页/鉴权约定、通用实体。找不到就跳过，不阻塞。
+
+## 步骤 2：现状盘点（迭代项目必做，新项目跳过）
+
+读现有 `backend/` 工程结构（pom.xml、现有 entity/mapper/service/controller）、现有 `schema.sql`、
+project-spec 接口清单 → 产出「现状清单」：已有表、已有接口、已有实体、既有约定。
+作为变更基线，写进功能详细设计的「一、现状清单」节。
+
+## 步骤 3：提炼接口种子
+
+- 模式 A：从 PRD ch6「接口需求」表取 R 编号 + method + path；从 3.2 各 F 的字段说明表取字段/类型/长度/必填/默认值；
+  从校验矩阵取校验规则（校验项/规则/失败提示/执行端）；从 ch5 实体树取实体与字段。
+- 模式 B：从需求提炼功能点（自分配 F 编号）、接口（自分配 R 编号）、字段、校验、实体；
+  编号从 `.pm-state.json` 顶层 `counters.F/R` 续编（初始从 F001/R001）。
+
+## 步骤 4：生成功能详细设计
+
+写入 `output/[项目名]/design/[项目名]-功能详细设计.md`。结构：
+
+```markdown
+# [项目名] 功能详细设计
+
+> 批次：[B] | 项目性质：新项目/迭代 | 输入来源：PRD/需求 | 生成时间：[时间] | 技能：pm-design-1-func v1.4.0
+> 编号说明：接 PM 链消费 F/R / 独立跑自行分配 F/R
+
+## 一、现状清单（仅迭代项目）
+
+| 类型 | 名称 | 说明 | 处置（新增/修改/复用） |
+|------|------|------|----------------------|
+
+## 二、功能清单
+
+| F 编号 | 功能名 | 关联 R | 优先级 | 处置（新增/修改/复用） |
+|--------|--------|--------|--------|----------------------|
+
+## 三、接口设计块（按 F 组织 → R 展开）
+
+### F001 [功能名]
+
+#### R001 [接口名]（[处置：新增/修改/复用]）
+
+- **方法/URL**：`GET /api/v1/xxx`（baseURL=`/api/v1`，前缀由 context-path 承载）
+- **请求参数**（Query/Path/Body 逐字段）：
+
+  | 参数 | 位置 | 类型 | 必填 | 校验规则 |
+  |------|------|------|------|---------|
+
+- **成功响应**（schema，字段名对齐原型 `MOCK_DATA` / PRD 字段表）：
+
+  | 字段 | 类型 | 说明 |
+  |------|------|------|
+
+- **错误码**（非零整数，per-module 分段）：
+
+  | code | 含义 | 触发条件 |
+  |------|------|---------|
+
+- **业务规则**：…
+- **状态流转**：…
+
+## 四、字段溯源表
+
+| 需求/PRD 字段 | 类型 | 建议 DDL 字段 | 来源章节/文件 |
+|--------------|------|--------------|--------------|
+
+## 五、参考来源（历史参考留痕）
+
+（复用了哪个历史项目的表/字段命名、错误码分段、响应约定，逐条注明来源；无则写"无"）
+```
+
+接口设计块硬规则：
+- 方法/URL 沿用 PRD 表或自行分配；RESTful 标准动词（GET 查 / POST 增 / PUT 改 / DELETE 删）
+- 响应 schema 字段名优先对齐原型 `MOCK_DATA` 与 PRD 字段表，不发明
+- 错误码与 pm-common 响应格式 `{code,message,data}` 的 `code` 对应；`code==0` 成功
+- 迭代项目：复用接口标注「复用」，只写差异；新增接口全量写
+
+## 步骤 5：落盘与更新
+
+### 5.1 更新 .pm-state.json
+
+- 写入/更新顶层 `devProjectType`；迭代项目写 `devBaseline`（既有工程路径 / schema 路径 / 历史批次引用）
+- 独立跑/迭代：把分配的 F/R 写入**顶层** `counters.F/R`
+- `devPipeline` 插入条目（splice 到拓扑正确位置，不是 push；重跑先摘旧条目再插）：
+  `{"step":"pm-design-1-func","status":"completed","startedAt":null,"completedAt":"…Z","output":"design/[项目名]-功能详细设计.md","counters":{}}`
+- 时间戳 UTC 带 `Z`
+
+### 5.2 更新 README.md
+
+在 `### 详细设计（pm-design-1-func）` 章节追加一行（固定 5 列：产物/路径/功能编号范围/生成时间/批次）。
+该章节追加在产物清单末尾（`### 变更记录` 之前）；首次执行时按此列结构创建。
+
+### 5.3 更新 project-spec.md
+
+- 「接口清单」append 新 R 行（模式 B / 迭代新增），**不改既有五列**
+- 若引入错误码方案/分页规范，append 一行到「技术决策」
+
+## 步骤 6：自检
+
+1. 每个 R 都有 方法/URL、请求参数、成功响应、错误码、业务规则、状态流转
+2. 响应字段名对齐 MOCK_DATA / PRD，无自造字段
+3. 编号：接链消费、独立跑续编；无 FUN-XXXXX；counters 类型未扩展
+4. project-spec 既有列未改
+5. 迭代项目每个接口/实体标注 新增/修改/复用，且有「现状清单」
+6. 历史参考有「参考来源」留痕
+7. 时间戳 UTC 带 `Z`；devPipeline 条目 6 keys 齐全（startedAt/completedAt/output/counters 都在，无值写 null）
+8. README 表 5 列
+
+## 步骤 7：会话内输出摘要
+
+只回（不倒全文）：
+
+```
+✅ 功能详细设计：`output/[项目名]/design/[项目名]-功能详细设计.md`
+
+- 项目性质：新项目 / 迭代
+- 输入来源：PRD / 需求
+- 功能 F [a] 个 · 接口 R [b] 个 · 实体 [c] 个
+```

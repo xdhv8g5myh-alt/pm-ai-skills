@@ -1,6 +1,6 @@
 ---
 name: pm-common
-description: PM 技能包共享的项目管理规范（目录骨架、编号体系、产物依赖门禁、Blocker 门禁、批次管理）。被 pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot 在运行时引用，一般无需单独调用。
+description: PM 技能包共享的项目管理规范（目录骨架、编号体系、产物依赖门禁、Blocker 门禁、批次管理、研发链 devPipeline 与历史参考）。被 pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-design-* / pm-dev-* 在运行时引用，一般无需单独调用。
 ---
 
 # PM 共享规范
@@ -14,6 +14,7 @@ description: PM 技能包共享的项目管理规范（目录骨架、编号体�
 - 产物依赖门禁
 - Blocker 门禁
 - 批次管理（新建 → 进行中 → 已完成 → 已冻结 → 已归档）
+- 研发链（详细设计 → 数据库 → 设计评审 → 后端 → 前端 → 单元测试 → 代码审查）：`devPipeline[]` 状态追踪、独立/迭代运行、历史参考
 
 ## 使用
 
