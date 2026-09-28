@@ -22,13 +22,14 @@ PM AI 协作平台的 Claude Code 插件市场 —— 覆盖需求分析 → 原
 | `pm-autopilot` | 全流程自动编排 | 全自动跑需求、一键跑完、autopilot |
 | `pm-annotate` | 原型标注 | 原型标注、生成标注、给原型加角标 |
 | `pm-design-reverse` | 设计稿反推需求 | 设计稿反推、Figma转需求、逆向需求 |
+| `pm-review` | PRD 评审自查 | PRD自查、评审自查、检查PRD |
 
 ## 目录结构
 
 - `.claude-plugin/marketplace.json` — 市场清单
 - `plugins/pm-ai-skills/` — 插件本体
   - `.claude-plugin/plugin.json` — 插件 manifest
-  - `skills/` — 技能（pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-common / pm-annotate / pm-design-reverse）
+  - `skills/` — 技能（pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-common / pm-annotate / pm-design-reverse / pm-review）
 
 ## 关联仓库
 

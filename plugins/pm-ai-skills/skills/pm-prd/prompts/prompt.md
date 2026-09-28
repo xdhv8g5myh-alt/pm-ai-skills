@@ -79,6 +79,7 @@
 ### 3.2 更新 .pm-state.json
 - `pipeline` 中 pm-prd 的 `status` → `completed`
 - `counters.T` 和 `counters.R` 更新为最后分配的编号数字
+- `reviewBlockerCount`（由步骤 3.6 产生）记入 pm-prd 的 pipeline 条目
 
 ### 3.3 追加 project-spec.md
 将 PRD 中新增的接口追加到 project-spec.md 的"接口清单"表格。
@@ -93,3 +94,42 @@
 - F 编号：引用 pm-analyze 已分配的编号，如需新增功能则从 counters.F+1 续编
 - T 编号：每个测试用例独立编号（T001, T002...），每条标注关联的 F 编号
 - R 编号：每个接口独立编号（R001, R002...），标注关联的 F 编号
+
+### 3.6 执行评审自查（软门禁，不可跳过）
+
+PRD 与测试用例写完后，**必须**执行 pm-review 做一遍评审自查。
+
+1. **Read** `${CLAUDE_SKILL_DIR}/../pm-review/prompts/prompt.md` 与同目录 `checklist.md`
+2. 以**嵌入模式**执行：跳过 pm-review 步骤 0.2/0.3（PRD 路径已知），从步骤 1 开始
+3. 产出报告到 `output/[项目名]/prd/[项目名]-review-[日期].md`
+4. 在 PRD 文件**末尾**追加以下小节（链接用相对路径）：
+
+```markdown
+---
+
+## 评审自查结论
+
+> 评审报告：[项目名]-review-[日期].md | 生成时间：[日期时间]
+
+- 必查 A 档 22 项：通过 [N]，❌ [X]
+- 条件触发 B 档：激活 [K]/11 组
+- **Blocker [a] 项** · 建议 [b] 项 · 提示 [c] 项
+
+### 须评审前解决的 Blocker
+
+| # | 检查项 | 缺什么 |
+|---|--------|--------|
+
+（无 Blocker 时写"本次未发现 Blocker 级问题"）
+```
+
+5. 把 `reviewBlockerCount` 记入 `.pm-state.json` 中 pm-prd 的 pipeline 条目（见 3.2）
+6. 在 README.md 的 `### 评审自查（pm-review）` 章节把评审报告追加为一行产物，
+   并更新索引头的 `> 最后更新：` 时间戳。该章节**追加在产物清单末尾**
+   （`### 变更记录` 之前）；首次执行时按 pm-review prompt.md 步骤 7.1 定义的列结构创建。
+   **不要**把评审报告并进「PRD 文档（pm-prd）」表格——README 按技能分节，
+   保持与独立模式一致，同一产物才总是落在同一处。
+
+> **软门禁语义（关键）**：无论自查查出多少 ❌，**本技能都照常返回 PASS**。
+> 评审报告是给人工评审用的输入，**不拦截**流水线，不改变 pm-autopilot 的走向。
+> 不要因为 Blocker 数量 > 0 就返回 FAIL。

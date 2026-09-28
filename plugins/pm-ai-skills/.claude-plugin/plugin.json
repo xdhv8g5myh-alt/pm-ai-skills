@@ -1,11 +1,11 @@
 {
   "name": "pm-ai-skills",
-  "version": "1.2.1",
-  "description": "产品经理全流程技能包：需求分析 → 原型 → PRD → 前端交付，含全流程自动编排、原型标注与设计稿反推",
+  "version": "1.3.0",
+  "description": "产品经理全流程技能包：需求分析 → 原型 → PRD → 前端交付，含全流程自动编排、原型标注、设计稿反推与 PRD 评审自查",
   "author": {
     "name": "panl83",
     "email": "panl83@163.com"
   },
   "repository": "https://github.com/xdhv8g5myh-alt/pm-ai-skills",
-  "keywords": ["pm", "product", "prototype", "prd", "vue", "autopilot"]
+  "keywords": ["pm", "product", "prototype", "prd", "vue", "autopilot", "review"]
 }
