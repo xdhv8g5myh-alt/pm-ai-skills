@@ -14,7 +14,7 @@
       "name": "pm-ai-skills",
       "source": "./plugins/pm-ai-skills",
       "description": "产品经理全流程技能包：pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "pm",
       "tags": ["pm", "product", "prototype", "prd", "vue", "autopilot"]
     }
