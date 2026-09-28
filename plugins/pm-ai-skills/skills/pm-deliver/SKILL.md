@@ -24,6 +24,8 @@ description: 当用户意图涉及转Vue、前端交付、HTML转Vue、交付代
 6. **增量模式不重建脚手架**：已有工程只添加新文件（view/route/api/type），不修改 main.ts/App.vue/package.json 等核心文件
 7. **路由命名一致**：路由 path 必须与原型 HTML 文件名对应（`list.html` → `/list`）
 8. **维护产物索引**：执行完毕后必须更新 `output/[项目名]/README.md` 和 `.pm-state.json`，标记交付完成
+9. **transition/keep-alive 位置正确**：layout 中 `<transition>`/`<keep-alive>` 必须包裹在 `<router-view>` 内层，禁止放在外层（多根组件会导致菜单点击空白、二次进入读到旧缓存）
+10. **编译修复上限 5 轮**：编译/类型检查报错的自动修复循环上限 5 轮，超限则停止并输出错误清单，禁止无限重试
 
 ## 执行流程概览
 

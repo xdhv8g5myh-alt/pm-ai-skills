@@ -5,18 +5,18 @@
     "email": "panl83@163.com"
   },
   "metadata": {
-    "description": "PM AI 协作平台 —— Claude Code 技能包市场（需求分析 / 原型 / PRD / 前端交付 / 全流程自动编排）",
-    "version": "1.0.0",
+    "description": "PM AI 协作平台 —— Claude Code 技能包市场（需求分析 / 原型 / PRD / 前端交付 / 全流程自动编排 / 原型标注 / 设计稿反推）",
+    "version": "1.2.0",
     "pluginRoot": "./plugins"
   },
   "plugins": [
     {
       "name": "pm-ai-skills",
       "source": "./plugins/pm-ai-skills",
-      "description": "产品经理全流程技能包：pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot",
-      "version": "1.1.0",
+      "description": "产品经理全流程技能包：pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-annotate / pm-design-reverse",
+      "version": "1.2.0",
       "category": "pm",
-      "tags": ["pm", "product", "prototype", "prd", "vue", "autopilot"]
+      "tags": ["pm", "product", "prototype", "prd", "vue", "autopilot", "annotation", "design"]
     }
   ]
 }

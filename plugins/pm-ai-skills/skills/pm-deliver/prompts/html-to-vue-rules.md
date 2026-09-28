@@ -64,3 +64,41 @@ export default createRouter({
   ]
 })
 ```
+
+## 常见陷阱与修复
+
+### 多根组件下的 transition / keep-alive
+
+layout 布局组件中，`<transition>` 与 `<keep-alive>` **必须包裹在 `<router-view>` 内层**，禁止放在外层。多根组件（fragment root）配在外层会导致路由渲染异常：
+
+| 症状 | 原因 |
+|------|------|
+| 菜单点击后页面空白 | 多根组件 + transition 无法确定过渡根节点 |
+| 二次进入页面不刷新、读到旧缓存 | keep-alive 缓存键落在 layout 而非页面组件上 |
+
+正确写法：
+
+```vue
+<!-- src/layouts/DefaultLayout.vue -->
+<template>
+  <a-layout>
+    <a-layout-sider>...</a-layout-sider>
+    <a-layout-content>
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <keep-alive :include="cachedViews">
+            <component :is="Component" />
+          </keep-alive>
+        </transition>
+      </router-view>
+    </a-layout-content>
+  </a-layout>
+</template>
+```
+
+> 若页面组件是**多根节点**（`<template>` 下多个并列元素），transition 会失效。此时给页面组件补一个单一根节点，或对该页面去掉 transition。
+
+### 编译修复循环上限
+
+`npm run build` 或 `vue-tsc` 报错时，自动修复循环**上限 5 轮**。5 轮后仍有错误 → 停止修复，输出完整错误清单交由人工处理，不得无限重试。
+

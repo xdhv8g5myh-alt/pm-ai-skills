@@ -10,6 +10,7 @@
   - pm-analyze：`${CLAUDE_SKILL_DIR}/../pm-analyze/prompts/prompt.md`
   - pm-prototype：`${CLAUDE_SKILL_DIR}/../pm-prototype/prompts/prompt.md`
   - pm-prd：`${CLAUDE_SKILL_DIR}/../pm-prd/prompts/prompt.md`
+  - pm-annotate：`${CLAUDE_SKILL_DIR}/../pm-annotate/prompts/prompt.md`
   - pm-deliver：`${CLAUDE_SKILL_DIR}/../pm-deliver/prompts/prompt.md`
 
 ---
@@ -37,10 +38,12 @@
      - pm-analyze status=completed → 标 PASS
      - pm-prototype status=completed → 标 PASS
      - pm-prd status=completed → 标 PASS
+     - pm-annotate status=completed → 标 PASS（`--skip-annotate` 时标跳过）
      - pm-deliver status=completed → 标 PASS
    - **已存在** → 读取各步 STATUS
 
 3. 如果用户传入 `--from pm-[X]`：将该步及其后重置为"待执"
+4. 如果用户传入 `--skip-annotate`：Step 4 直接标"跳过"，不 dispatch
 
 ### 0.3 分流
 
@@ -69,7 +72,8 @@
 | Step 1 | pm-analyze | 待执/进行中/PASS/FAIL | — | — | — | — |
 | Step 2 | pm-prototype | 待执 | — | — | — | — |
 | Step 3 | pm-prd | 待执 | — | — | — | — |
-| Step 4 | pm-deliver | 待执 | — | — | — | — |
+| Step 4 | pm-annotate | 待执 | — | — | — | — |
+| Step 5 | pm-deliver | 待执 | — | — | — | — |
 
 ## 暂停记录
 
@@ -220,13 +224,58 @@ SUMMARY(一句话)
 
 ---
 
-## Step 4：dispatch pm-deliver 前端交付
+## Step 4：dispatch pm-annotate 原型标注
 
-### 4.1 更新 run 文件
+> 可选步骤。用户传 `--skip-annotate` → 本步标"跳过"，直接进入 Step 5。
+
+### 4.0 更新 run 文件
 
 Step 4 STATUS = 进行中。
 
-### 4.2 dispatch subagent
+### 4.1 dispatch subagent
+
+```
+你是 pm-annotate 技能执行者（原型标注）。项目名：[项目名]，工作空间根：[workspace_root]。
+
+**立即 Read** `[pm-annotate prompt.md 的绝对路径]` 并严格按其流程执行，走 Workflow A（初始化标注），不得跳步。
+
+执行前先 Read `[pm-common/project-management.md 的绝对路径]` 了解项目管理规范。
+
+上游产物路径：
+- PRD：output/[项目名]/prd/
+- 原型目录：output/[项目名]/prototypes/
+- 项目规范：output/[项目名]/project-spec.md
+
+**编排层约定（必须遵守）**：
+- 标注结果输出为 `output/[项目名]/prototypes/[端]/[页面名].annotated.html` **副本**，
+  **禁止覆盖原原型 HTML**——pm-deliver 仍需读取干净原型。
+- 编号需回写到 PRD 对应需求描述开头。
+
+完成后只回报：
+STATUS(PASS|FAIL)
+OUTPUT(关键产物路径列表)
+SUMMARY(一句话)
+```
+
+### 4.2 返回后验证
+
+- `output/[项目名]/prototypes/[端]/` 下存在 `*.annotated.html`？
+- 原原型 HTML 文件未被覆盖（文件列表与 Step 2 一致）？
+
+### 4.3 更新 run 文件 + 门禁检查
+
+- 存在 annotated 副本且原原型未被覆盖 → PASS，进入 Step 5
+- 不满足 → FAIL，暂停
+
+---
+
+## Step 5：dispatch pm-deliver 前端交付
+
+### 5.1 更新 run 文件
+
+Step 5 STATUS = 进行中。
+
+### 5.2 dispatch subagent
 
 ```
 你是 pm-deliver 技能执行者（前端交付）。项目名：[项目名]，工作空间根：[workspace_root]。
@@ -236,7 +285,7 @@ Step 4 STATUS = 进行中。
 执行前先 Read `[pm-common/project-management.md 的绝对路径]` 了解项目管理规范。
 
 上游产物路径：
-- 原型目录：output/[项目名]/prototypes/
+- 原型目录：output/[项目名]/prototypes/（读取原原型，**忽略 .annotated.html 副本**）
 - PRD：output/[项目名]/prd/
 - 项目规范：output/[项目名]/project-spec.md
 
@@ -246,21 +295,21 @@ OUTPUT(关键产物路径列表)
 SUMMARY(一句话)
 ```
 
-### 4.3 返回后验证
+### 5.3 返回后验证
 
 - `output/[项目名]/vue/package.json` 存在？
 - `output/[项目名]/vue/src/` 目录存在？
 
-### 4.4 更新 run 文件
+### 5.4 更新 run 文件
 
 - 验证通过 → PASS
 - 不通过 → FAIL，暂停
 
 ---
 
-## Step 5：完成与提示
+## Step 6：完成与提示
 
-当 Step 1-4 全部 PASS：
+当 Step 1-5 全部 PASS（Step 4 跳过视为通过）：
 
 1. 更新 run 文件：运行状态 = 已完成
 2. 更新 `.pm-state.json`：`batchStatus` = `completed`
@@ -273,9 +322,11 @@ SUMMARY(一句话)
 - pm-analyze：[SUMMARY]
 - pm-prototype：[SUMMARY]
 - pm-prd：[SUMMARY]
+- pm-annotate：[SUMMARY]（或"已跳过"）
 - pm-deliver：[SUMMARY]
 
 📁 产物索引：output/[项目名]/README.md
+📌 规格版原型（带需求编号标注）：output/[项目名]/prototypes/[端]/*.annotated.html
 
 🔒 如需冻结此批次（禁止修改），输入"冻结批次"
 🆕 如需开始新的迭代，输入"新批次"
@@ -289,6 +340,7 @@ SUMMARY(一句话)
 - run 文件各步 STATUS 是续做的唯一依据
 - subagent 间状态靠产物文件 + `.pm-state.json` 传递，subagent 不读主会话历史
 - 用户可传 `--from pm-[X]` 强制从某步重跑
+- 用户可传 `--skip-annotate` 跳过 Step 4 原型标注（该步记"跳过"，不影响后续步骤与完成判定）
 - **换会话可恢复**：状态全落盘，新会话执行 `/pm-autopilot` 即自动接续
 
 ## subagent dispatch 通用模板

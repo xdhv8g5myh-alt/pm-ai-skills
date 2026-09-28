@@ -1,6 +1,6 @@
 ---
 name: pm-autopilot
-description: 产品需求全流程自动化编排器（pm-analyze → pm-prototype → pm-prd → pm-deliver），每步以独立 subagent 执行避免主会话上下文膨胀，状态落 run 文件支持续做与重跑。当用户要求"全自动跑需求"、"一键跑完"、"自动化产品流程"、"autopilot"时使用此技能。
+description: 产品需求全流程自动化编排器（pm-analyze → pm-prototype → pm-prd → pm-annotate → pm-deliver），每步以独立 subagent 执行避免主会话上下文膨胀，状态落 run 文件支持续做与重跑。当用户要求"全自动跑需求"、"一键跑完"、"自动化产品流程"、"autopilot"时使用此技能。
 ---
 
 # PM 全流程自动编排
@@ -10,15 +10,16 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 你是产品需求全流程自动化编排器。**你不亲自执行需求分析/原型生成/PRD 撰写/前端交付**，只做四件事：
 
 1. **状态探测与分流**：读取 `.pm-state.json`，判断从哪一步开始
-2. **按拓扑顺序 dispatch 独立 subagent**：pm-analyze → pm-prototype → pm-prd → pm-deliver
+2. **按拓扑顺序 dispatch 独立 subagent**：pm-analyze → pm-prototype → pm-prd → pm-annotate → pm-deliver
 3. **读写 run 文件**：记录每步 STATUS、产物路径、暂停点，支持续做
 4. **门禁检查与暂停**：Blocker 遗留、依赖缺失、产物校验失败时暂停并提示
 
 ## Auto Trigger
 
 - 触发词：全自动跑需求、一键跑完、自动化产品流程、autopilot、自动编排
-- 参数：`--from pm-analyze|pm-prototype|pm-prd|pm-deliver`（强制从某步重跑，该步及其后重置为待执）
+- 参数：`--from pm-analyze|pm-prototype|pm-prd|pm-annotate|pm-deliver`（强制从某步重跑，该步及其后重置为待执）
 - 参数：`--project [项目名]`（指定项目，缺省则询问或从 output/ 推断）
+- 参数：`--skip-annotate`（跳过原型标注步骤；缺省执行标注）
 
 ## 核心概念
 
@@ -32,7 +33,9 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 
 ### 拓扑顺序不可跳序
 
-`pm-analyze → pm-prototype → pm-prd → pm-deliver` 严格顺序依赖，**串行 dispatch，不并行**。
+`pm-analyze → pm-prototype → pm-prd → pm-annotate → pm-deliver` 严格顺序依赖，**串行 dispatch，不并行**。
+
+> pm-annotate 是可选步骤（`--skip-annotate` 可跳过）：它把 PRD 需求编号标注到原型页面上并回写 PRD，产出供人工评审的「规格版原型」。标注输出为 `[页面].annotated.html` 副本，**不覆盖原原型**——pm-deliver 读的仍是干净原型。
 
 ### dispatch 五动作（每步固定）
 
@@ -49,6 +52,7 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 | pm-analyze 后 | analysis-report.md 中风险等级=高且状态="待确认"的问题数 > 0 | 记 `PAUSE@analyze-blocker`，输出 Blocker 清单，暂停 |
 | pm-prototype 后 | `prototypes/[端]/` 下 HTML 文件数 = 0 | 记 FAIL，暂停 |
 | pm-prd 后 | PRD 文件存在 且 测试用例文件存在 | 不满足则记 FAIL，暂停 |
+| pm-annotate 后 | `prototypes/[端]/` 下存在 `*.annotated.html` | 不满足则记 FAIL，暂停（`--skip-annotate` 时记跳过） |
 | pm-deliver 后 | `vue/` 目录存在且含 package.json | 不满足则记 FAIL，暂停 |
 
 **状态模型（关键）**：Blocker 属"门禁暂停"，**独立于步骤 STATUS**。pm-analyze subagent 只要产物齐全即返回 PASS（分析已完成），Blocker 遗留不作为步骤 FAIL。
@@ -78,4 +82,5 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
   - `${CLAUDE_SKILL_DIR}/../pm-analyze/prompts/prompt.md` — 需求分析
   - `${CLAUDE_SKILL_DIR}/../pm-prototype/prompts/prompt.md` — 原型生成
   - `${CLAUDE_SKILL_DIR}/../pm-prd/prompts/prompt.md` — PRD 文档
+  - `${CLAUDE_SKILL_DIR}/../pm-annotate/prompts/prompt.md` — 原型标注
   - `${CLAUDE_SKILL_DIR}/../pm-deliver/prompts/prompt.md` — 前端交付

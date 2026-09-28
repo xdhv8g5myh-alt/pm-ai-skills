@@ -1,7 +1,7 @@
 {
   "name": "pm-ai-skills",
-  "version": "1.1.0",
-  "description": "产品经理全流程技能包：需求分析 → 原型 → PRD → 前端交付，含全流程自动编排",
+  "version": "1.2.0",
+  "description": "产品经理全流程技能包：需求分析 → 原型 → PRD → 前端交付，含全流程自动编排、原型标注与设计稿反推",
   "author": {
     "name": "panl83",
     "email": "panl83@163.com"
