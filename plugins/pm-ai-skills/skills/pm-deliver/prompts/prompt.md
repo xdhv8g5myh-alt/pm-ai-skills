@@ -1,4 +1,4 @@
-> 执行前必须 Read `{{SKILL_DIR}}/../pm-common/project-management.md` 了解项目管理规范。
+> 执行前必须 Read `${CLAUDE_SKILL_DIR}/../pm-common/project-management.md` 了解项目管理规范。
 
 # PM 前端交付执行步骤
 
@@ -41,11 +41,11 @@
 - 使用到的 Arco 组件名（→ 确认导入方式）
 - 页面间跳转关系（→ 路由配置）
 
-（此处继续读取并使用 `{{SKILL_DIR}}/prompts/html-to-vue-rules.md` 和 `{{SKILL_DIR}}/prompts/vue3-scaffold-spec.md` 中的转换规则和脚手架模板）
+（此处继续读取并使用 `${CLAUDE_SKILL_DIR}/prompts/html-to-vue-rules.md` 和 `${CLAUDE_SKILL_DIR}/prompts/vue3-scaffold-spec.md` 中的转换规则和脚手架模板）
 
 请在执行步骤 3 前分别 Read：
-- `{{SKILL_DIR}}/prompts/html-to-vue-rules.md`
-- `{{SKILL_DIR}}/prompts/vue3-scaffold-spec.md`
+- `${CLAUDE_SKILL_DIR}/prompts/html-to-vue-rules.md`
+- `${CLAUDE_SKILL_DIR}/prompts/vue3-scaffold-spec.md`
 
 ## 步骤 3：更新项目管理文件
 

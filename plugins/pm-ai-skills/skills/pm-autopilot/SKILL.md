@@ -1,15 +1,6 @@
 ---
 name: pm-autopilot
 description: 产品需求全流程自动化编排器（pm-analyze → pm-prototype → pm-prd → pm-deliver），每步以独立 subagent 执行避免主会话上下文膨胀，状态落 run 文件支持续做与重跑。当用户要求"全自动跑需求"、"一键跑完"、"自动化产品流程"、"autopilot"时使用此技能。
-version: 1.0.0
-owner: pai
-category: pm
-tags:
-  - pm
-  - autopilot
-  - orchestration
-  - automation
-  - subagent
 ---
 
 # PM 全流程自动编排
@@ -78,13 +69,13 @@ tags:
 
 ## 执行入口（必读）
 
-本 SKILL.md 是技能概览与规则；**实际执行步骤在同目录的 `prompts/prompt.md`**。被调用后必须**立即 Read `{{SKILL_DIR}}/prompts/prompt.md`** 并严格按其流程执行——不要只读 SKILL.md 就开始动作或中途停下。
+本 SKILL.md 是技能概览与规则；**实际执行步骤在同目录的 `prompts/prompt.md`**。被调用后必须**立即 Read `${CLAUDE_SKILL_DIR}/prompts/prompt.md`** 并严格按其流程执行——不要只读 SKILL.md 就开始动作或中途停下。
 
 ## 参考
 
-- `{{SKILL_DIR}}/../pm-common/project-management.md` — 项目管理规范（编排器与 subagent 均需遵守）
+- `${CLAUDE_SKILL_DIR}/../pm-common/project-management.md` — 项目管理规范（编排器与 subagent 均需遵守）
 - 被编排技能 prompt.md（subagent 必读）：
-  - `{{SKILL_DIR}}/../pm-analyze/prompts/prompt.md` — 需求分析
-  - `{{SKILL_DIR}}/../pm-prototype/prompts/prompt.md` — 原型生成
-  - `{{SKILL_DIR}}/../pm-prd/prompts/prompt.md` — PRD 文档
-  - `{{SKILL_DIR}}/../pm-deliver/prompts/prompt.md` — 前端交付
+  - `${CLAUDE_SKILL_DIR}/../pm-analyze/prompts/prompt.md` — 需求分析
+  - `${CLAUDE_SKILL_DIR}/../pm-prototype/prompts/prompt.md` — 原型生成
+  - `${CLAUDE_SKILL_DIR}/../pm-prd/prompts/prompt.md` — PRD 文档
+  - `${CLAUDE_SKILL_DIR}/../pm-deliver/prompts/prompt.md` — 前端交付

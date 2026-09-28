@@ -1,15 +1,6 @@
 ---
 name: generate-mini-app
 description: 当用户意图涉及小程序、Taro、微信/支付宝/抖音小程序、跨端小程序等任何包含小程序的意图时，用于生成基于 Taro 框架的高质量、可运行的多端小程序代码。
-version: 1.0.1
-owner: pai
-category: miniapp
-tags:
-  - taro
-  - weapp
-  - alipay
-  - douyin
-  - miniapp
 ---
 
 # Generate Taro MiniApp
@@ -35,7 +26,7 @@ tags:
 
 ## Commands
 ```bash
-node {{SKILL_DIR}}/scripts/get-skill-assets-dir.js
+node ${CLAUDE_SKILL_DIR}/scripts/get-skill-assets-dir.js
 # 获取本次任务应使用的 Skill 资产目录；返回 skill_assets_dir，后续通过 ${skill_assets_dir}/prompts 和 ${skill_assets_dir}/scripts 读取对应文件
 
 node ${skill_assets_dir}/scripts/init-template.js [dir]
@@ -46,7 +37,7 @@ node ${skill_assets_dir}/scripts/preview-server.js [dir]
 ```
 
 注意：
-- `{{SKILL_DIR}}` 代表 `SKILL.md` 文件所在的目录，也就是当前 Skill 被安装到的实际路径。仅 `get-skill-assets-dir.js` 使用此路径，用于获取更新后的 Skill 资产目录。
+- `${CLAUDE_SKILL_DIR}` 代表 `SKILL.md` 文件所在的目录，也就是当前 Skill 被安装到的实际路径。仅 `get-skill-assets-dir.js` 使用此路径，用于获取更新后的 Skill 资产目录。
 - `${skill_assets_dir}` 是由 Step 0（`get-skill-assets-dir.js`）返回的 `skill_assets_dir` 字段，`init-template.js` 和 `preview-server.js` 必须使用此变量，以确保执行的是最新版本的脚本。
 - 如果任一脚本输出 `[SkillToolUpdated]: true` + `[SkillToolPath]: <path>`，表示当前运行的脚本不是最新版本；必须立即停止当前工具流程，使用 `[SkillToolPath]` 指定的新脚本路径，保持原参数重新执行新脚本。
 
@@ -57,12 +48,12 @@ node ${skill_assets_dir}/scripts/preview-server.js [dir]
 ## Execution Flow （CRITICAL: 必须严格遵守该流程）
 
 ### 0. 绑定本次任务的 Skill 资产目录（CRITICAL: 必须最先执行）
-- **必须先执行 `node {{SKILL_DIR}}/scripts/get-skill-assets-dir.js` 获取本次任务应使用的 Skill 资产目录**。
+- **必须先执行 `node ${CLAUDE_SKILL_DIR}/scripts/get-skill-assets-dir.js` 获取本次任务应使用的 Skill 资产目录**。
 - 脚本会自动完成必要的更新检查，并输出 JSON，其中 `skill_assets_dir` 字段是本次任务应使用的 Skill 根目录。
 - 后续读取 prompts 和调用 scripts 时，必须基于 `${skill_assets_dir}` 拼接路径。
 - 后续读取 prompts 时，必须使用 `${skill_assets_dir}/prompts` 下的文件。
-- 后续调用脚本工具时，必须使用 `${skill_assets_dir}/scripts` 下的脚本，不要继续直接使用 `{{SKILL_DIR}}/scripts` 下的脚本。
-- 如果 `get-skill-assets-dir.js` 不存在或获取路径失败，需要回退到直接使用 `{{SKILL_DIR}}/prompts` 和 `{{SKILL_DIR}}/scripts`。
+- 后续调用脚本工具时，必须使用 `${skill_assets_dir}/scripts` 下的脚本，不要继续直接使用 `${CLAUDE_SKILL_DIR}/scripts` 下的脚本。
+- 如果 `get-skill-assets-dir.js` 不存在或获取路径失败，需要回退到直接使用 `${CLAUDE_SKILL_DIR}/prompts` 和 `${CLAUDE_SKILL_DIR}/scripts`。
 
 ### 1. 初始化项目模板
 在开发之前，必须先调用 `${skill_assets_dir}/scripts/init-template.js` 初始化项目模板，后续将基于初始化模版进行开发

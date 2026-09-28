@@ -1,17 +1,6 @@
 ---
 name: pm-deliver
 description: 当用户意图涉及转Vue、前端交付、HTML转Vue、交付代码等时，将HTML原型转化为Vue3+Vite5+TypeScript+Arco Design Vue 4项目。支持全量转换（新项目）和增量模式（已有工程，只转新页面）。启动前强制检查原型产物存在性。
-version: 3.0.0
-owner: pai
-category: pm
-tags:
-  - pm
-  - deliver
-  - vue3
-  - vite
-  - typescript
-  - frontend
-  - iteration
 ---
 
 # PM 前端交付
@@ -66,4 +55,4 @@ tags:
 
 ---
 
-**被调用后必须立即 Read `{{SKILL_DIR}}/prompts/prompt.md` 并严格遵守其中的执行步骤。**
+**被调用后必须立即 Read `${CLAUDE_SKILL_DIR}/prompts/prompt.md` 并严格遵守其中的执行步骤。**

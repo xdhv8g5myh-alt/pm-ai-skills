@@ -1,18 +1,6 @@
 ---
 name: pm-prototype
 description: 当用户意图涉及生成原型、做原型、画原型、H5原型、小程序原型、后台原型等时，基于现有HTML原型模板库生成可在浏览器直接打开的交互原型。支持全量生成（新项目多页）和单页模式（迭代/改单个页面）。启动前强制检查 pm-analyze 产物存在性和 Blocker 状态。
-version: 3.0.0
-owner: pai
-category: pm
-tags:
-  - pm
-  - prototype
-  - html
-  - admin
-  - h5
-  - miniapp
-  - user-pc
-  - iteration
 ---
 
 # PM 原型生成
@@ -77,4 +65,4 @@ Read 目标端 _base.html
 
 ---
 
-**被调用后必须立即 Read `{{SKILL_DIR}}/prompts/prompt.md` 并严格遵守其中的执行步骤。**
+**被调用后必须立即 Read `${CLAUDE_SKILL_DIR}/prompts/prompt.md` 并严格遵守其中的执行步骤。**

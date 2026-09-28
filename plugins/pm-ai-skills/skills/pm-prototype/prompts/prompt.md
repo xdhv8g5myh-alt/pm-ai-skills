@@ -1,6 +1,6 @@
 # PM 原型生成执行步骤
 
-> 执行前必须 Read `{{SKILL_DIR}}/../pm-common/project-management.md` 了解项目管理规范。
+> 执行前必须 Read `${CLAUDE_SKILL_DIR}/../pm-common/project-management.md` 了解项目管理规范。
 
 ## 步骤 -1：加载项目状态
 
@@ -120,10 +120,10 @@ proto-toolbar 按钮切换这四个状态。
 - miniapp：`prototypes/miniapp/_base.html`
 
 根据目标端，还需读取对应的端规格文件：
-- `{{SKILL_DIR}}/prompts/admin-spec.md`（管理后台）
-- `{{SKILL_DIR}}/prompts/h5-spec.md`（移动端H5）
-- `{{SKILL_DIR}}/prompts/user-pc-spec.md`（用户前台PC）
-- `{{SKILL_DIR}}/prompts/miniapp-spec.md`（微信小程序）
+- `${CLAUDE_SKILL_DIR}/prompts/admin-spec.md`（管理后台）
+- `${CLAUDE_SKILL_DIR}/prompts/h5-spec.md`（移动端H5）
+- `${CLAUDE_SKILL_DIR}/prompts/user-pc-spec.md`（用户前台PC）
+- `${CLAUDE_SKILL_DIR}/prompts/miniapp-spec.md`（微信小程序）
 
 ## 步骤 4：生成页面规则
 

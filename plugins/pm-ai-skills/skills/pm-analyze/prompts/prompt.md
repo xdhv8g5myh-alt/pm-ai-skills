@@ -1,6 +1,6 @@
 # PM 需求分析执行步骤
 
-> 执行前必须 Read `{{SKILL_DIR}}/../pm-common/project-management.md` 了解项目管理规范。
+> 执行前必须 Read `${CLAUDE_SKILL_DIR}/../pm-common/project-management.md` 了解项目管理规范。
 
 ## 步骤 0：初始化项目骨架
 

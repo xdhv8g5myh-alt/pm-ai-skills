@@ -1,17 +1,6 @@
 ---
 name: pm-analyze
 description: 当用户意图涉及需求分析、需求整理、功能梳理、业务梳理、用户故事、需求拆解等时，将原始需求描述转化为结构化分析报告。支持全量分析（新项目）和轻量分析（迭代/小需求）两种模式。支持多格式输入（文本/PDF/图片/Excel/代码）。
-version: 3.0.0
-owner: pai
-category: pm
-tags:
-  - pm
-  - analyze
-  - requirements
-  - user-story
-  - moscow
-  - iteration
-  - multi-format
 ---
 
 # PM 需求分析
@@ -74,4 +63,4 @@ Blocker 门禁检查：高风险问题 > 0 → 标记暂停【门禁暂停】
 
 ---
 
-**被调用后必须立即 Read `{{SKILL_DIR}}/prompts/prompt.md` 并严格遵守其中的执行步骤。**
+**被调用后必须立即 Read `${CLAUDE_SKILL_DIR}/prompts/prompt.md` 并严格遵守其中的执行步骤。**

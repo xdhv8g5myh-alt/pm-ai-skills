@@ -7,10 +7,10 @@
 - 路径变量：`output/[项目名]/` 为项目根，所有产物按 `pm-common/project-management.md` 目录骨架存放
 - run 文件：`output/[项目名]/.pm-run.md`（autopilot 运行态，不进产物索引）
 - 被编排技能 prompt.md（subagent 必读）：
-  - pm-analyze：`{{SKILL_DIR}}/../pm-analyze/prompts/prompt.md`
-  - pm-prototype：`{{SKILL_DIR}}/../pm-prototype/prompts/prompt.md`
-  - pm-prd：`{{SKILL_DIR}}/../pm-prd/prompts/prompt.md`
-  - pm-deliver：`{{SKILL_DIR}}/../pm-deliver/prompts/prompt.md`
+  - pm-analyze：`${CLAUDE_SKILL_DIR}/../pm-analyze/prompts/prompt.md`
+  - pm-prototype：`${CLAUDE_SKILL_DIR}/../pm-prototype/prompts/prompt.md`
+  - pm-prd：`${CLAUDE_SKILL_DIR}/../pm-prd/prompts/prompt.md`
+  - pm-deliver：`${CLAUDE_SKILL_DIR}/../pm-deliver/prompts/prompt.md`
 
 ---
 

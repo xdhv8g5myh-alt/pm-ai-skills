@@ -1,4 +1,4 @@
-> 执行前必须 Read `{{SKILL_DIR}}/../pm-common/project-management.md` 了解项目管理规范。
+> 执行前必须 Read `${CLAUDE_SKILL_DIR}/../pm-common/project-management.md` 了解项目管理规范。
 
 # PM PRD 文档生成执行步骤
 
@@ -63,11 +63,11 @@
 
 ## 步骤 2：生成完整 PRD（完整模式）
 
-（此处读取并使用 `{{SKILL_DIR}}/prompts/prd-template.md` 和 `test-case-template.md` 的模板内容）
+（此处读取并使用 `${CLAUDE_SKILL_DIR}/prompts/prd-template.md` 和 `test-case-template.md` 的模板内容）
 
 请在执行时 Read 这两个文件：
-- `{{SKILL_DIR}}/prompts/prd-template.md`
-- `{{SKILL_DIR}}/prompts/test-case-template.md`
+- `${CLAUDE_SKILL_DIR}/prompts/prd-template.md`
+- `${CLAUDE_SKILL_DIR}/prompts/test-case-template.md`
 
 按照其中的模板逐章节输出，然后写入 output-contract 定义的路径。
 

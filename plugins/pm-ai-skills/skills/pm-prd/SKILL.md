@@ -1,17 +1,6 @@
 ---
 name: pm-prd
 description: 当用户意图涉及写PRD、生成PRD、需求文档、产品需求文档等时，基于需求分析报告或原始需求，生成完整PRD、测试用例和工时估算。支持完整PRD（新项目）和变更单（迭代需求）两种模式。启动前强制检查 pm-analyze 产物，变更批次自动溯源。
-version: 3.0.0
-owner: pai
-category: pm
-tags:
-  - pm
-  - prd
-  - documentation
-  - test-case
-  - estimate
-  - iteration
-  - change-tracing
 ---
 
 # PM PRD 文档生成
@@ -67,4 +56,4 @@ tags:
 
 ---
 
-**被调用后必须立即 Read `{{SKILL_DIR}}/prompts/prompt.md` 并严格遵守其中的执行步骤。**
+**被调用后必须立即 Read `${CLAUDE_SKILL_DIR}/prompts/prompt.md` 并严格遵守其中的执行步骤。**

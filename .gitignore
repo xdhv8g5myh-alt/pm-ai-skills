@@ -1,9 +1,3 @@
-# 本地环境（机器相关路径，不迁移）
-.claude/settings.local.json
-
-# 技能更新运行态（时间戳/状态，新环境重新生成）
-.pai/skill-update/update.json
-
 # 系统文件
 .DS_Store
 Thumbs.db
