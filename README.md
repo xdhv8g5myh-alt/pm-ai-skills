@@ -26,7 +26,7 @@ PM AI 协作平台的 Claude Code 插件市场 —— 覆盖需求分析 → 原
 - `.claude-plugin/marketplace.json` — 市场清单
 - `plugins/pm-ai-skills/` — 插件本体
   - `.claude-plugin/plugin.json` — 插件 manifest
-  - `skills/` — 技能（pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-common / generate-mini-app）
+  - `skills/` — 技能（pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-common / pm-annotate / generate-mini-app）
 
 ## 关联仓库
 
