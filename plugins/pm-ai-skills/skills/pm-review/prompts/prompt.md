@@ -192,24 +192,42 @@ Blocker/建议/提示 总数。没有则写"无"。
 2. 在 `### 评审自查（pm-review）` 章节追加一行产物。
    该章节**追加在产物清单末尾**（`### 变更记录` 之前）。**不要插在「PRD 文档」与「前端代码」之间**——
    那会打乱 `project-management.md` 规定的基础模板章节顺序。
-3. 基础模板里**没有**这个章节，首次执行时需创建。列结构定为：
+3. 基础模板里**没有**这个章节，首次执行时需创建。列结构**固定为下面 5 列，不得增删**
+   （曾有执行自行加了「检查范围」列，与其它项目的表打不齐；检查范围属于报告内容，不写进索引）：
 
    | 产物 | 路径 | Blocker 数 | 生成时间 | 批次 |
    |------|------|-----------|---------|------|
+   | PRD 评审自查报告 | `prd/[报告文件名]` | [数字] | [日期 时间] | [批次] |
 
-**.pm-state.json** —— 把 `pm-review` 条目**插到 `pm-prd` 条目之后**（即它的逻辑位置），
-不是字面 append。`pipeline` 表示执行顺序，直接 append 会写出
-`…→ prd → deliver(pending) → review` 的错误顺序，破坏断点续做语义。
+**.pm-state.json** —— 操作对象是 `pipeline` **数组**，分两步，不是"字面 append"：
 
-> **注意**：若此时所有步骤都已是 `completed`，"插到最后一个 completed 之后"会退化成字面 append。
-> 所以位置规则一律以**"紧跟在 `pm-prd` 之后"**为准，不看 completed 状态。
+1. **先摘**：把已有的 `{"step": "pm-review"}` 条目从数组中删掉（重跑时防止留下两条）
+2. **再插**：定位 `step == "pm-prd"` 的元素下标 `i`，用 **splice 插到 `i + 1`**，
+   即 `pipeline.splice(i + 1, 0, entry)` —— **不是 `pipeline.push(entry)`**
 
-条目内容（保留 `startedAt` 与空的 `counters`，与其它条目形状一致）：
+`pipeline` 表示执行顺序，直接 push 会写出 `…→ prd → deliver → review` 的错误顺序，破坏断点续做语义。
+**不看 completed 状态**（"插到最后一个 completed 之后"在全部完成时会退化成 push，就是这个 bug 的来源）。
+
+> **插完必须核对**：`pipeline` 中 `pm-review` 的下标 === `pm-prd` 的下标 + 1。
+> 可以用一行命令验证，不要凭"我记得插了"：
+> ```bash
+> python -c "import json;d=json.load(open('.pm-state.json',encoding='utf-8'));s=[x['step'] for x in d['pipeline']];print(s, s.index('pm-review')==s.index('pm-prd')+1)"
+> ```
+
+条目内容 —— 与 `project-management.md` 的 schema 一致，**六个键一个都不能少**
+（无值的键写 `null`，不是省略）：
 
 ```json
-{ "step": "pm-review", "status": "completed", "startedAt": "[时间]", "completedAt": "[时间]",
-  "output": "prd/[报告文件名]", "counters": {}, "reviewBlockerCount": N }
+{ "step": "pm-review", "status": "completed", "startedAt": "[ISO 时间或 null]",
+  "completedAt": "[ISO 时间]", "output": "prd/[报告文件名]", "counters": {},
+  "reviewBlockerCount": N }
 ```
+
+- `counters` **始终是空对象 `{}`**（本技能不分配编号），但这个键必须在。
+  曾漏写它导致与其它条目形状不一致。
+- 时间戳统一用 **UTC 的 ISO 格式，结尾带 `Z`**（如 `2026-09-28T09:42:00Z`）。
+  不要把本地时间直接标成 `Z` —— 曾出现本地 17:40 被写成 `17:40:00Z` 的情况。
+- 起始时间没记录到时写 `null`，**不要凭"大概跑了 5 分钟"编一个**。
 
 **project-spec.md** —— **不写**（本技能不产生技术决策）。
 
@@ -246,6 +264,11 @@ Blocker/建议/提示 总数。没有则写"无"。
 10. **路径正确**：报告写在 products 仓库的 `output/[项目名]/prd/` 下（用绝对路径核对过）
 11. **只读未改**：PRD / 测试用例 / 工时估算 / analysis-report **均未被修改**
 12. **数字自洽**：结论行 ✅ + ✅↑ + N/A + ❌ = 22；Blocker/建议/提示 与正文明细一致
+13. **落盘位置正确**（独立模式必查）：`pipeline` 中 `pm-review` 的下标 === `pm-prd` 的下标 + 1，
+    且数组里**只有一条** `pm-review`；条目的六个键齐全（`startedAt`/`completedAt`/`output`/
+    `counters` 都在，无值写 `null`），时间戳是 UTC 带 `Z`
+14. **README 表列数正确**：`### 评审自查（pm-review）` 表是 5 列
+    （产物 / 路径 / Blocker 数 / 生成时间 / 批次），没有自行增删列
 
 ## 步骤 9：会话内输出摘要
 

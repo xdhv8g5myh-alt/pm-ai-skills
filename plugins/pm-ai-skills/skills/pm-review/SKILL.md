@@ -47,7 +47,7 @@ description: 当用户意图涉及 PRD 评审、PRD 自查、需求自查、评�
     ↓
 生成报告：每条 ❌ = 证据 + 可粘贴改法
     ↓
-更新 README + .pm-state.json（独立模式）→ 自检 → 会话内只回摘要
+更新 README + .pm-state.json（独立模式：条目 splice 到 pm-prd 之后，**不是 push**）→ 自检 → 会话内只回摘要
 ```
 
 ## output-contract
