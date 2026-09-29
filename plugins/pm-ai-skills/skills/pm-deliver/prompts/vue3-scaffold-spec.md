@@ -18,7 +18,8 @@
     ├── router/
     │   └── index.ts
     ├── api/
-    │   ├── [模块名].ts        # 接口函数
+    │   ├── request.ts         # axios 实例：baseURL / 拦截器 / 统一错误提示
+    │   ├── [模块名].ts        # 接口函数（内部 import request）
     │   └── mock/
     │       └── [模块名].ts    # Mock 数据
     ├── types/
@@ -26,7 +27,8 @@
     ├── composables/
     │   └── use[功能名].ts     # 可复用逻辑
     ├── utils/
-    │   └── index.ts
+    │   ├── index.ts
+    │   └── storage.ts         # localStorage 读写封装
     └── views/
         ├── [PageName]View.vue
         └── ...

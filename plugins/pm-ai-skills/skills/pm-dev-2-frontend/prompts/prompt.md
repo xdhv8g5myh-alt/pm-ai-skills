@@ -4,15 +4,17 @@
 
 ## 步骤 0：门禁检查（硬门禁，可强制跳过）
 
-1. `后端工程/pom.xml` 存在 且 `.pm-state.json` 中 `pm-dev-1-backend` = `completed`
+1. 用户传 `--skip-frontend` → 本步标「跳过」：`.pm-state.json` 条目记 `"status":"skipped","skipped":true,"output":null`；
+   **结束前仍须**按 5.2 在 README「独立前端工程（pm-dev-2-frontend）」节追加一行为「已跳过」
+2. `后端工程/pom.xml` 存在 且 `.pm-state.json` 中 `pm-dev-1-backend` = `completed`
    - 不满足 → ❌ 停止：`请先执行 pm-dev-1-backend 完成后端`
-2. 用户传 `--skip-frontend` → 本步标「跳过」：`.pm-state.json` 条目记 `"status":"skipped","skipped":true,"output":null`，直接结束
+   - （传 `--skip-frontend` 时已在上一步结束，不经此判定）
 3. 用户强制跳过依赖 → 记 `"dependencySkipped": true`
 
 ## 步骤 1：读取上下文
 
 1. 【主契约】`设计/[项目名]-功能详细设计.md`（R 编号/method/URL/请求/响应，作为 `src/api/[模块].ts` 与 `types` 依据）
-2. 【UIUE】`原型/[端]/*.html`（干净原型，**忽略 `-标注版.html`**；无则从设计推导页面结构）
+2. 【UIUE】`原型/[端]/*.html`（`[端]` ∈ 管理后台 / H5 / 用户前台 / 小程序；干净原型，**忽略 `*-标注版.html`**；无则从设计推导页面结构）
 3. 【脚手架】Read `${CLAUDE_SKILL_DIR}/../pm-deliver/prompts/vue3-scaffold-spec.md`
 4. `output/[项目名]/项目规范.md`（baseURL、组件约定）
 5. `.pm-state.json`（读 `devProjectType`）
@@ -39,7 +41,7 @@
 
 ### 5.1 更新 .pm-state.json
 
-- 正常完成：`{"step":"pm-dev-2-frontend","status":"completed","startedAt":null,"completedAt":"…Z","output":"独立前端工程/","counters":{}}`
+- 正常完成：`{"step":"pm-dev-2-frontend","status":"completed","startedAt":"…Z","completedAt":"…Z","output":"独立前端工程/","counters":{}}`（`startedAt` 写本次执行开始时间）
 - 跳过：`{"step":"pm-dev-2-frontend","status":"skipped","startedAt":null,"completedAt":null,"output":null,"counters":{},"skipped":true}`
 - 时间戳 UTC 带 `Z`
 
@@ -47,6 +49,11 @@
 
 `### 前端代码（pm-dev-2-frontend）` 章节追加一行（5 列：产物/路径/页面数/生成时间/批次），
 追加在产物清单末尾（`### 变更记录` 之前）。跳过时写「已跳过」。**不要并入 `### 前端代码（pm-deliver）`**——按技能分节。
+
+### 5.3 反向沉淀
+
+若产生新的前端通用约定（响应解包方式、鉴权头、路由映射规则等），append 到 `项目规范.md`「技术决策」（不覆盖既有行）；
+`CLAUDE.md` 存在则同步其「迭代记录」节。
 
 ## 步骤 6：自检
 

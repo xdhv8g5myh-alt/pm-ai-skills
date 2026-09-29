@@ -19,7 +19,7 @@
 
 按顺序检查（**未读取 项目规范.md 不得进入步骤 1**）：
 1. **【强制】** `output/[项目名]/项目规范.md`：获取接口规范（baseURL、鉴权方式、响应格式）、组件使用约定
-2. 检查是否存在 `CLAUDE.md`，提取：
+2. 检查 `output/[项目名]/CLAUDE.md` 是否存在（其次当前目录；**项目内优先，只读不回写**），提取：
    - 项目目录结构约定
    - 已有组件封装（避免重复封装）
    - 接口 baseURL 和鉴权方式
@@ -35,7 +35,7 @@
 
 ## 步骤 2：分析原型文件
 
-逐一 Read 所有 HTML 原型文件，提取：
+逐一 Read 所有 HTML 原型文件（**跳过 `*-标注版.html`** —— 标注版是 pm-annotate 的评审产物，不是交付输入），提取：
 - 页面名称和对应路由
 - `const MOCK_DATA = {}` 的数据结构（→ TypeScript interface）
 - 使用到的 Arco 组件名（→ 确认导入方式）
@@ -43,9 +43,59 @@
 
 （此处继续读取并使用 `${CLAUDE_SKILL_DIR}/prompts/html-to-vue-rules.md` 和 `${CLAUDE_SKILL_DIR}/prompts/vue3-scaffold-spec.md` 中的转换规则和脚手架模板）
 
-请在执行步骤 3 前分别 Read：
+请在执行步骤 2.5 前分别 Read：
 - `${CLAUDE_SKILL_DIR}/prompts/html-to-vue-rules.md`
 - `${CLAUDE_SKILL_DIR}/prompts/vue3-scaffold-spec.md`
+
+## 步骤 2.5：生成/更新 Vue 工程（核心落盘步骤）
+
+> **本步骤是交付的实际产物生成步骤。产物落盘根目录 = `output/[项目名]/前端交付/`。**
+> 此前各步只做门禁、读上下文、判模式、分析原型；**不落盘工程就不算交付**。
+
+### 2.5.1 依据
+
+执行前必须已 Read（见步骤 2）：
+- `${CLAUDE_SKILL_DIR}/prompts/html-to-vue-rules.md` —— HTML → Vue SFC 转换规则（结构 / JS / 组件库 / Mock 数据 / 路由，含常见陷阱）
+- `${CLAUDE_SKILL_DIR}/prompts/vue3-scaffold-spec.md` —— Vue3 工程脚手架规格（目录结构 + `package.json` / `vite.config.ts` / `main.ts` / `tsconfig.json` 模板）
+
+### 2.5.2 全量转换模式 —— 写出完整工程
+
+在 `output/[项目名]/前端交付/` 下落盘**完整可构建**的工程，产物清单（缺一不可）：
+
+| 类别 | 产物 |
+|------|------|
+| 脚手架 | `package.json`、`vite.config.ts`、`tsconfig.json`、`index.html` |
+| 入口 | `src/main.ts`、`src/App.vue` |
+| 路由 | `src/router/index.ts` |
+| 页面 | `src/views/[PageName]View.vue`（每个（非标注版）原型页面一个，页面名由中文原型名映射） |
+| 复用逻辑 | `src/composables/use[功能名].ts` |
+| 接口 | `src/api/[module].ts` + `src/api/mock/[module].ts` |
+| 类型 | `src/types/index.ts` |
+
+### 2.5.3 增量模式 —— 只写新增文件
+
+只写**已有工程**对应的新文件，**不重建脚手架**：
+
+- 新增页面：`src/views/[PageName]View.vue`
+- 追加路由：`src/router/index.ts`
+- 新增接口：`src/api/[module].ts` + `src/api/mock/[module].ts`
+- 追加类型：`src/types/index.ts`
+
+**不得修改**已有工程的 `main.ts`、`App.vue`、`package.json` 等核心文件（见铁律 6）。
+
+### 2.5.4 编译验证（强制）
+
+生成/写入完毕后**必须**验证工程可构建：
+
+```bash
+# 仅类型检查（更快、推荐先跑）
+npx vue-tsc --noEmit
+# 全量模式完整构建（首次需先安装依赖）
+cd output/[项目名]/前端交付 && npm install && npm run build
+```
+
+- 报错则自动修复，**编译修复上限 5 轮**（见铁律 10）；超限则停止并输出完整错误清单，禁止无限重试
+- 验证通过后方可进入步骤 3
 
 ## 步骤 3：更新项目管理文件
 
@@ -54,7 +104,7 @@
 
 ### 3.2 更新 .pm-state.json
 - `pipeline` 中 pm-deliver 的 `status` → `completed`
-- 如果 pipeline 中所有 4 个步骤都是 `completed`，自动将 `batchStatus` 设为 `completed`
+- 如果 PM 链 `pipeline` 中所有**非跳过**步都是 `completed`，自动将 `batchStatus` 设为 `completed`
 
 ### 3.3 追加 项目规范.md
 将转换过程中发现的新组件使用约定追加到"组件使用约定"表格。
@@ -74,5 +124,5 @@
 ### 3.5 产物头部标注
 在生成的 Vue 项目 README.md 头部追加：
 ```
-> 批次：B[N] | 来源原型：output/[项目名]/原型/[端]/ | pm-deliver v2.0.0
+> 批次：B[N] | 来源原型：output/[项目名]/原型/[端]/ | pm-deliver v1.5.0
 ```

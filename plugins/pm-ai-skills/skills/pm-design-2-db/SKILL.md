@@ -13,6 +13,8 @@ description: 数据库设计。当用户要"数据库设计""表设计""建表""
 
 - 触发词：数据库设计、表设计、建表、DDL、ER 图、设计数据库、写 schema、数据建模
 - 自动触发：pm-dev-autopilot 第二步
+- 参数 `--ref [参考目录]`：历史参考扫描目录（默认 `D:/pm-ai/pm-ai-projects/output/`），用于复用同义表/字段命名；另有 `--config` 项目初始化配置（DB 脚本基线）
+- **独立调用时的项目根定位**：产物落在含 `output/` 的 products 仓库（本机 `D:/pm-ai/pm-ai-projects`）。若当前 cwd 不在该仓库，`output/` 相对路径会写错位置 —— 先定位 products 仓库根再拼**绝对路径**；定位不到就问用户，不要猜。
 
 ## 铁律（不可违反）
 

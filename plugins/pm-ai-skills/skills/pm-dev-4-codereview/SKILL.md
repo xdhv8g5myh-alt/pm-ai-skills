@@ -21,7 +21,7 @@ description: 代码审查。当用户要"代码审查""code review""审查代码
 3. **只读不改**：绝不改代码，问题给位置和改法，修复由人做
 4. **安全优先**：SQL 注入/XSS/认证授权/脱敏/文件上传/参数校验必查
 5. **迭代额外核对**：迭代项目核对变更是否引入兼容性/回归风险
-6. **报告产出即 PASS**：严重问题数记 `reviewBlockerCount`，不拦截流水线
+6. **报告产出即 `STATUS=PASS`**：严重问题数记 `reviewBlockerCount`（写入本步 devPipeline 条目）；严重问题 > 0 时由**编排器**记 `PAUSE@codereview`（阻塞下游），本技能自身**不写 PAUSE 标记**
 
 ## 执行流程概览
 

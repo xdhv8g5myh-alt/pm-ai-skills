@@ -7,8 +7,8 @@
 1. Read `output/[项目名]/.pm-state.json`（如存在）
    - 获取当前批次编号和 P 计数器（counters.P）
    - 检查 pm-prototype 的 status，如为 `in_progress` 则提示续做
-2. 如果项目目录不存在，提示用户："建议先执行 pm-analyze 进行需求分析，还是直接创建项目骨架？"
-   - 如果用户选择直接创建，则初始化 output/[项目名]/ 骨架（参考 project-management.md）
+2. 如果项目目录不存在 → ❌ 停止执行，提示用户："未找到项目产物目录，请先执行 pm-analyze 完成需求分析与项目骨架初始化。"
+   - （步骤 -0.5 为硬门禁，项目目录不存在时必然无法通过依赖检查，因此**不提供"直接创建骨架"分支**）
 3. 更新 .pm-state.json 中 pm-prototype 的 status 为 `in_progress`
 
 ## 步骤 -0.5：产物依赖门禁检查（硬门禁，不可跳过）
@@ -113,11 +113,13 @@ proto-toolbar 按钮切换这四个状态。
 
 ## 步骤 3：读取基础模板
 
-使用 Read 工具读取目标端的 `_base.html`：
-- admin：`原型/管理后台/_base.html`
-- h5：`原型/H5/_base.html`
-- user-pc：`原型/用户前台/_base.html`
-- miniapp：`原型/小程序/_base.html`
+使用 Read 工具读取目标端的参考模板（**来自插件资产，不复制进项目**）：
+- admin：`${CLAUDE_SKILL_DIR}/assets/_base-admin.html`
+- h5：`${CLAUDE_SKILL_DIR}/assets/_base-h5.html`
+- user-pc：`${CLAUDE_SKILL_DIR}/assets/_base-user-pc.html`
+- miniapp：`${CLAUDE_SKILL_DIR}/assets/_base-miniapp.html`
+
+> `_base-*.html` 是**参考模板，不复制进项目**；生成页面时把资源引用统一改写为 `../../_公共资源/...`。
 
 根据目标端，还需读取对应的端规格文件：
 - `${CLAUDE_SKILL_DIR}/prompts/admin-spec.md`（管理后台）
@@ -125,9 +127,18 @@ proto-toolbar 按钮切换这四个状态。
 - `${CLAUDE_SKILL_DIR}/prompts/user-pc-spec.md`（用户前台PC）
 - `${CLAUDE_SKILL_DIR}/prompts/miniapp-spec.md`（微信小程序）
 
+## 步骤 3.5：复制公共资源
+
+若 `output/[项目名]/_公共资源/` **不存在**，把 `${CLAUDE_SKILL_DIR}/assets/_公共资源/` 整目录复制过去（含 `vendor/`、`theme.css`、`proto-utils.js`）；**已存在则跳过，不覆盖**（避免覆盖用户改过的主题）。
+
+```bash
+# 仅当目标目录不存在时复制（已存在则跳过，不覆盖）
+[ -d "output/[项目名]/_公共资源" ] || cp -r "${CLAUDE_SKILL_DIR}/assets/_公共资源" "output/[项目名]/_公共资源"
+```
+
 ## 步骤 4：生成页面规则
 
-1. **基于 `_base.html` 生成**：必须先 Read 目标端的 `_base.html`，复制其结构，只替换内容区（`PAGE_CONTENT_SLOT` 注释位置）
+1. **基于 `_base.html` 生成**：必须先 Read 目标端的 `${CLAUDE_SKILL_DIR}/assets/_base-[端].html`，复制其结构（**不复制进项目**），只替换内容区（`PAGE_CONTENT_SLOT` 注释位置）
 2. **Mock 数据真实感**：数据内容要贴合项目业务，不要用 item1/item2 这样的占位
 3. **交互完整性**：表单字段要有 v-model 绑定，按钮要有 @click 处理函数（即使只是改状态）
 4. **导航连通**：页面间跳转用相对路径，`index.html` 要能跳到所有功能页
@@ -151,7 +162,7 @@ graph LR
   index --> page2[功能页2]
   page1 --> page2
 ```
-3. 打开方式说明：将 `output/原型/[端类型]/[项目名]/index.html` 拖入浏览器即可
+3. 打开方式说明：将 `output/[项目名]/原型/[端]/index.html` 拖入浏览器即可
 
 ## 步骤 7：更新项目管理文件
 
@@ -160,30 +171,32 @@ graph LR
 
 ### 7.2 更新 .pm-state.json
 - `pipeline` 中 pm-prototype 的 `status` → `completed`，填入 `completedAt` 和 `output`
+- 写入 `pipeline` 条目时一并带上 `counters`（与 pm-common §五 的 canonical 形状一致，即 `{"counters": {"P": [最后一个 P 编号]}}`）
 - `counters.P` 更新为最后一个 P 编号
 
 ### 7.3 追加 项目规范.md
 如果在生成过程中发现了新的组件使用约定，追加到 项目规范.md 的"组件使用约定"表格。
 
 ### 7.4 页面编号
-每个生成的页面在 index.html 导航页中标注 P 编号：
+每个生成的页面在 index.html 导航页中标注 P 编号，页面文件名用中文：
 ```
-P001 仪表盘 — dashboard.html
-P002 用户列表 — user-list.html
+P001 仪表盘 — 仪表盘.html
+P002 用户列表 — 用户列表.html
 ```
 
 ### 7.5 产物头部标注
 在每个 HTML 文件的第一行注释中标注：
 ```html
-<!-- 批次：B1 | P001 | 生成时间：2026-09-26 15:00 | pm-prototype v2.0.0 -->
+<!-- 批次：B1 | P001 | 生成时间：2026-09-26 15:00 | pm-prototype v1.5.0 -->
 ```
 
 ## 输出目录结构
 
 ```
-output/原型/[端类型]/[项目名]/
-├── index.html          # 导航索引，列出所有页面（全量模式）
-├── [功能1].html
-├── [功能2].html
-└── ...
+output/[项目名]/
+├── _公共资源/                      # 公共资源（vendor / theme.css / proto-utils.js）
+└── 原型/[端]/                      # 管理后台 / H5 / 用户前台 / 小程序
+    ├── index.html                 # 导航索引，列出所有页面（全量模式）
+    ├── [中文页面名].html          # P001...
+    └── [中文页面名]-标注版.html   # pm-annotate 产出（若执行了标注）
 ```

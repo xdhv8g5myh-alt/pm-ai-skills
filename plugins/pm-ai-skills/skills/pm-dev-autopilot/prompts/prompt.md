@@ -30,6 +30,7 @@
 
 - **配置文档**：`--config <路径>` 或 `output/[项目名]/项目配置.md`（可选，见 pm-common §十三）；存在则读，其「1 项目信息 / 2 输入来源」覆盖下述判定；工程拉取/DB 基线/CLAUDE.md 由 Step 1 的 pm-design-1-func 消费
 - **项目性质**：`--iterate` 或目标目录已有 `后端工程/`/`表结构.sql`/devPipeline 历史 → 迭代；否则新项目
+  - 本项为 **Step 0.2 的预判**，**最终由 pm-design-1-func 判定**；Step 1 回报后以其结论回写 run 文件头部
 - **输入来源**：`--prd <路径>` → 模式 A；`--requirement <文本/文件>` → 模式 B；都未传 → 探测 `output/[项目名]/需求文档/*-PRD-*.md` 是否存在，存在即模式 A，否则询问
 - **参考目录**：`--ref <路径>`，缺省 `D:/pm-ai/pm-ai-projects/output/`（配置「7. 参考模块」并入）
 - 把判定结果写进 run 文件头部
@@ -42,15 +43,17 @@
 2. 检查 `output/[项目名]/.pm-dev-run.md`
    - **不存在** → 按 `devPipeline` 状态预标各步 PASS/待执
    - **存在** → 读取各步 STATUS
-3. 用户传 `--from pm-X` → 该步及其后重置为待执
-4. 用户传 `--skip-frontend` → Step 5 直接标「跳过」
+   - 预标规则：`devPipeline` 中 `status=completed` 的步按 PASS、`status=skipped` 的步按**「跳过」**预标，其余按待执
+3. 用户传 `--from pm-X` → 该步及其后 `devPipeline` 条目重置为 `pending`，run 文件对应步重置为待执
+4. 用户传 `--skip-frontend` → Step 5 直接标「跳过」（并按 #Step 5 写入 devPipeline skipped 条目 + README）
 
 ### 0.4 分流
 
 - 定位第一个非 PASS（且非跳过）步作为起点
 - 全部 PASS → 提示「研发链所有步骤已完成。是否从某步重跑？」
 - 有 `PAUSE@*` 标记 → 检查暂停条件是否解除：
-  - `PAUSE@design-blocker`：re-check 最新 `设计/评审/*.md` 的 Blocker
+  - `PAUSE@design-blocker`：**须先重跑 pm-design-3-review 生成新报告**，再 re-check 最新 `设计/评审/*.md` 的 Blocker
+    - 判定量 = 最新报告 Blocker 表中**状态为「待确认」**的行数
     - 遗留 = 0 → 解除，从下一步继续
     - 遗留 > 0 → 再次暂停，输出未解决 Blocker 清单
   - `PAUSE@codereview`：re-check 最新 `代码审查/*.md` 严重问题是否已修复应答
@@ -88,29 +91,20 @@
 
 ### 1.1 更新 run 文件 → 1.2 dispatch subagent
 
-```
-你是 pm-design-1-func 技能执行者（功能详细设计）。项目名：[项目名]，工作空间根：[workspace_root]。
+使用文末「subagent dispatch 通用模板」，本步只填差异项（不再内联重复整份模板，避免与通用模板不一致）：
 
-**立即 Read** `[pm-design-1-func prompt.md 绝对路径]` 并严格按其流程执行，不得跳步。
-
-执行前先 Read `[pm-common/project-management.md 绝对路径]` 了解项目管理规范。
-
-项目性质：[新项目/迭代] | 输入来源：[PRD 路径 / 需求文本] | 参考目录：[路径]
-
-（有配置文档时附上）项目初始化配置：[--config 路径 / 项目配置.md 路径]
-
-（模式 B 时附上）用户需求内容：[需求文本或文件路径]
-
-完成后只回报：
-STATUS(PASS|FAIL)
-OUTPUT(关键产物路径列表)
-SUMMARY(一句话)
-```
+- 技能名：pm-design-1-func（功能详细设计）
+- 被执行 prompt.md 绝对路径：`${CLAUDE_SKILL_DIR}/../pm-design-1-func/prompts/prompt.md`
+- 项目性质：[新项目/迭代]（Step 0.2 **预判**值）
+- 输入来源：[PRD 路径 / 需求文本] | 参考目录：[路径]
+- 配置文档：[--config 路径 / 项目配置.md 路径 / 无]
+- 上游产物：无（链首步）
+- 模式 B 时追加：用户需求内容：[需求文本或文件路径]
 
 ### 1.3 返回后验证
 
-- `output/[项目名]/设计/[项目名]-功能详细设计.md` 存在？
-- `.pm-state.json` 出现 `devPipeline` 且 `pm-design-1-func` completed？
+- `output/[项目名]/设计/[项目名]-功能详细设计.md` 存在 且 devPipeline `pm-design-1-func` = `completed`（**双校验**）
+- **回写项目性质**：以 pm-design-1-func 的最终判定为准，回写 run 文件头部「项目性质」
 
 ### 1.4 更新 run 文件 → 1.5 门禁（无）→ Step 2
 
@@ -120,9 +114,10 @@ SUMMARY(一句话)
 
 dispatch prompt（同上模板，role 改为「数据库设计」），上游产物路径：功能详细设计、项目规范、PRD ch5。
 
-验证：
+验证（双校验 = 关键产物存在 + devPipeline 对应步 `completed`）：
 - 新项目：`设计/数据库/[项目名]-表结构.sql` 存在？
 - 迭代项目：`设计/数据库/[项目名]-增量-*.sql` 存在？
+- devPipeline `pm-design-2-db` = `completed`？
 
 ---
 
@@ -130,11 +125,11 @@ dispatch prompt（同上模板，role 改为「数据库设计」），上游产
 
 dispatch prompt（role「设计评审」），回报多一行 `BLOCKER_COUNT(Blocker 数)`。
 
-验证：`设计/评审/[项目名]-设计评审-[日期].md` 存在？
+验证（双校验）：`设计/评审/[项目名]-设计评审-[日期].md` 存在 且 devPipeline `pm-design-3-review` = `completed`？
 
 ### 3.x 门禁检查（设计 Blocker）
 
-- 读 `.pm-state.json` `pm-design-3-review` 条目的 `blockerCount`（或报告 Blocker 数）
+- 读 `.pm-state.json` `pm-design-3-review` 条目的 `blockerCount`（口径 = 最新报告 Blocker 表中**状态为「待确认」**的行数；或直接数报告）
 - **Blocker > 0**：
   - run 文件：Step 3 STATUS = PASS（报告完成），**同时**记 `PAUSE@design-blocker`
   - 向用户输出 Blocker 清单，提示「解决后重新执行 /pm-dev-autopilot 续做；确认带问题推进请回复"继续"」
@@ -147,9 +142,9 @@ dispatch prompt（role「设计评审」），回报多一行 `BLOCKER_COUNT(Blo
 
 dispatch prompt（role「后端开发」），上游产物：功能详细设计、表结构/增量 SQL、项目规范。
 
-验证：
-- `后端工程/pom.xml` 存在？
-- `后端工程/src/main/java` 存在？
+验证（双校验）：
+- `后端工程/pom.xml` 存在 且 `后端工程/src/main/java` 存在？
+- devPipeline `pm-dev-1-backend` = `completed`？
 
 门禁：pom.xml 缺失或 subagent 回报编译失败 → FAIL，暂停。
 
@@ -157,11 +152,17 @@ dispatch prompt（role「后端开发」），上游产物：功能详细设计�
 
 ## Step 5：dispatch pm-dev-2-frontend 前端工程（可选）
 
-> 用户传 `--skip-frontend` → 本步标「跳过」，直接进入 Step 6。
+> 用户传 `--skip-frontend` → 本步标「跳过」，**必须留痕**后直接进入 Step 6：
+> - `devPipeline` 写入条目：`{"step":"pm-dev-2-frontend","status":"skipped","startedAt":null,"completedAt":null,"output":null,"counters":{},"skipped":true}`
+> - README「独立前端工程（pm-dev-2-frontend）」节追加一行为「已跳过」
+>
+> ⚠️ 不能只改 run 文件：否则换会话后按 `devPipeline` 预标会把本步当「待执」并去跑（见 Step 0.3 预标规则）。
 
 dispatch prompt（role「前端工程」），上游产物：功能详细设计、原型（干净 HTML）、后端。
 
-验证：`独立前端工程/package.json` 存在？
+验证（双校验）：
+- `独立前端工程/package.json` 存在？
+- devPipeline `pm-dev-2-frontend` = `completed`（或 `skipped`）？
 
 门禁：未 `--skip-frontend` 但 package.json 缺失 → FAIL，暂停。
 
@@ -171,7 +172,9 @@ dispatch prompt（role「前端工程」），上游产物：功能详细设计�
 
 dispatch prompt（role「单元测试」），上游产物：功能详细设计、后端工程/、独立前端工程/（可选）。
 
-验证：`测试/[项目名]-单元测试报告-[日期].md` 存在？
+验证（双校验）：
+- `测试/[项目名]-单元测试报告-[日期].md` 存在？
+- devPipeline `pm-dev-3-test` = `completed`？
 
 门禁：报告标注覆盖率未达标或单测未通过 → FAIL，暂停。
 
@@ -181,7 +184,9 @@ dispatch prompt（role「单元测试」），上游产物：功能详细设计�
 
 dispatch prompt（role「代码审查」），回报多一行 `BLOCKER_COUNT(严重问题数)`。
 
-验证：`代码审查/[项目名]-代码审查报告-[日期].md` 存在？
+验证（双校验）：
+- `代码审查/[项目名]-代码审查报告-[日期].md` 存在？
+- devPipeline `pm-dev-4-codereview` = `completed`？
 
 ### 7.x 门禁检查（审查严重问题）
 

@@ -1,0 +1,147 @@
+/* pm-annotate · 原型标注样式（角标 + 悬浮说明）*/
+
+/* 定位锚点：仅作 DOM 定位用，不参与布局 */
+.pm-anno-anchor { display: none !important; }
+
+/* 角标层（绝对定位，随文档滚动） */
+#pm-anno-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+/* 角标（严格规格：rgb(250,173,20) 底、白字、10px 加粗、行高 14px、padding 0 4px、圆角 2px、无边框、手型） */
+.pm-anno-marker {
+  position: absolute;
+  display: inline-block;
+  vertical-align: top;
+  background-color: rgb(250, 173, 20);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 14px;
+  padding: 0 4px;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+  white-space: nowrap;
+}
+
+/* 悬浮说明层 */
+#pm-anno-tip-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9999;
+}
+
+/* 悬浮说明卡片 */
+.pm-anno-tooltip {
+  position: absolute;
+  width: 450px;
+  max-width: 90vw;
+  background-color: #f0efef;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .22);
+  color: #1d2129;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  pointer-events: auto;
+}
+
+.pm-anno-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: move;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.pm-anno-tooltip-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #1d2129;
+}
+
+.pm-anno-tooltip-num {
+  display: inline-block;
+  background-color: rgb(250, 173, 20);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 14px;
+  padding: 0 4px;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.pm-anno-tooltip-close {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: #86909c;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+.pm-anno-tooltip-close:hover { color: #1d2129; background: rgba(0,0,0,.06); }
+
+.pm-anno-tooltip-body {
+  padding: 10px 14px 14px;
+  max-height: 460px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* Markdown 深度渲染：段落、列表、引用、表格、代码 */
+.pm-anno-tooltip-body p { margin: 0 0 12px; line-height: 1.6; }
+.pm-anno-tooltip-body p:last-child { margin-bottom: 0; }
+.pm-anno-tooltip-body ul, .pm-anno-tooltip-body ol { margin: 0 0 12px; padding-left: 20px; }
+.pm-anno-tooltip-body li { margin-bottom: 4px; }
+.pm-anno-tooltip-body blockquote {
+  border-left: 3px solid #c9cdd4;
+  margin: 0 0 12px;
+  padding: 6px 12px;
+  color: #4e5969;
+  background: rgba(0, 0, 0, .03);
+  border-radius: 0 4px 4px 0;
+}
+.pm-anno-tooltip-body strong { font-weight: 600; }
+.pm-anno-tooltip-body code {
+  background: rgba(0, 0, 0, .06);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: Consolas, Menlo, monospace;
+}
+.pm-anno-tooltip-body table { border-collapse: collapse; width: 100%; margin: 0 0 12px; font-size: 12px; }
+.pm-anno-tooltip-body th, .pm-anno-tooltip-body td {
+  border: 1px solid #d5d5d5;
+  padding: 4px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+.pm-anno-tooltip-body th { background: rgba(0, 0, 0, .04); font-weight: 600; }
+.pm-anno-tooltip-body .pm-anno-lbl { font-weight: 600; }
+.pm-anno-tooltip-body .pm-anno-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}

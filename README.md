@@ -43,6 +43,8 @@ PM AI 协作平台的 Claude Code 插件市场 —— 覆盖需求分析 → 原
 - `plugins/pm-ai-skills/` — 插件本体
   - `.claude-plugin/plugin.json` — 插件 manifest
   - `skills/` — 技能（pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-common / pm-annotate / pm-design-reverse / pm-review / pm-design-1-func / pm-design-2-db / pm-design-3-review / pm-dev-1-backend / pm-dev-2-frontend / pm-dev-3-test / pm-dev-4-codereview / pm-dev-autopilot）
+  - `skills/pm-prototype/assets/` — 原型模板库：`_base-{admin,h5,user-pc,miniapp}.html` + `_公共资源/`（Vue 3 / Arco UMD、theme.css、proto-utils.js，约 1.7MB）。生成原型时整目录复制到项目，**无需本机另装模板库、无需联网**
+  - `skills/pm-annotate/assets/` — 标注资源：`pm-annotate.css` + `pm-annotate-engine.js`（静态引擎）+ `annotate-data-template.js`（数据模板，按 PRD 填充）
 
 ## 关联仓库
 

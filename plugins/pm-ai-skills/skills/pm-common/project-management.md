@@ -12,6 +12,8 @@
 output/[项目名]/
 ├── README.md                           # 项目产物索引（自动维护；文件名保持英文）
 ├── 项目规范.md                          # 共享规范文件（跨批次 append-only）
+├── CLAUDE.md                           # 工程规格（§十三 自动生成；文件名保持英文）
+├── 项目配置.md                          # 一次性初始化配置（§十三；入参非产物，不进产物索引）
 ├── .pm-state.json                      # 项目状态追踪文件（文件名保持不变）
 │
 ├── 需求分析/                            # pm-analyze / pm-design-reverse 产物
@@ -29,11 +31,14 @@ output/[项目名]/
 │
 ├── _公共资源/                           # 原型公共资源（vendor / theme / proto-utils）
 │                                       # 原型页以 ../../_公共资源/ 相对引用
+│                                       # pm-prototype 首次生成原型时从插件 assets/ 复制；
+│                                       # pm-annotate 另补其标注资源（css / 引擎 / 数据）
 │
 ├── 需求文档/                            # pm-prd 产物
 │   ├── [项目名]-PRD-v1.0.md
 │   ├── [项目名]-测试用例.md
 │   ├── [项目名]-工时估算.md
+│   ├── [项目名]-评审自查-[日期].md      # pm-review / pm-prd 步骤 3.6 产物
 │   └── 变更单/                          # 变更单归档
 │       └── 变更-[日期]-[功能名].md
 │
@@ -96,6 +101,7 @@ output/[项目名]/
 | 产物 | 路径 | 生成时间 | 批次 |
 |------|------|---------|------|
 | 全量分析报告 | `需求分析/需求分析报告.md` | 2026-09-26 14:30 | B1 |
+| 设计稿反推 | `需求分析/设计稿反推-20260928.md` | 2026-09-28 09:30 | B1 |
 
 ### 原型（pm-prototype）
 | 产物 | 路径 | 端类型 | 页面数 | 生成时间 | 批次 |
@@ -107,6 +113,11 @@ output/[项目名]/
 |------|------|------------|---------|------|
 | PRD v1.0 | `需求文档/[项目名]-PRD-v1.0.md` | F001-F012 | 2026-09-26 16:00 | B1 |
 | 测试用例 | `需求文档/[项目名]-测试用例.md` | T001-T036 | 2026-09-26 16:00 | B1 |
+
+### 评审自查（pm-review）
+| 产物 | 路径 | Blocker 数 | 生成时间 | 批次 |
+|------|------|-----------|---------|------|
+| PRD 评审自查 | `需求文档/[项目名]-评审自查-20260926.md` | 1 | 2026-09-26 16:30 | B1 |
 
 ### 前端代码（pm-deliver）
 | 产物 | 路径 | 页面数 | 生成时间 | 批次 |
@@ -134,7 +145,7 @@ output/[项目名]/
 |------|------|--------|---------|------|
 | Spring Boot 工程 | `后端工程/` | 10 | 2026-09-28 12:00 | B1 |
 
-### 前端代码（pm-dev-2-frontend）
+### 独立前端工程（pm-dev-2-frontend）
 | 产物 | 路径 | 页面数 | 生成时间 | 批次 |
 |------|------|--------|---------|------|
 | 独立前端工程 | `独立前端工程/` | 6 | 2026-09-28 13:00 | B1 |
@@ -159,7 +170,7 @@ output/[项目名]/
 
 1. 每个技能包执行完毕后，在对应章节追加一行
 2. 如果是覆盖已有产物（如重新生成 PRD），更新该行的生成时间
-3. README.md 不可手动编辑"产物清单"之外的内容
+3. 产物清单的**结构与列**不可手改（列数、列名按模板固定）；`> 最后更新` 与「项目信息」节由技能按规则 1-2 维护
 4. **研发链 7 个小节**固定列数为 5（产物/路径/[各节专属指标]/生成时间/批次），
    一律 append 到产物清单末尾（`### 变更记录` 之前）；首次执行时按上方模板创建，不得增删列
 
@@ -255,6 +266,8 @@ output/[项目名]/
 7. **研发链复用 F/R**：不新增前缀、不扩展 counters 类型。接 PM 链时只消费 PRD 已分配的
    F/R；独立跑（只有需求）或迭代时由 pm-design-1-func 自行分配/续编 F/R，写入
    `.pm-state.json` 顶层 `counters.F/R`
+8. **pm-prd 分配 C 编号**：生成变更单时从 `counters.C + 1` 续编，并回写 `counters.C`
+9. **测试用例编号一律用 `T` 前缀**（`T001`），**禁止** `TC-[模块]-[序号]` 之类变体
 
 ### 编号在文档中的使用示例
 
@@ -314,6 +327,23 @@ output/[项目名]/
       "startedAt": "2026-09-26T15:30:00Z",
       "completedAt": null,
       "output": null,
+      "counters": {}
+    },
+    {
+      "step": "pm-review",
+      "status": "completed",
+      "startedAt": "2026-09-26T15:15:00Z",
+      "completedAt": "2026-09-26T15:25:00Z",
+      "output": "需求文档/[项目名]-评审自查-[日期].md",
+      "counters": {},
+      "reviewBlockerCount": 1
+    },
+    {
+      "step": "pm-annotate",
+      "status": "completed",
+      "startedAt": "2026-09-26T15:10:00Z",
+      "completedAt": "2026-09-26T15:20:00Z",
+      "output": "原型/管理后台/",
       "counters": {}
     },
     {
@@ -382,11 +412,14 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
     "output": "设计/数据库/[项目名]-表结构.sql", "counters": {} },
   { "step": "pm-design-3-review", "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
     "output": "设计/评审/[项目名]-设计评审-[日期].md", "counters": {}, "blockerCount": 2 },
-  { "step": "pm-dev-1-backend",  "status": "completed", "output": "后端工程/", "counters": {} },
-  { "step": "pm-dev-2-frontend", "status": "skipped",   "output": null, "counters": {}, "skipped": true },
-  { "step": "pm-dev-3-test",     "status": "completed", "output": "测试/…-单元测试报告-[日期].md", "counters": {} },
-  { "step": "pm-dev-4-codereview", "status": "completed", "output": "代码审查/…-代码审查报告-[日期].md",
-    "counters": {}, "reviewBlockerCount": 1 }
+  { "step": "pm-dev-1-backend",  "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
+    "output": "后端工程/", "counters": {} },
+  { "step": "pm-dev-2-frontend", "status": "skipped",   "startedAt": null, "completedAt": null,
+    "output": null, "counters": {}, "skipped": true },
+  { "step": "pm-dev-3-test",     "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
+    "output": "测试/…-单元测试报告-[日期].md", "counters": {} },
+  { "step": "pm-dev-4-codereview", "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
+    "output": "代码审查/…-代码审查报告-[日期].md", "counters": {}, "reviewBlockerCount": 1 }
 ]
 ```
 
@@ -400,6 +433,22 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 - 时间戳一律 UTC ISO-8601 结尾 `Z`，无值写 `null`。
 - `batchStatus` 不受研发链影响；研发链全部 PASS 时仅在 `.pm-dev-run.md` 置「已完成」。
 
+### pipeline 步名闭表（PM 链）
+
+`pipeline[]` 允许的 step 名**只有**以下 6 个，按拓扑顺序：
+
+```
+pm-analyze → pm-prototype → pm-prd → pm-review → pm-annotate → pm-deliver
+```
+
+- **可选步**：`pm-review`（仅执行了评审自查时有条目）与 `pm-annotate`（`--skip-annotate` 时无条目）。
+  缺条目 = 未执行，**不算异常**，不要补占位条目。
+- `pm-review` 在 pm-prd 步骤 3.6 内部触发，位置固定在 `pm-prd` 之后。
+- **optional keys 按链隔离，不串读**：
+  - PM 链条目 —— `blockerCount`（pm-analyze）、`reviewBlockerCount`（pm-review / pm-prd 的评审自查结果）
+  - 研发链条目 —— `blockerCount`（pm-design-3-review）、`reviewBlockerCount`（pm-dev-4-codereview）、
+    `skipped`（2-frontend 跳过）、`dependencySkipped`（用户强制跳过门禁）
+
 ---
 
 ## 六、产物依赖矩阵（强制门禁）
@@ -409,13 +458,16 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 | 当前技能 | 前置依赖 | 检查文件 | 不满足时行为 |
 |----------|---------|---------|------------|
 | pm-analyze | 无（入口技能） | — | 直接执行 |
+| pm-design-reverse | 无（入口技能） | — | 直接执行 |
 | pm-prototype | pm-analyze 已完成 | `output/[项目名]/需求分析/需求分析报告.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 完成需求分析" |
-| pm-prd | pm-analyze 已完成 | `output/[项目名]/需求分析/需求分析报告.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 完成需求分析" |
+| pm-prd | pm-analyze 或 pm-design-reverse 已完成 | `需求分析/需求分析报告.md` **或** `需求分析/设计稿反推-*.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 或 pm-design-reverse" |
+| pm-review | pm-prd 已完成（或用户指定外部 PRD） | `需求文档/*-PRD-*.md` 存在 | ❌ 停止，提示"请先执行 pm-prd 生成 PRD" |
 | pm-deliver | pm-prototype 已完成 | `output/[项目名]/原型/[端]/` 下至少有 1 个 HTML 文件 | ❌ 停止，提示"请先执行 pm-prototype 生成原型" |
+| pm-annotate | pm-prototype 已完成 | `output/[项目名]/原型/[端]/` 下至少有 1 个**非**"标注版"HTML 文件 | ❌ 停止，提示"请先执行 pm-prototype 生成原型" |
 | pm-design-1-func | 无硬门禁（入口） | 有 PRD（`需求文档/*.md` 或 `--prd`）或有需求内容；无 `.pm-state.json` 则先初始化 | 直接执行 |
 | pm-design-2-db | pm-design-1-func 完成 | `设计/[项目名]-功能详细设计.md` 存在 + devPipeline `pm-design-1-func`=completed | ❌ 停止，提示"请先执行 pm-design-1-func" |
 | pm-design-3-review | 1-func + 2-db 完成 | 功能详细设计.md + 表结构/增量 SQL 均存在 | ❌ 停止，提示"请先完成功能详细设计与数据库设计" |
-| pm-dev-1-backend | 设计段完成 + 评审无搁置 Blocker | 功能详细设计.md + 表结构/增量 SQL 存在；`设计/评审/*.md` 无「搁置待定」Blocker | ❌ 停止，提示"请先完成设计评审（Blocker 已解决）" |
+| pm-dev-1-backend | 设计段完成 + 评审无未解决 Blocker | 功能详细设计.md + 表结构/增量 SQL 存在；devPipeline 中 `pm-design-3-review` 条目 `blockerCount` 为 0 或缺失 | ❌ 停止，提示"请先完成设计评审（Blocker 已解决）" |
 | pm-dev-2-frontend | 后端完成 | `后端工程/pom.xml` 存在 + devPipeline `pm-dev-1-backend`=completed | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
 | pm-dev-3-test | 后端完成 | `后端工程/` 存在 | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
 | pm-dev-4-codereview | 后端完成 | `后端工程/` 存在 | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
@@ -425,7 +477,7 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 1. **硬门禁**：依赖检查失败时必须停止，不得"降级执行"或"边做边等"
 2. **检查时机**：在步骤 0（读取项目上下文）之后、步骤 1（判断模式）之前执行
 3. **`.pm-state.json` 辅助检查**：除文件存在性外，同时检查 `.pm-state.json` 中对应 pipeline step 的 status 是否为 `completed`
-4. **用户强制跳过**：如果用户明确说"跳过依赖检查"或"我有自己的分析文档"，可跳过门禁，但必须在 `.pm-state.json` 中记录 `"dependencySkipped": true`
+4. **用户强制跳过**：如果用户明确说"跳过依赖检查"或"我有自己的分析文档"，可跳过门禁，但必须在本步**所属链的条目内**记录 `"dependencySkipped": true`（PM 链写 `pipeline[]`，研发链写 `devPipeline[]`）
 
 ---
 
@@ -436,7 +488,7 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 ### 强制读取顺序
 
 ```
-1. CLAUDE.md（如存在）→ 提取技术栈、组件约定、业务术语；若 CLAUDE.md 中声明了「参见 docs/component-spec.md」等自定义组件文档，一并读取（只读，不回写）
+1. `output/[项目名]/CLAUDE.md`（§十三 生成，如存在）→ 提取技术栈、组件约定、业务术语；若其中声明了「参见 docs/component-spec.md」等自定义组件文档，一并读取（只读，不回写）。**项目内没有时再看当前目录的 CLAUDE.md（只读，不回写）；两处都有以项目内为准**
 2. output/[项目名]/项目规范.md（如存在）→ 提取已有技术决策、接口清单、组件约定
 3. output/[项目名]/.pm-state.json → 获取批次、计数器、pipeline 状态
 ```
@@ -506,15 +558,17 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 
 | 触发时机 | 检查条件 | 暂停行为 |
 |---------|---------|---------|
-| pm-analyze 完成后 | 待澄清问题中 Blocker 数 > 0 | 暂停流程，提示用户处理 Blocker |
-| pm-prototype 启动前 | 需求分析报告.md 中 Blocker 未全部标记为 ✅ | 阻止启动，提示用户先解决 Blocker |
+| pm-analyze 完成后 | `需求分析/需求分析报告.md` 第 7 章中「风险等级=高 **且** 状态=待确认」的问题数 > 0 | 记 `PAUSE@analyze-blocker`，输出 Blocker 清单，暂停（**标记由 pm-autopilot 写**） |
+| pm-prototype 启动前 | 同上（第 7 章「风险等级=高 且 状态=待确认」的问题数 > 0） | 提示 + 用户确认「继续」可带问题推进（**软门禁**，不硬阻止） |
 | pm-prd 完成后 | PRD 中标注了"待确认"项 | 提醒用户确认，但不强制暂停 |
+| pm-review 后 | 评审自查 Blocker > 0 | 提醒用户，不强制暂停（**软门禁**） |
+| pm-annotate 后 | `原型/[端]/` 下无 `*-标注版.html`，或原原型被覆盖 | 记 FAIL，暂停（`--skip-annotate` 时记跳过） |
 | pm-deliver 启动前 | PRD 不存在或未标注批次 | 阻止启动 |
 | pm-design-3-review 后 | 设计评审 Blocker > 0 | 记 `PAUSE@design-blocker`，输出 Blocker 清单，暂停 |
 | pm-dev-1-backend 后 | `后端工程/` 无 pom.xml 或编译失败 | 记 FAIL，暂停 |
 | pm-dev-2-frontend 后 | `独立前端工程/` 无 package.json（未 `--skip-frontend`） | 记 FAIL，暂停 |
 | pm-dev-3-test 后 | 覆盖率未达标或单测未通过 | 记 FAIL，暂停 |
-| pm-dev-4-codereview 后 | 严重问题 > 0 | 记 `PAUSE@codereview`（报告完成，阻塞下游），暂停 |
+| pm-dev-4-codereview 后 | 严重问题 > 0 | 记 `PAUSE@codereview`（报告完成，阻塞下游），暂停（**标记由 pm-dev-autopilot 写**；技能自身只在报告/摘要标注「阻塞下游」） |
 
 > **研发链门禁独立于 PM 链**：`PAUSE@design-blocker` / `PAUSE@codereview` 与
 > `PAUSE@analyze-blocker` 平行，各自只影响本链。研发链的 Blocker 属「门禁暂停」，
@@ -528,6 +582,10 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 | 已确认 | 干系人已回答，结论已采纳 | 不计入遗留数 |
 | 已关闭 | 问题已解决或不再相关 | 不计入遗留数 |
 
+> **承载要求**：`需求分析报告.md` 第 7 章与设计评审报告的 Blocker 表**必须带「状态」列**
+> （取值即上表三值，默认「待确认」）。各技能统计 Blocker 遗留数时**只计「待确认」的行**；
+> 重跑时读上一份报告回填已变更的状态。**报告没有「状态」列 = 门禁不可判定**，属规范违规。
+
 ### 暂停后恢复
 
 当门禁暂停后，用户处理完 Blocker 重新执行技能包时：
@@ -535,6 +593,10 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 2. 重新检查门禁条件
 3. 条件满足 → 从暂停点继续
 4. 条件仍不满足 → 再次暂停，输出未解决的 Blocker 清单
+5. **评审类 Blocker**（`design-blocker` / `codereview`）：修复后必须**重跑对应评审技能生成新报告**，
+   再按新报告 Blocker 表中「待确认」行数判定。旧报告不会自动更新——直接 re-check 旧报告会导致**永远无法解除**
+6. **用户确认放行**：用户明确表示带问题推进时，在 run 文件备注记「已确认放行（用户 [时间]）」；
+   后续启动检测到该标记则不再重复暂停
 
 ---
 
@@ -546,7 +608,7 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 新建 (new)
   ↓ 开始执行任意技能包
 进行中 (in_progress)
-  ↓ 全部4步完成 或 用户手动触发
+  ↓ PM 链所有非跳过步完成 或 用户手动触发
 已完成 (completed)
   ↓ 用户说"冻结批次"
 已冻结 (frozen)
@@ -581,7 +643,7 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 每个产物文件的头部必须标注批次信息：
 
 ```markdown
-> 批次：B1 | 生成时间：2026-09-26 14:30 | 技能：pm-analyze v2.0.0
+> 批次：B1 | 生成时间：2026-09-26 14:30 | 技能：pm-analyze v1.5.0
 ```
 
 变更单额外标注来源批次：
@@ -714,3 +776,6 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 3. **幂等**：工程/脚本已就位不重复拉取；CLAUDE.md 已存在不覆盖（仅补缺）
 4. **消费留痕**：功能详细设计「参考来源」注明「配置：项目配置.md」
 5. **过时提示**：读配置时若发现信息与实际不符（工程路径 / 分支 / DDL 已变），提示用户更新配置，不自行改写
+6. **配置节 8「备注约束」必须被研发链消费**：pm-design-1-func 步骤 0.4 须逐条 append 到 `项目规范.md`
+   「技术决策」（不覆盖既有行），其中的接口规范项（baseURL / 响应格式 / 分页）并入 `CLAUDE.md`「接口规范」节。
+   研发链**独立运行**（不经 pm-analyze）时这是**唯一**的约束入口——漏消费会导致设计违反用户强制约束

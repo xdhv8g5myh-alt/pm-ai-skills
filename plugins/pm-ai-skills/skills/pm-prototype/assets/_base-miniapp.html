@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>基础模板 — 小程序原型</title>
+  <link rel="stylesheet" href="../../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../../_公共资源/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    body { margin: 0; background: #e8e8e8; display: flex; justify-content: center; align-items: flex-start; padding: 24px 0 80px; min-height: 100vh; }
+    .mp-shell {
+      width: 375px; min-height: 700px; background: #fff;
+      border-radius: 40px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,.25), 0 0 0 2px #d0d0d0;
+      display: flex; flex-direction: column; position: relative;
+    }
+    .mp-statusbar {
+      height: 44px; background: #000; color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; font-size: 13px; flex-shrink: 0;
+    }
+    .mp-navbar {
+      height: 44px; background: #fff; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; flex-shrink: 0;
+    }
+    .mp-navbar-back { position: absolute; left: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; text-decoration: none; display: flex; align-items: center; color: #333; }
+    .mp-navbar-title { font-size: 16px; font-weight: 600; color: #191919; }
+    .mp-navbar-more { position: absolute; right: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; }
+    .mp-content { flex: 1; overflow-y: auto; background: #f7f8fa; }
+    .mp-tabbar {
+      height: 56px; background: #fff; border-top: 1px solid #e8e8e8;
+      display: flex; flex-shrink: 0;
+    }
+    .mp-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; text-decoration: none; }
+    .mp-tab-icon { font-size: 22px; line-height: 1; }
+    .mp-tab-label { font-size: 10px; color: #999; }
+    .mp-tab.active .mp-tab-label { color: #07c160; }
+    .mp-section { background: #fff; border-radius: 10px; margin: 10px; overflow: hidden; }
+    .mp-section-title { font-size: 14px; font-weight: 600; color: #333; padding: 14px 16px 8px; }
+    .mp-cell { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f5f5f5; gap: 12px; }
+    .mp-cell:last-child { border-bottom: none; }
+    .mp-cell-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .mp-cell-body { flex: 1; }
+    .mp-cell-title { font-size: 14px; color: #191919; }
+    .mp-cell-desc { font-size: 12px; color: #999; margin-top: 2px; }
+    .mp-cell-right { font-size: 13px; color: #bbb; }
+    .mp-banner { margin: 10px; border-radius: 10px; background: linear-gradient(135deg,#07c160,#10aeff); color: #fff; padding: 20px; }
+    .mp-banner-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .mp-banner-sub { font-size: 13px; opacity: .85; }
+    .mp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #fff; border-radius: 10px; margin: 10px; overflow: hidden; }
+    .mp-grid-item { display: flex; flex-direction: column; align-items: center; padding: 16px 8px; gap: 6px; cursor: pointer; }
+    .mp-grid-item:active { background: #f5f5f5; }
+    .mp-grid-icon { font-size: 24px; }
+    .mp-grid-label { font-size: 12px; color: #333; }
+    .mp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .mp-tag-green { background: #e8f7ee; color: #07c160; }
+    .mp-tag-blue { background: #e8f3ff; color: #1677ff; }
+    .mp-tag-orange { background: #fff3e8; color: #ff7d00; }
+    .mp-tag-gray { background: #f2f3f5; color: #86909c; }
+    .mp-form-item { padding: 12px 16px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: center; gap: 12px; }
+    .mp-form-label { width: 72px; font-size: 14px; color: #333; flex-shrink: 0; }
+    .mp-form-input { flex: 1; border: none; outline: none; font-size: 14px; color: #191919; background: transparent; }
+    /* 使用说明样式 */
+    .usage-section { padding: 16px; }
+    .usage-title { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 10px; }
+    .usage-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; color: #555; line-height: 1.6; }
+    .usage-num { width: 20px; height: 20px; border-radius: 50%; background: #07c160; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .code-inline { background: #f2f3f5; padding: 1px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #07c160; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="mp-shell">
+      <!-- 状态栏 -->
+      <div class="mp-statusbar">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:12px">
+          <span>●●●</span><span>WiFi</span><span>🔋</span>
+        </span>
+      </div>
+
+      <!-- 导航栏 -->
+      <div class="mp-navbar">
+        <a href="./index.html" class="mp-navbar-back">‹</a>
+        <span class="mp-navbar-title">{{ navTitle }}</span>
+        <span class="mp-navbar-more">⋯</span>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="mp-content">
+        <!-- loading 态 -->
+        <div v-if="pageState==='loading'" style="display:flex;justify-content:center;align-items:center;height:300px">
+          <a-spin tip="加载中..." size="large"></a-spin>
+        </div>
+
+        <!-- empty 态 -->
+        <div v-else-if="pageState==='empty'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
+          <div style="font-size:48px">📭</div>
+          <div style="font-size:14px">暂无数据</div>
+          <div style="font-size:12px;color:#ccc">在这里放置你的空状态提示</div>
+        </div>
+
+        <!-- error 态 -->
+        <div v-else-if="pageState==='error'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
+          <div style="font-size:48px">⚠️</div>
+          <div style="font-size:14px;color:#f53f3f">加载失败，请重试</div>
+          <a-button type="primary" size="small" @click="pageState='normal'" style="background:#07c160;border-color:#07c160">重新加载</a-button>
+        </div>
+
+        <!-- normal 态 — 模板说明 -->
+        <div v-else>
+          <div style="padding:20px;text-align:center;color:#999">这是小程序基础模板</div>
+
+          <!-- Banner 示例 -->
+          <div class="mp-banner">
+            <div class="mp-banner-title">页面标题区</div>
+            <div class="mp-banner-sub">在这里放 Banner 或顶部引导内容</div>
+          </div>
+
+          <!-- 功能入口示例 -->
+          <div class="mp-grid">
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">📝</div>
+              <div class="mp-grid-label">功能 1</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">📊</div>
+              <div class="mp-grid-label">功能 2</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">📄</div>
+              <div class="mp-grid-label">功能 3</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">⚙️</div>
+              <div class="mp-grid-label">功能 4</div>
+            </div>
+          </div>
+
+          <!-- 列表示例 -->
+          <div class="mp-section">
+            <div class="mp-section-title">内容列表示例</div>
+            <div class="mp-cell" v-for="item in demoItems" :key="item.id">
+              <div class="mp-cell-icon" :style="{background: item.bg}">{{ item.icon }}</div>
+              <div class="mp-cell-body">
+                <div class="mp-cell-title">{{ item.title }}</div>
+                <div class="mp-cell-desc">{{ item.desc }}</div>
+              </div>
+              <div class="mp-cell-right">›</div>
+            </div>
+          </div>
+
+          <!-- 使用说明 -->
+          <div class="mp-section">
+            <div class="mp-section-title">模板使用说明</div>
+            <div class="usage-section">
+              <div class="usage-item">
+                <div class="usage-num">1</div>
+                <div>复制此文件，修改 <span class="code-inline">navTitle</span> 和 <span class="code-inline">pageTitle</span> 为页面名称</div>
+              </div>
+              <div class="usage-item">
+                <div class="usage-num">2</div>
+                <div>替换 <span class="code-inline">mp-content</span> 内的模板内容为实际页面设计</div>
+              </div>
+              <div class="usage-item">
+                <div class="usage-num">3</div>
+                <div>TabBar 中将对应页面的 <span class="code-inline">mp-tab</span> 加上 <span class="code-inline">active</span> 类</div>
+              </div>
+              <div class="usage-item">
+                <div class="usage-num">4</div>
+                <div>若无 TabBar（如详情/表单页），删除 <span class="code-inline">.mp-tabbar</span> 块，并给内容区加 <span class="code-inline">padding-bottom:72px</span> 留出操作栏空间</div>
+              </div>
+              <div class="usage-item">
+                <div class="usage-num">5</div>
+                <div>PROTO 工具栏的四个状态按钮可切换 loading / empty / error / normal 四种预览状态</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:16px"></div>
+        </div>
+      </div>
+
+      <!-- TabBar -->
+      <div class="mp-tabbar">
+        <a href="./home.html" class="mp-tab">
+          <div class="mp-tab-icon">🏠</div>
+          <div class="mp-tab-label">首页</div>
+        </a>
+        <a href="./list.html" class="mp-tab">
+          <div class="mp-tab-icon">🧭</div>
+          <div class="mp-tab-label">发现</div>
+        </a>
+        <a href="./form.html" class="mp-tab">
+          <div class="mp-tab-icon">✏️</div>
+          <div class="mp-tab-label">发布</div>
+        </a>
+        <a href="#" class="mp-tab active">
+          <div class="mp-tab-icon">👤</div>
+          <div class="mp-tab-label" style="color:#07c160">我的</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Proto Toolbar -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">小程序</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳</button>
+      <button @click="pageState='empty'">📭</button>
+      <button @click="pageState='error'">⚠️</button>
+      <button @click="pageState='normal'">✅</button>
+    </div>
+  </div>
+
+  <script src="../../_公共资源/vendor/vue.global.prod.js"></script>
+  <script src="../../_公共资源/vendor/arco-vue.min.js"></script>
+  <script src="../../_公共资源/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('基础模板')
+        const navTitle = ref('页面标题')
+        const activeTab = ref('profile')
+        const pageState = ref('normal')
+
+        const demoItems = ref([
+          { id:1, icon:'📝', bg:'#e8f7ee', title:'列表项标题一', desc:'副标题或描述信息' },
+          { id:2, icon:'📊', bg:'#e8f3ff', title:'列表项标题二', desc:'副标题或描述信息' },
+          { id:3, icon:'🚀', bg:'#fff3e8', title:'列表项标题三', desc:'副标题或描述信息' },
+          { id:4, icon:'📄', bg:'#f2f3f5', title:'列表项标题四', desc:'副标题或描述信息' },
+          { id:5, icon:'⭐', bg:'#f3f0ff', title:'列表项标题五', desc:'副标题或描述信息' },
+        ])
+
+        return { pageTitle, navTitle, activeTab, pageState, demoItems }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

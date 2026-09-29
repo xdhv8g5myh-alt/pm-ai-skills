@@ -12,17 +12,21 @@
 
 ### 0.2 软门禁（评审 Blocker）
 
-- 读 `.pm-state.json` 中 `pm-design-3-review` 条目的 `blockerCount`
-- 或读最新 `设计/评审/*-设计评审-*.md` 的「二、Blocker」，看是否仍有「搁置待定」Blocker
-- **有搁置 Blocker → 停止**：输出 Blocker 清单，提示「请先解决设计评审 Blocker 或确认带问题推进」
+- 读 `.pm-state.json` 中 `pm-design-3-review` 条目的 `blockerCount`（口径见 pm-common §十：只统计**状态=待确认**的 Blocker 行）
+- `blockerCount > 0` → 视为未解决 → **停止**，并输出该报告「二、Blocker」清单，提示「请先解决设计评审 Blocker 或确认带问题推进」
+- **兜底**：无 `设计/评审/` 产物或无 `pm-design-3-review` 条目 → 视为未评审，提示用户确认是否继续；用户确认后记 `"dependencySkipped": true`（写入本步 `devPipeline` 条目）
 - 用户明确「继续/带问题推进」→ 继续，但在 SUMMARY 里标注
+
+### 0.3 读取项目规范（规范引用铁律）
+
+- Read `output/[项目名]/项目规范.md`（响应格式 pre-seed：`{code:0,message:"ok",data:{}}`、baseURL、技术决策）；
+  后续产出前先读，遵循规范引用铁律
 
 ## 步骤 1：读取上下文
 
 1. 【主输入】`设计/[项目名]-功能详细设计.md`（接口设计块：R 编号/method/URL/请求/响应/错误码/业务规则）
 2. `设计/数据库/[项目名]-表结构.sql`（或 增量 SQL）：表结构与 DDL
-3. `output/[项目名]/项目规范.md`（响应格式 pre-seed：`{code:0,message:"ok",data:{}}`、baseURL、技术决策）
-4. `.pm-state.json`：读 `devProjectType`（new/iteration）
+3. `.pm-state.json`：读 `devProjectType`（new/iteration）
 
 ## 步骤 2：判定性质 + 工程骨架
 
@@ -61,6 +65,11 @@
 - 修改：只改「修改」接口对应的类
 - 不重建工程、不覆盖现有代码
 
+### 2.3 既有工程基线（devBaseline）
+
+- 若 `后端工程/` 不存在且 `.pm-state.json.devBaseline` 有值 → 按该路径**就地开发，不拷贝工程**进项目；
+  后续读/写代码一律以该基线路径为准
+
 ## 步骤 3：TDD 按 R 编号（红-绿-重构）
 
 对每个 R 编号：
@@ -71,10 +80,13 @@
 
 测试要点：正常路径、参数校验失败、业务错误码、状态流转非法、幂等（如设计有要求）。
 
+**测试职责边界**：本技能写**按 R 接口的 TDD 基线测试**（含少量 `@SpringBootTest`），落在 `后端工程/src/test/java/`；
+`pm-dev-3-test` 补 **Service 纯 Mock 单测 + 覆盖率**，**不覆盖本技能已写的文件**（只新增/修改自己那份）。
+
 ## 步骤 4：编译 + 基线测试（交付门槛）
 
 1. `cd 后端工程 && mvn -q compile` 必须通过
-2. `mvn -q test` 跑基线测试
+2. `cd 后端工程 && mvn -q test` 跑基线测试
 3. **环境性失败**（如无 MySQL 实例导致 `@SpringBootTest` 起不来）：明确标注「环境性失败 + 原因」，
    不冒充通过；Mockito 纯单测应能通过
 
@@ -83,12 +95,17 @@
 ### 5.1 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-dev-1-backend` 条目：
-`{"step":"pm-dev-1-backend","status":"completed","startedAt":null,"completedAt":"…Z","output":"后端工程/","counters":{}}`。时间戳 UTC 带 `Z`。
+`{"step":"pm-dev-1-backend","status":"completed","startedAt":"…Z","completedAt":"…Z","output":"后端工程/","counters":{}}`。时间戳 UTC 带 `Z`；`startedAt` 写本次执行**开始时间**，`completedAt` 写完成时间。
 
 ### 5.2 更新 README.md
 
 `### 后端代码（pm-dev-1-backend）` 章节追加一行（5 列：产物/路径/接口数/生成时间/批次），
 追加在产物清单末尾（`### 变更记录` 之前）。
+
+### 5.3 反向沉淀
+
+若产生新的错误码分段/响应约定，append 到 `项目规范.md`「技术决策」（不覆盖既有行）；
+`CLAUDE.md` 存在则同步其「迭代记录」节。
 
 ## 步骤 6：自检
 
@@ -99,6 +116,7 @@
 5. 迭代项目就地增改，未重建/未覆盖既有代码
 6. devPipeline 条目 6 keys 齐全，时间戳 UTC 带 `Z`
 7. README 表 5 列
+8. 基线测试落 `后端工程/src/test/java/`（不与 `pm-dev-3-test` 的纯 Mock 单测文件重叠）
 
 ## 步骤 7：会话内输出摘要
 

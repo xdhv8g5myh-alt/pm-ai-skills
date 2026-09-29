@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>基础布局 · H5 原型</title>
+<link rel="stylesheet" href="../../_公共资源/vendor/arco.css"/>
+<link rel="stylesheet" href="../../_公共资源/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+</style>
+</head>
+<body class="h5-body">
+<!--
+  =====================================================================
+  H5 移动端原型 · 基础布局模板 (_base.html)
+  =====================================================================
+  使用方式：
+  1. 复制此文件，重命名为目标页面（如 my-page.html）
+  2. 修改 <title> 和 pageTitle ref
+  3. 替换 <!-- PAGE_CONTENT_SLOT --> 区域为页面具体内容
+  4. detail/form/success 类页面：移除 .h5-tabbar，activeTab 无需设置
+  5. home/list 类页面：设置 activeTab ref 为 'home' 或 'list'
+  =====================================================================
+-->
+<div id="app" v-cloak>
+  <div class="h5-phone">
+
+    <!-- 状态栏 -->
+    <div class="h5-status">
+      <span>9:41</span>
+      <span>🔋</span>
+    </div>
+
+    <!-- 顶部导航 (NavBar) -->
+    <!-- 有返回按钮的页面：加 class="h5-navbar-back" 的 <a> -->
+    <!-- 无返回按钮的页面：直接只放 .h5-navbar-title -->
+    <div class="h5-navbar">
+      <!-- 示例：带返回 -->
+      <!-- <a href="javascript:history.back()" class="h5-navbar-back">←</a> -->
+      <span class="h5-navbar-title">{{ pageTitle }}</span>
+      <!-- 右侧操作按钮（可选） -->
+      <!-- <span class="h5-navbar-action">⋮</span> -->
+    </div>
+
+    <!-- 内容区 -->
+    <!-- 有底部 TabBar 时：内容区会自动适配，无需额外 padding -->
+    <!-- 有底部固定操作栏时：添加 style="padding-bottom:72px;" -->
+    <div class="h5-content">
+
+      <!-- ====== 以下为加载中/空/出错状态示例 ====== -->
+
+      <!-- 加载中 -->
+      <div v-if="pageState === 'loading'" style="display:flex;align-items:center;justify-content:center;min-height:200px;">
+        <a-spin tip="加载中..." :size="28"></a-spin>
+      </div>
+
+      <!-- 空数据 -->
+      <div v-else-if="pageState === 'empty'" style="display:flex;align-items:center;justify-content:center;min-height:200px;">
+        <a-empty description="暂无数据">
+          <template #extra>
+            <a-button type="primary" size="small" href="./form.html">立即创建</a-button>
+          </template>
+        </a-empty>
+      </div>
+
+      <!-- 出错 -->
+      <div v-else-if="pageState === 'error'" style="display:flex;align-items:center;justify-content:center;min-height:200px;">
+        <a-result status="500" style="padding:0;">
+          <template #subtitle>
+            <span style="font-size:13px;">加载失败，请重试</span>
+          </template>
+          <template #extra>
+            <a-button type="primary" size="small" @click="pageState='normal'">重新加载</a-button>
+          </template>
+        </a-result>
+      </div>
+
+      <!-- ====== PAGE_CONTENT_SLOT：正常内容替换此处 ====== -->
+      <template v-else>
+
+        <!-- 提示：这是基础模板页，实际页面替换此区域 -->
+        <div style="padding:24px 16px;">
+          <a-result status="info" title="基础布局模板" style="padding:0;">
+            <template #subtitle>
+              <span style="font-size:13px;">
+                这是 h5/_base.html 的预览。<br>复制此文件并替换内容区开始开发。
+              </span>
+            </template>
+            <template #extra>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <a-button type="primary" href="./home.html">首页</a-button>
+                <a-button href="./list.html">列表页</a-button>
+                <a-button href="./detail.html">详情页</a-button>
+                <a-button href="./form.html">表单页</a-button>
+                <a-button href="./success.html">成功页</a-button>
+                <a-button href="./index.html">导航总览</a-button>
+              </div>
+            </template>
+          </a-result>
+        </div>
+
+        <!-- 示例：Section + Cell 结构 -->
+        <div class="h5-section">
+          <div class="h5-section-title">内容区示例</div>
+          <div class="h5-cell">
+            <div class="h5-cell-icon">📌</div>
+            <div class="h5-cell-body">
+              <div class="h5-cell-title">单元格标题</div>
+              <div class="h5-cell-desc">副标题描述文字</div>
+            </div>
+            <div class="h5-cell-right">
+              <a-tag color="arcoblue" size="mini">状态</a-tag>
+            </div>
+          </div>
+          <div class="h5-cell">
+            <div class="h5-cell-icon">📋</div>
+            <div class="h5-cell-body">
+              <div class="h5-cell-title">另一个单元格</div>
+              <div class="h5-cell-desc">点击可跳转到详情</div>
+            </div>
+            <div class="h5-cell-right" style="color:#86909c;">›</div>
+          </div>
+        </div>
+
+        <!-- 示例：Grid 结构 -->
+        <div class="h5-section">
+          <div class="h5-section-title">网格区示例（4列）</div>
+          <div class="h5-grid">
+            <div class="h5-grid-item">
+              <div class="h5-grid-icon">📝</div>
+              <div class="h5-grid-label">功能 1</div>
+            </div>
+            <div class="h5-grid-item">
+              <div class="h5-grid-icon">📊</div>
+              <div class="h5-grid-label">功能 2</div>
+            </div>
+            <div class="h5-grid-item">
+              <div class="h5-grid-icon">⚙️</div>
+              <div class="h5-grid-label">功能 3</div>
+            </div>
+            <div class="h5-grid-item">
+              <div class="h5-grid-icon">❓</div>
+              <div class="h5-grid-label">功能 4</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 示例：Form 结构 -->
+        <div class="h5-section">
+          <div class="h5-section-title">表单区示例</div>
+          <div class="h5-form-field">
+            <div class="h5-form-label">字段标签</div>
+            <div class="h5-form-input">
+              <a-input placeholder="输入框示例"></a-input>
+            </div>
+          </div>
+          <div class="h5-form-field">
+            <div class="h5-form-label">下拉选择</div>
+            <div class="h5-form-input">
+              <a-select placeholder="请选择..." style="width:100%;">
+                <a-option value="a">选项 A</a-option>
+                <a-option value="b">选项 B</a-option>
+              </a-select>
+            </div>
+          </div>
+        </div>
+
+      </template>
+      <!-- ====== PAGE_CONTENT_SLOT 结束 ====== -->
+
+      <!-- 底部占位，防止 TabBar 遮挡 -->
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- 底部 TabBar（detail/form/success 页删除此块） -->
+    <div class="h5-tabbar">
+      <a href="./home.html" class="h5-tab" :class="{active: activeTab==='home'}">
+        <span class="h5-tab-icon">🏠</span>
+        <span class="h5-tab-label">首页</span>
+      </a>
+      <a href="./list.html" class="h5-tab" :class="{active: activeTab==='list'}">
+        <span class="h5-tab-icon">📋</span>
+        <span class="h5-tab-label">发现</span>
+      </a>
+      <a href="./form.html" class="h5-tab">
+        <span class="h5-tab-icon">✏️</span>
+        <span class="h5-tab-label">发布</span>
+      </a>
+      <a href="#" class="h5-tab">
+        <span class="h5-tab-icon">👤</span>
+        <span class="h5-tab-label">我的</span>
+      </a>
+    </div>
+
+    <!-- Proto 调试条 -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">H5 移动端</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳ 加载中</button>
+      <button @click="pageState='empty'">📭 空数据</button>
+      <button @click="pageState='error'">⚠ 出错</button>
+      <button @click="pageState='normal'">✅ 正常</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="../../_公共资源/vendor/vue.global.prod.js"></script>
+<script src="../../_公共资源/vendor/arco-vue.min.js"></script>
+<script src="../../_公共资源/proto-utils.js"></script>
+<script>
+const { createApp, ref, computed } = Vue
+createApp({
+  setup() {
+    const pageTitle = ref('基础布局')
+    const activeTab = ref('home')    // 'home' | 'list' — 当前 TabBar 高亮项
+    const pageState = ref('normal')  // 'normal' | 'loading' | 'empty' | 'error'
+
+    // Mock 数据示例（实际页面替换）
+    const items = ref([
+      { id: 1, title: '示例数据 1', desc: '副标题描述 1', tag: '进行中', tagColor: 'arcoblue' },
+      { id: 2, title: '示例数据 2', desc: '副标题描述 2', tag: '已完成', tagColor: 'green'    },
+      { id: 3, title: '示例数据 3', desc: '副标题描述 3', tag: '待处理', tagColor: 'orange'   },
+    ])
+
+    window.__protoApp = { pageState }
+
+    return { pageTitle, activeTab, pageState, items }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

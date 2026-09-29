@@ -17,7 +17,7 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 ## Auto Trigger
 
 - 触发词：全自动跑需求、一键跑完、自动化产品流程、autopilot、自动编排
-- 参数：`--from pm-analyze|pm-prototype|pm-prd|pm-annotate|pm-deliver`（强制从某步重跑，该步及其后重置为待执）
+- 参数：`--from pm-[技能名]`（技能名 ∈ pm-analyze / pm-prototype / pm-prd / pm-annotate / pm-deliver；强制从某步重跑，该步及其后重置为待执）
 - 参数：`--project [项目名]`（指定项目，缺省则询问或从 output/ 推断）
 - 参数：`--skip-annotate`（跳过原型标注步骤；缺省执行标注）
 
@@ -50,8 +50,8 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 | 门禁点 | 检查条件 | 暂停行为 |
 |--------|---------|---------|
 | pm-analyze 后 | 需求分析报告.md 中风险等级=高且状态="待确认"的问题数 > 0 | 记 `PAUSE@analyze-blocker`，输出 Blocker 清单，暂停 |
-| pm-prototype 后 | `原型/[端]/` 下 HTML 文件数 = 0 | 记 FAIL，暂停 |
-| pm-prd 后 | PRD 文件存在 且 测试用例文件存在 | 不满足则记 FAIL，暂停 |
+| pm-prototype 后 | 该端目录下无 HTML 文件数 = 0 | 记 FAIL，暂停 |
+| pm-prd 后 | PRD 文件存在 且 测试用例文件存在 且 **工时估算文件存在** | 不满足则记 FAIL，暂停 |
 | pm-annotate 后 | `原型/[端]/` 下存在 `*-标注版.html` | 不满足则记 FAIL，暂停（`--skip-annotate` 时记跳过） |
 | pm-deliver 后 | `前端交付/` 目录存在且含 package.json | 不满足则记 FAIL，暂停 |
 
@@ -60,7 +60,7 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 ### 重跑续做
 
 - 默认从 run 文件第一个非 PASS（且非跳过）步续做
-- `--from pm-0X` 强制从某步重跑，该步及其后重置为待执
+- `--from pm-[技能名]` 强制从某步重跑，该步及其后重置为待执
 - 用户在中断后输入"继续"→ 从暂停点续做；"重新开始"→ 重跑该步
 
 ## 与其他技能的边界

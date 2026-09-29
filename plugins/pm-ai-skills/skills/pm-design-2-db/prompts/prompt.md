@@ -7,17 +7,18 @@
 1. 检查 `output/[项目名]/设计/[项目名]-功能详细设计.md` 是否存在
    - **不存在** → ❌ 停止：`请先执行 pm-design-1-func 完成功能详细设计`
 2. 检查 `.pm-state.json` 中 `devPipeline` 的 `pm-design-1-func` status 是否为 `completed`
-3. **用户强制跳过**：仅当用户明确说"跳过依赖检查"时可跳过，但必须记 `"dependencySkipped": true`
+3. **用户强制跳过**：仅当用户明确说"跳过依赖检查"时可跳过，但必须记 `"dependencySkipped": true`（写入**本步 `devPipeline` 条目内**）
 
 ## 步骤 1：读取上下文
 
 按顺序读取：
 
 1. 【主输入】`设计/[项目名]-功能详细设计.md`（接口设计块 + 字段溯源表 + 实体）
-2. `需求文档/*-PRD-*.md` 第五章「核心数据实体」（实体树，如存在）
-3. `output/[项目名]/项目规范.md`「业务术语表」（`数据库字段` 列命名来源）
-4. `.pm-state.json`：读 `devProjectType`（new/iteration）
-5. 【历史参考·软参考】参考目录（默认 `D:/pm-ai/pm-ai-projects/output/`，可 `--ref`）里的历史 `设计/数据库/*-表结构.sql`，复用同义表/字段命名
+2. 【变更基线】本项目既有 `设计/数据库/*.sql`（含配置节 5 导入的基线，及上一批次增量 SQL）：**逐表比对**，确定「新增 / 修改 / 复用」
+3. `需求文档/*-PRD-*.md` 第五章「核心数据实体」（实体树，如存在）
+4. `output/[项目名]/项目规范.md`「业务术语表」（`数据库字段` 列命名来源）
+5. `.pm-state.json`：读 `devProjectType`（new/iteration）
+6. 【历史参考·软参考】参考目录（默认 `D:/pm-ai/pm-ai-projects/output/`，可 `--ref`）里的历史 `设计/数据库/*-表结构.sql`，复用同义表/字段命名
 
 ## 步骤 2：实体抽取
 
@@ -54,7 +55,7 @@ erDiagram
 - 引擎 `InnoDB DEFAULT CHARSET=utf8mb4`
 - 索引设计：唯一键（如 `batch_no`）、查询字段索引
 - **新项目**：全量 `CREATE TABLE`，写入 `设计/数据库/[项目名]-表结构.sql`
-- **迭代项目**：增量 DDL，写入 `设计/数据库/[项目名]-增量-[日期].sql`——新增表 `CREATE TABLE`、改表 `ALTER TABLE ... ADD COLUMN`，复用表不重复建并在文档标注「复用」
+- **迭代项目**：增量 DDL，写入 `设计/数据库/[项目名]-增量-[日期].sql`——新增表 `CREATE TABLE`、改表 `ALTER TABLE ... ADD COLUMN`，复用表不重复建并在文档标注「复用」（对照**变更基线**：步骤 1 第 2 条的既有 `设计/数据库/*.sql`，逐表判定 新增/修改/复用）
 - 末尾附「PRD 字段 → DDL 字段」映射表（如 `batchNo→batch_no`、`createdAt→create_time`），供设计评审字段溯源核对
 
 ## 步骤 4：落盘与更新
@@ -63,11 +64,13 @@ erDiagram
 
 - 新项目 → `设计/[项目名]-数据库设计.md`（ER + 实体定义表 + 映射表）
 - 迭代项目 → `设计/[项目名]-数据库变更设计.md`
+- 文档头部统一标注一行：
+  `> 批次：B[N] | 项目性质：新项目/迭代 | 生成时间：[时间] | 技能：pm-design-2-db v1.5.0`
 
 ### 4.2 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-design-2-db` 条目（splice，重跑先摘旧条目）：
-`{"step":"pm-design-2-db","status":"completed","startedAt":null,"completedAt":"…Z","output":"设计/数据库/[项目名]-表结构.sql","counters":{}}`（迭代项目 output 写增量 DDL 路径）。时间戳 UTC 带 `Z`。
+`{"step":"pm-design-2-db","status":"completed","startedAt":"…Z","completedAt":"…Z","output":"设计/数据库/[项目名]-表结构.sql","counters":{}}`（迭代项目 output 写增量 DDL 路径）。`startedAt` 写**本次执行开始时间**、`completedAt` 写完成时间，均 UTC 带 `Z`。
 
 ### 4.3 更新 README.md
 
@@ -88,6 +91,7 @@ erDiagram
 6. 有「PRD 字段 → DDL 字段」映射表
 7. 时间戳 UTC 带 `Z`；devPipeline 条目 6 keys 齐全
 8. README 表 5 列
+9. 迭代项目已列明**变更基线来源**（既有 `设计/数据库/*.sql` 逐表比对，逐项标注 新增/修改/复用）
 
 ## 步骤 6：会话内输出摘要
 

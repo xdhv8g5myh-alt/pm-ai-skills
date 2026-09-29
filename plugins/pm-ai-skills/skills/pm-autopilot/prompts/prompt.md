@@ -5,6 +5,7 @@
 ## 前置约定
 
 - 路径变量：`output/[项目名]/` 为项目根，所有产物按 `pm-common/project-management.md` 目录骨架存放
+- **先定位 products 仓库根**：即包含 `output/` 的那个仓库（默认 `D:/pm-ai/pm-ai-projects`）；**所有 `output/...` 路径一律拼成绝对路径后使用**，避免 cwd 不在产物仓库时把产物写错位置
 - run 文件：`output/[项目名]/.pm-run.md`（autopilot 运行态，不进产物索引）
 - 被编排技能 prompt.md（subagent 必读）：
   - pm-analyze：`${CLAUDE_SKILL_DIR}/../pm-analyze/prompts/prompt.md`
@@ -39,10 +40,11 @@
      - pm-prototype status=completed → 标 PASS
      - pm-prd status=completed → 标 PASS
      - pm-annotate status=completed → 标 PASS（`--skip-annotate` 时标跳过）
+       - **兜底**：若 `pipeline` 中**无 pm-annotate 条目**，则以 `原型/[端]/*-标注版.html` 是否存在来判定 Step 4 的 PASS / 待执
      - pm-deliver status=completed → 标 PASS
    - **已存在** → 读取各步 STATUS
 
-3. 如果用户传入 `--from pm-[X]`：将该步及其后重置为"待执"
+3. 如果用户传入 `--from pm-[技能名]`：将该步及其后重置为"待执"
 4. 如果用户传入 `--skip-annotate`：Step 4 直接标"跳过"，不 dispatch
 
 ### 0.3 分流
@@ -53,6 +55,10 @@
   - `PAUSE@analyze-blocker`：re-check 需求分析报告.md 中 Blocker 遗留
     - 遗留 = 0 → 解除暂停，从下一步继续
     - 遗留 > 0 → 再次暂停，输出未解决 Blocker 清单
+
+> **本编排器只处理 PM 链标记**（`PAUSE@analyze-blocker`）。`PAUSE@design-blocker` / `PAUSE@codereview`
+> 属研发链，由 `pm-dev-autopilot` 写入 `.pm-dev-run.md` 并自行处理，**与本链互不干扰**
+> （见 `pm-common/project-management.md` §十）。
 
 ### 0.4 创建/更新 run 文件
 
@@ -112,7 +118,7 @@ BLOCKER_COUNT(待确认 Blocker 数)
 ### 1.3 subagent 返回后验证
 
 只检查关键产物存在性（不读全量）：
-- `output/[项目名]/需求分析/需求分析报告.md` 存在？
+- `output/[项目名]/需求分析/需求分析报告.md` **或** `output/[项目名]/需求分析/轻量分析-*.md` 存在？（**二者有其一即 PASS**；轻量模式产出后者）
 - `output/[项目名]/.pm-state.json` 已更新？
 - `output/[项目名]/README.md` 已更新？
 
@@ -125,6 +131,10 @@ BLOCKER_COUNT(待确认 Blocker 数)
 
 Read `output/[项目名]/需求分析/需求分析报告.md` 第 7 章，统计风险等级=高且状态="待确认"的问题数：
 
+> **轻量模式补充**：若本次为轻量模式（报告无第 7 章，产物为 `需求分析/轻量分析-*.md`），
+> Blocker 数取轻量报告中 **风险等级=高 且 状态="待确认"** 的条数；
+> 若轻量报告无「状态」列，则按 **风险等级=高** 的条数计。
+
 - **Blocker > 0**：
   - run 文件：Step 1 STATUS = PASS（产物完成），**同时**记 `PAUSE@analyze-blocker`
   - 向用户输出 Blocker 清单：
@@ -136,7 +146,8 @@ Read `output/[项目名]/需求分析/需求分析报告.md` 第 7 章，统计�
     请解决以上问题后，重新执行 /pm-autopilot 续做。
     如确认可带问题推进，请回复"继续"。
     ```
-  - 用户回复"继续" → 解除暂停，进入 Step 2
+  - 用户回复"继续" → 解除暂停，进入 Step 2；同时在 run 文件**该步备注**写
+    `analyze-blocker 已确认放行（用户 [时间]）`（步骤 0.3 与 Step 2.0 见到该备注则不再重复暂停）
   - 否则 → 暂停 autopilot，**退出**
 - **Blocker = 0** → 进入 Step 2
 
@@ -175,13 +186,13 @@ SUMMARY(一句话)
 
 ### 2.3 返回后验证
 
-- `output/[项目名]/原型/[端]/` 下有 HTML 文件？
-- 有 index.html 导航页？
+- `output/[项目名]/原型/[端]/` 下**有 ≥1 个 `.html` 文件即 PASS**
+- `index.html` 导航页**不再是硬性通过条件**：缺 `index.html`（单页模式）**只记提示，不阻断**
 
 ### 2.4 更新 run 文件 + 门禁检查
 
-- HTML 文件存在 → PASS，进入 Step 3
-- 不存在 → FAIL，暂停
+- 该端目录下 `.html` 文件数 ≥1 → PASS，进入 Step 3
+- 无 `.html` 文件 → FAIL，暂停
 
 ---
 
@@ -339,7 +350,7 @@ SUMMARY(一句话)
 - autopilot 被调用 → Step 0 读 `.pm-state.json` + `.pm-run.md` → 定位第一个非 PASS 步 → 从该步 dispatch 续做
 - run 文件各步 STATUS 是续做的唯一依据
 - subagent 间状态靠产物文件 + `.pm-state.json` 传递，subagent 不读主会话历史
-- 用户可传 `--from pm-[X]` 强制从某步重跑
+- 用户可传 `--from pm-[技能名]`（技能名 ∈ pm-analyze / pm-prototype / pm-prd / pm-annotate / pm-deliver）强制从某步重跑
 - 用户可传 `--skip-annotate` 跳过 Step 4 原型标注（该步记"跳过"，不影响后续步骤与完成判定）
 - **换会话可恢复**：状态全落盘，新会话执行 `/pm-autopilot` 即自动接续
 

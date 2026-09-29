@@ -12,19 +12,25 @@
 
 1. 【用例依据】`设计/[项目名]-功能详细设计.md`（接口业务规则/错误码/状态流转）
 2. 【被测对象】`后端工程/` 结构：`src/main/java` 下的 service/controller/mapper 清单
-3. 【契约复验（可选）】`独立前端工程/`（只读核对 R 编号方法/路径/字段，不改前端）
-4. `.pm-state.json`（读 `devProjectType`）
+3. 【契约复验（可选）】`独立前端工程/`（只读核对 R 编号方法/路径/字段，不改前端；**目录不存在则跳过**）
+4. `output/[项目名]/项目规范.md`（规范引用铁律：响应格式/错误码分段等约定）
+5. `.pm-state.json`（读 `devProjectType`）
 
 ## 步骤 2：扫描 + 写/补单测
 
+> **落盘路径（勿混）**：测试源码写入 **`后端工程/src/test/java/com/[包名]/...`**；
+> 本技能在 `测试/` 目录下**只落报告 md**，不要把 `.java` 放进 `测试/`。
+> （`测试/` 是报告目录、`后端工程/src/test/java/` 是 Java 源码目录，写错位置 `mvn test` 收不到。）
+
 - 对 Service（核心，覆盖业务规则/错误码/状态流转/幂等）、Controller（参数校验、Result 包装）、Mapper（如逻辑复杂）
 - JUnit 5 + Mockito：`@Mock` 依赖、`@InjectMocks` 被测对象，**不启 Spring 上下文**
+- **测试职责边界**：本技能补 **Service 纯 Mock 单测 + 覆盖率**，**不覆盖 `pm-dev-1-backend` 已写的测试文件**（只新增/修改自己那份）
 - 迭代项目：聚焦本次「新增/修改」的类（从功能详细设计三态标注判定），并回归既有核心用例
 
 ## 步骤 3：批量验证
 
-1. 编译一次（`mvn -q test-compile`）
-2. 全量执行（`mvn -q test`），收集所有失败
+1. 编译一次（`cd 后端工程 && mvn -q test-compile`）
+2. 全量执行（`cd 后端工程 && mvn -q test`），收集所有失败
 3. **按根因分类修复**：同源失败（如都因某个 mapper mock 缺失）归一类统一修，不逐个硬怼
 4. 回归：修完重跑全量，直到绿或明确标注剩余失败
 
@@ -41,7 +47,7 @@
 ```markdown
 # 单元测试报告
 
-> 批次：[B] | 项目性质：新项目/迭代 | 生成时间：[时间] | 技能：pm-dev-3-test v1.4.0
+> 批次：[B] | 项目性质：新项目/迭代 | 生成时间：[时间] | 技能：pm-dev-3-test v1.5.0
 
 ## 一、结论
 
@@ -67,7 +73,7 @@
 ### 6.1 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-dev-3-test` 条目：
-`{"step":"pm-dev-3-test","status":"completed","startedAt":null,"completedAt":"…Z","output":"测试/[项目名]-单元测试报告-[日期].md","counters":{}}`。时间戳 UTC 带 `Z`。
+`{"step":"pm-dev-3-test","status":"completed","startedAt":"…Z","completedAt":"…Z","output":"测试/[项目名]-单元测试报告-[日期].md","counters":{}}`。时间戳 UTC 带 `Z`；`startedAt` 写本次执行**开始时间**。
 
 ### 6.2 更新 README.md
 
@@ -80,11 +86,15 @@
 2. 覆盖了 Service 业务规则/错误码/状态流转
 3. 覆盖率是实测值，未编造；失败如实列出
 4. 迭代项目聚焦新增/修改类
-5. 报告落在 `测试/`（绝对路径核对过）
-6. devPipeline 条目 6 keys 齐全，时间戳 UTC 带 `Z`
-7. README 表 5 列
+5. 报告落在 `测试/`、测试源码落在 `后端工程/src/test/java/`（**两者不混**）
+6. 未覆盖 `pm-dev-1-backend` 已写的测试文件（只新增/修改自己那份）
+7. devPipeline 条目 6 keys 齐全，时间戳 UTC 带 `Z`
+8. README 表 5 列
 
 ## 步骤 8：会话内输出摘要
+
+**PASS/FAIL 口径**：覆盖率 ≥ 85% 且无未通过用例 → `STATUS(PASS)`；
+覆盖率 < 85% 或存在未通过用例 → `STATUS(FAIL)` + 注明原因；**两种情况报告都照常产出**，FAIL 不等于不出报告。
 
 只回（不倒全文）：
 

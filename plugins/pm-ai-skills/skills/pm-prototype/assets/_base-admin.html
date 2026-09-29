@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>管理后台 · PM 原型库</title>
+<link rel="stylesheet" href="../../_公共资源/vendor/arco.css"/>
+<link rel="stylesheet" href="../../_公共资源/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <!-- ① 左侧边栏 -->
+  <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
+    <!-- Logo 区 -->
+    <div class="pro-brand">
+      <div class="pro-brand-icon">⚡</div>
+      <span v-show="!collapsed" class="pro-brand-name">管理系统</span>
+    </div>
+    <!-- 菜单 -->
+    <a-menu
+      :collapsed="collapsed"
+      :selected-keys="selectedKeys"
+      :open-keys="openKeys"
+      @menu-item-click="onMenuClick"
+      @sub-menu-click="onSubMenuClick"
+      style="border:none;width:100%;flex:1"
+    >
+      <a-menu-item key="dashboard">
+        <template #icon><icon-home></icon-home></template>
+        <a href="./dashboard.html">数据概览</a>
+      </a-menu-item>
+
+      <a-sub-menu key="list-group">
+        <template #icon><icon-apps></icon-apps></template>
+        <template #title>业务管理</template>
+        <a-menu-item key="list"><a href="./list.html">数据列表</a></a-menu-item>
+        <a-menu-item key="form-add"><a href="./form-add.html">新增数据</a></a-menu-item>
+        <a-menu-item key="detail"><a href="./detail.html">数据详情</a></a-menu-item>
+      </a-sub-menu>
+
+      <a-sub-menu key="system">
+        <template #icon><icon-settings></icon-settings></template>
+        <template #title>系统管理</template>
+        <a-menu-item key="user-mgmt">用户管理</a-menu-item>
+        <a-menu-item key="role-mgmt">角色权限</a-menu-item>
+        <a-menu-item key="log">操作日志</a-menu-item>
+      </a-sub-menu>
+
+      <a-menu-item key="help">
+        <template #icon><icon-question-circle></icon-question-circle></template>
+        帮助中心
+      </a-menu-item>
+    </a-menu>
+  </aside>
+
+  <!-- ② 顶部导航栏 -->
+  <header class="pro-navbar" :style="{ left: collapsed ? '48px' : '220px' }">
+    <!-- 左侧：折叠按钮 + 面包屑 -->
+    <div style="display:flex;align-items:center;gap:12px">
+      <a-button type="text" style="color:var(--color-text-2)" @click="collapsed = !collapsed">
+        <template #icon>
+          <icon-menu-fold v-if="!collapsed"></icon-menu-fold>
+          <icon-menu-unfold v-else></icon-menu-unfold>
+        </template>
+      </a-button>
+      <a-breadcrumb>
+        <a-breadcrumb-item>
+          <a href="./dashboard.html" style="color:var(--color-text-3)">首页</a>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>{{ pageTitle }}</a-breadcrumb-item>
+      </a-breadcrumb>
+    </div>
+
+    <!-- 右侧：搜索、通知、头像 -->
+    <div style="display:flex;align-items:center;gap:4px">
+      <!-- 搜索框 -->
+      <div style="display:flex;align-items:center;gap:8px;width:200px;height:32px;padding:0 12px;border:1px solid var(--proto-border);border-radius:20px;background:rgba(0,0,0,.04);color:var(--color-text-3);cursor:pointer;font-size:13px;margin-right:8px">
+        <icon-search style="font-size:14px;flex-shrink:0"></icon-search>
+        <span>搜索页面...</span>
+      </div>
+
+      <a-tooltip content="消息通知">
+        <a-badge :count="noticeCount" :offset="[-2,4]">
+          <a-button type="text" style="color:var(--color-text-2)">
+            <template #icon><icon-notification style="font-size:18px"></icon-notification></template>
+          </a-button>
+        </a-badge>
+      </a-tooltip>
+
+      <a-tooltip content="全屏">
+        <a-button type="text" style="color:var(--color-text-2)">
+          <template #icon><icon-fullscreen style="font-size:18px"></icon-fullscreen></template>
+        </a-button>
+      </a-tooltip>
+
+      <a-tooltip :content="isDark ? '切换浅色模式' : '切换深色模式'">
+        <a-button type="text" style="color:var(--color-text-2);font-size:16px" @click="toggleTheme">
+          {{ isDark ? '☀️' : '🌙' }}
+        </a-button>
+      </a-tooltip>
+
+      <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
+
+      <!-- 用户头像菜单 -->
+      <a-dropdown trigger="click">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseenter="this.style.background='rgba(0,0,0,.04)'" onmouseleave="this.style.background=''">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);font-size:14px" :size="32">管</a-avatar>
+          <span style="font-size:14px;color:var(--color-text-1)">管理员</span>
+          <icon-down style="font-size:12px;color:var(--color-text-3)"></icon-down>
+        </div>
+        <template #content>
+          <a-doption>个人信息</a-doption>
+          <a-doption>修改密码</a-doption>
+          <a-doption disabled>系统设置</a-doption>
+          <a-divider style="margin:4px 0"></a-divider>
+          <a-doption><a href="./login.html" style="color:inherit">退出登录</a></a-doption>
+        </template>
+      </a-dropdown>
+    </div>
+  </header>
+
+  <!-- ③ 主内容区 -->
+  <main class="pro-main" :style="{ marginLeft: collapsed ? '48px' : '220px' }">
+    <div class="pro-content">
+
+      <!-- 状态切换：加载中 -->
+      <div v-if="pageState === 'loading'" style="display:flex;align-items:center;justify-content:center;min-height:400px">
+        <a-spin tip="加载中..." :size="32"></a-spin>
+      </div>
+
+      <!-- 状态切换：加载失败 -->
+      <a-result v-else-if="pageState === 'error'" status="500" title="加载失败" subtitle="请求数据时出现错误，请稍后重试" style="padding:80px 0">
+        <template #extra>
+          <a-button type="primary" @click="pageState='normal'">重新加载</a-button>
+        </template>
+      </a-result>
+
+      <!-- 状态切换：空数据 -->
+      <a-card v-else-if="pageState === 'empty'" class="general-card" style="padding:60px 0;text-align:center">
+        <a-empty description="暂无数据" style="padding:40px 0">
+          <template #extra>
+            <a-button type="primary" href="./form-add.html">立即创建</a-button>
+          </template>
+        </a-empty>
+      </a-card>
+
+      <!-- 正常内容区 -->
+      <template v-else>
+        <!-- ====== 各页面替换此处 PAGE_CONTENT_SLOT ====== -->
+        <a-result status="info" title="基础布局模板" subtitle="这是 admin/_base.html 的预览。各功能页面会替换此区域。" style="padding:80px 0">
+          <template #extra>
+            <a-space wrap>
+              <a-button type="primary" href="./dashboard.html">仪表盘</a-button>
+              <a-button href="./list.html">列表页</a-button>
+              <a-button href="./detail.html">详情页</a-button>
+              <a-button href="./form-add.html">新增表单</a-button>
+              <a-button href="./login.html">登录页</a-button>
+              <a-button href="./index.html">导航总览</a-button>
+            </a-space>
+          </template>
+        </a-result>
+      </template>
+
+    </div>
+  </main>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <button @click="setPageState('loading')">⏳ 加载中</button>
+    <button @click="setPageState('empty')">📭 空数据</button>
+    <button @click="setPageState('error')">⚠️ 出错</button>
+    <button @click="setPageState('normal')">✅ 正常</button>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../../_公共资源/vendor/vue.global.prod.js"></script>
+<script src="../../_公共资源/vendor/arco-vue.min.js"></script>
+<script src="../../_公共资源/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+
+createApp({
+  setup() {
+    const collapsed    = ref(false)
+    const selectedKeys = ref(['dashboard'])
+    const openKeys     = ref([])
+    const pageTitle    = ref('基础布局')
+    const noticeCount  = ref(3)
+    const pageState    = ref('normal')   // 'normal' | 'loading' | 'empty' | 'error'
+
+    const isDark = ref(localStorage.getItem('proto-theme') === 'dark')
+    function toggleTheme() {
+      isDark.value = !isDark.value
+      if (isDark.value) {
+        document.body.setAttribute('arco-theme', 'dark')
+        localStorage.setItem('proto-theme', 'dark')
+      } else {
+        document.body.removeAttribute('arco-theme')
+        localStorage.setItem('proto-theme', 'light')
+      }
+    }
+    if (isDark.value) document.body.setAttribute('arco-theme', 'dark')
+
+    const THEMES = {
+      blue:     { name:'品牌蓝', color:'#165dff', p1:'233 241 255', p5:'61 126 255',  p6:'22 93 255',   p7:'18 72 199'  },
+      techBlue: { name:'科技蓝', color:'#4080ff', p1:'232 240 255', p5:'90 155 255',  p6:'64 128 255',  p7:'50 100 200' },
+      green:    { name:'生机绿', color:'#00b42a', p1:'235 255 239', p5:'0 210 50',    p6:'0 180 42',    p7:'0 140 33'   },
+      cyan:     { name:'清新青', color:'#0fc6c2', p1:'228 254 253', p5:'40 215 212',  p6:'15 198 194',  p7:'11 153 150' },
+      orange:   { name:'活力橙', color:'#ff7d00', p1:'255 247 232', p5:'255 158 0',   p6:'255 125 0',   p7:'200 95 0'   },
+    }
+    const themePresets = Object.entries(THEMES).map(([key, v]) => ({ key, ...v }))
+    const themeKey = ref(localStorage.getItem('proto-theme-color') || 'blue')
+
+    function applyTheme(key) {
+      const t = THEMES[key]; if (!t) return
+      themeKey.value = key
+      const r = document.documentElement
+      r.style.setProperty('--primary-1', t.p1)
+      r.style.setProperty('--primary-5', t.p5)
+      r.style.setProperty('--primary-6', t.p6)
+      r.style.setProperty('--primary-7', t.p7)
+      localStorage.setItem('proto-theme-color', key)
+    }
+    applyTheme(themeKey.value)
+
+    function setPageState(s) { pageState.value = s }
+
+    const NAV_MAP = {
+      dashboard: './dashboard.html', list: './list.html', 'form-add': './form-add.html',
+      detail: './detail.html', 'list-filter': './list-filter.html', 'list-card': './list-card.html',
+      'form-step': './form-step.html', profile: './profile.html', 'result-success': './result-success.html',
+      'exception-404': './exception-404.html', 'user-role': './user-role.html',
+      'permission-tree': './permission-tree.html', 'log-list': './log-list.html',
+      'user-mgmt': './user-role.html', 'role-mgmt': './permission-tree.html',
+      log: './log-list.html', help: './index.html',
+      index: './index.html', login: './login.html'
+    }
+    function onMenuClick(key) {
+      selectedKeys.value = [key]
+      if (NAV_MAP[key]) window.location.href = NAV_MAP[key]
+    }
+    function onSubMenuClick(key, openedKeys) {
+      openKeys.value = openedKeys
+    }
+
+    window.__protoApp = { pageState }
+    return {
+      collapsed, selectedKeys, openKeys,
+      pageTitle, noticeCount, pageState,
+      setPageState, onMenuClick, onSubMenuClick,
+      isDark, toggleTheme,
+      themePresets, themeKey, applyTheme
+    }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

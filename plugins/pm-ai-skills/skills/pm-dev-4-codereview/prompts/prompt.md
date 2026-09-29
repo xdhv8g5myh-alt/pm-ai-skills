@@ -10,11 +10,12 @@
 
 ## 步骤 1：读取上下文
 
-1. 【计划一致性】`设计/[项目名]-功能详细设计.md`（核对实现是否符合设计）
-2. 【被测对象】`后端工程/src/main/java` 全量代码
-3. 【前端（可选）】`独立前端工程/src/`（存在才审查）
-4. 【辅助】`测试/*-单元测试报告-*.md`（参考，不作为判定）
-5. `.pm-state.json`（读 `devProjectType`）
+1. 【审查基准】`output/[项目名]/项目规范.md`（响应格式/错误码分段/命名约定等，规范引用铁律）
+2. 【计划一致性】`设计/[项目名]-功能详细设计.md`（核对实现是否符合设计）
+3. 【被测对象】`后端工程/src/main/java` 全量代码
+4. 【前端（可选）】`独立前端工程/src/`（存在才审查）
+5. 【辅助】`测试/*-单元测试报告-*.md`（参考，不作为判定；**不存在则跳过**）
+6. `.pm-state.json`（读 `devProjectType`）
 
 ## 步骤 2：后端审查
 
@@ -52,7 +53,7 @@
 ```markdown
 # 代码审查报告
 
-> 批次：[B] | 项目性质：新项目/迭代 | 生成时间：[时间] | 技能：pm-dev-4-codereview v1.4.0
+> 批次：[B] | 项目性质：新项目/迭代 | 生成时间：[时间] | 技能：pm-dev-4-codereview v1.5.0
 
 ## 一、结论
 
@@ -84,7 +85,10 @@
 ### 6.1 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-dev-4-codereview` 条目：
-`{"step":"pm-dev-4-codereview","status":"completed","startedAt":null,"completedAt":"…Z","output":"代码审查/[项目名]-代码审查报告-[日期].md","counters":{},"reviewBlockerCount":N}`（N = 严重问题数）。时间戳 UTC 带 `Z`。
+`{"step":"pm-dev-4-codereview","status":"completed","startedAt":"…Z","completedAt":"…Z","output":"代码审查/[项目名]-代码审查报告-[日期].md","counters":{},"reviewBlockerCount":N}`（N = 严重问题数）。时间戳 UTC 带 `Z`；`startedAt` 写本次执行**开始时间**。
+
+严重问题 > 0 时，在本步报告与摘要标注「**阻塞下游，需修复应答后解除**」；
+**不写 `PAUSE@codereview` 标记**（该标记由编排器 pm-dev-autopilot 统一写）。
 
 ### 6.2 更新 README.md
 
