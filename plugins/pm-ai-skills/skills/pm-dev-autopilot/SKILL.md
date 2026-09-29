@@ -1,6 +1,6 @@
 ---
 name: pm-dev-autopilot
-description: 研发链全流程自动编排器（pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend → pm-dev-2-frontend → pm-dev-3-test → pm-dev-4-codereview），每步以独立 subagent 执行，状态落 run 文件支持续做与重跑。支持新项目/旧项目迭代（--iterate）、有 PRD/只有需求（--prd / --requirement）、历史参考（--ref）、跳过前端（--skip-frontend）。当用户要求"自动跑研发""一键开发""全自动设计开发""研发编排"时使用此技能。
+description: 研发链全流程自动编排器（pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend → pm-dev-2-frontend → pm-dev-3-test → pm-dev-4-codereview），每步以独立 subagent 执行，状态落 run 文件支持续做与重跑。支持新项目/旧项目迭代（--iterate）、有 PRD/只有需求（--prd / --requirement）、历史参考（--ref）、项目初始化配置（--config，接既有工程时定位/拉取工程、导入 DB 基线、生成 CLAUDE.md）、跳过前端（--skip-frontend）。当用户要求"自动跑研发""一键开发""全自动设计开发""研发编排"时使用此技能。
 ---
 
 # PM 研发链自动编排
@@ -22,6 +22,7 @@ description: 研发链全流程自动编排器（pm-design-1-func → pm-design-
   - `--prd [PRD 路径]` / `--requirement [需求文本或文件]`（输入来源，二选一；缺省探测 `prd/`）
   - `--iterate`（强制迭代模式）
   - `--ref [参考目录]`（历史参考，默认 `D:/pm-ai/pm-ai-projects/output/`）
+  - `--config [配置文档路径]`（项目初始化配置，接既有工程时定位/拉取工程、导入 DB 基线、生成 CLAUDE.md）
   - `--from [step]`（强制从某步重跑）
   - `--skip-frontend`（跳过前端步骤）
 

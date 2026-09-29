@@ -32,15 +32,29 @@
 - `.pm-state.json` 写入 `devProjectType`（new/iteration）+ 空 `devPipeline[]` + `counters`（继承现有或初始 `{F:0,T:0,R:0,P:0,C:0}`）
 - 时间戳一律 UTC ISO-8601 带 `Z`
 
+### 0.4 检测并消费项目初始化配置（可选）
+
+检测顺序：① `--config <路径>` ② `output/[项目名]/project-config.md`。都不存在 → 跳过本步（现状兼容）。
+
+存在则 Read，并按 project-management.md §十三 消费：
+- **项目性质**：配置「1. 项目信息」覆盖 0.2 的运行时判定
+- **输入来源**：配置「2. 输入来源」的 PRD/需求路径覆盖 0.1
+- **前后端工程**：配置「3/4」git 地址 → clone 到 `backend/` / `frontend/`；本地路径 → 记录到 `devBaseline` 引用（不拷贝大工程）；已就位则跳过（幂等）
+- **DB 脚本基线**：配置「5」的 `*.sql` 拷贝到 `design/db/`（保留原文件名，作基线）
+- **生成 CLAUDE.md**：配置含前后端工程时，从工程探测生成 `output/[项目名]/CLAUDE.md`（技术栈/常用命令/已有模块/接口规范），已存在仅补缺
+- **待开发模块**：配置「6」作为功能清单种子（进入步骤 3 的 F 提炼）
+- **参考模块**：配置「7」并入历史参考目录（步骤 1 的扫描范围）
+
 ## 步骤 1：读取上下文 + 历史参考
 
 按顺序读取（未读完不得进入步骤 2）：
 
-1. 【强制】`output/[项目名]/project-spec.md`：已有技术决策、接口清单、术语表
-2. `output/[项目名]/.pm-state.json`：批次、counters、devPipeline 状态
-3. 模式 A：`prd/*-PRD-*.md`（ch6 接口表、3.2 字段说明表 + 校验矩阵、ch5 实体树）
-4. 佐证（存在则读）：`prototypes/[端]/*.html`（读 `const MOCK_DATA` 的真实字段名）；`analysis/analysis-report.md`
-5. 【历史参考 · 软参考】扫描参考目录（默认 `D:/pm-ai/pm-ai-projects/output/`，可 `--ref <路径>`）：
+1. `output/[项目名]/CLAUDE.md`（如存在；接既有工程时由 0.4 生成）：技术栈、已有模块、接口规范
+2. 【强制】`output/[项目名]/project-spec.md`：已有技术决策、接口清单、术语表
+3. `output/[项目名]/.pm-state.json`：批次、counters、devPipeline 状态
+4. 模式 A：`prd/*-PRD-*.md`（ch6 接口表、3.2 字段说明表 + 校验矩阵、ch5 实体树）
+5. 佐证（存在则读）：`prototypes/[端]/*.html`（读 `const MOCK_DATA` 的真实字段名）；`analysis/analysis-report.md`
+6. 【历史参考 · 软参考】扫描参考目录（默认 `D:/pm-ai/pm-ai-projects/output/`，可 `--ref <路径>`，含配置「7. 参考模块」）：
    历史 `design/db/*-schema.sql`、`design/*-功能详细设计.md`、`backend/` controller/entity、`project-spec.md`，
    建立「可复用资产基线」：表/字段命名、错误码分段、`Result<T>`/分页/鉴权约定、通用实体。找不到就跳过，不阻塞。
 

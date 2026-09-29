@@ -26,11 +26,12 @@
 - 用户传入 `--project [项目名]` → 直接使用
 - 未传入 → 检查 `output/` 下有哪些项目目录：只有 1 个自动选；多个列出让用户选；没有则询问项目名
 
-### 0.2 判定项目性质 + 输入来源 + 参考目录
+### 0.2 判定项目性质 + 输入来源 + 参考目录 + 配置文档
 
+- **配置文档**：`--config <路径>` 或 `output/[项目名]/project-config.md`（可选，见 pm-common §十三）；存在则读，其「1 项目信息 / 2 输入来源」覆盖下述判定；工程拉取/DB 基线/CLAUDE.md 由 Step 1 的 pm-design-1-func 消费
 - **项目性质**：`--iterate` 或目标目录已有 `backend/`/`schema.sql`/devPipeline 历史 → 迭代；否则新项目
 - **输入来源**：`--prd <路径>` → 模式 A；`--requirement <文本/文件>` → 模式 B；都未传 → 探测 `output/[项目名]/prd/*-PRD-*.md` 是否存在，存在即模式 A，否则询问
-- **参考目录**：`--ref <路径>`，缺省 `D:/pm-ai/pm-ai-projects/output/`
+- **参考目录**：`--ref <路径>`，缺省 `D:/pm-ai/pm-ai-projects/output/`（配置「7. 参考模块」并入）
 - 把判定结果写进 run 文件头部
 
 ### 0.3 读取项目状态
@@ -60,7 +61,7 @@
 ```markdown
 # PM Dev Autopilot 运行状态
 
-> 项目：[项目名] | 项目性质：新项目/迭代 | 输入来源：PRD/需求 | 参考目录：[路径] | 启动时间：[时间]
+> 项目：[项目名] | 项目性质：新项目/迭代 | 输入来源：PRD/需求 | 参考目录：[路径] | 配置文档：[路径/无] | 启动时间：[时间]
 
 ## 运行状态：进行中
 
@@ -95,6 +96,8 @@
 执行前先 Read `[pm-common/project-management.md 绝对路径]` 了解项目管理规范。
 
 项目性质：[新项目/迭代] | 输入来源：[PRD 路径 / 需求文本] | 参考目录：[路径]
+
+（有配置文档时附上）项目初始化配置：[--config 路径 / project-config.md 路径]
 
 （模式 B 时附上）用户需求内容：[需求文本或文件路径]
 
@@ -230,7 +233,7 @@ dispatch prompt（role「代码审查」），回报多一行 `BLOCKER_COUNT(严
 
 执行前先 Read `{pm-common/project-management.md 绝对路径}` 了解项目管理规范。
 
-项目性质：{new/iteration} | 参考目录：{路径}
+项目性质：{new/iteration} | 参考目录：{路径} | 配置文档：{路径/无}
 
 上游产物路径：
 {上游产物列表}
