@@ -16,7 +16,7 @@
       "description": "产品经理 + 研发全流程技能包：pm-analyze / pm-prototype / pm-prd / pm-deliver / pm-autopilot / pm-annotate / pm-design-reverse / pm-review / pm-design-1-func / pm-design-2-db / pm-design-3-review / pm-dev-1-backend / pm-dev-2-frontend / pm-dev-3-test / pm-dev-4-codereview / pm-dev-autopilot",
       "version": "1.4.0",
       "category": "pm",
-      "tags": ["pm", "product", "prototype", "prd", "vue", "autopilot", "annotation", "design", "review", "database", "spring", "backend", "dev"]
+      "tags": ["产品经理", "产品", "原型", "PRD", "Vue", "自动编排", "原型标注", "设计", "评审", "数据库", "Spring", "后端", "研发"]
     }
   ]
 }
