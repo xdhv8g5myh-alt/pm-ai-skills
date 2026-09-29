@@ -10,63 +10,69 @@
 
 ```
 output/[项目名]/
-├── README.md                           # 项目产物索引（自动维护）
-├── project-spec.md                     # 共享规范文件（跨批次 append-only）
-├── .pm-state.json                      # 项目状态追踪文件
+├── README.md                           # 项目产物索引（自动维护；文件名保持英文）
+├── 项目规范.md                          # 共享规范文件（跨批次 append-only）
+├── .pm-state.json                      # 项目状态追踪文件（文件名保持不变）
 │
-├── analysis/                           # pm-analyze 产物
-│   ├── analysis-report.md              # 全量分析报告
-│   └── quick-analysis-[日期].md        # 轻量分析（可多次）
+├── 需求分析/                            # pm-analyze / pm-design-reverse 产物
+│   ├── 需求分析报告.md                  # 全量分析报告
+│   ├── 轻量分析-[日期].md               # 轻量分析（可多次）
+│   └── 设计稿反推-[日期].md             # pm-design-reverse 补充产物（已有分析报告时）
 │
-├── prototypes/                         # pm-prototype 产物
-│   ├── admin/                          # 按端类型分目录
-│   │   ├── index.html
-│   │   └── [页面名].html
-│   ├── h5/
-│   ├── user-pc/
-│   └── miniapp/
+├── 原型/                                # pm-prototype 产物
+│   ├── 管理后台/                        # 按端类型分目录（admin / h5 / user-pc / miniapp）
+│   │   ├── index.html                  # 导航页（文件名保持英文）
+│   │   └── [中文页面名].html
+│   ├── H5/
+│   ├── 用户前台/
+│   └── 小程序/
 │
-├── prd/                                # pm-prd 产物
+├── _公共资源/                           # 原型公共资源（vendor / theme / proto-utils）
+│                                       # 原型页以 ../../_公共资源/ 相对引用
+│
+├── 需求文档/                            # pm-prd 产物
 │   ├── [项目名]-PRD-v1.0.md
-│   ├── [项目名]-test-cases.md
-│   ├── [项目名]-estimate.md
-│   └── changes/                        # 变更单归档
-│       └── change-[日期]-[功能名].md
+│   ├── [项目名]-测试用例.md
+│   ├── [项目名]-工时估算.md
+│   └── 变更单/                          # 变更单归档
+│       └── 变更-[日期]-[功能名].md
 │
-├── vue/                                # pm-deliver 产物
+├── 前端交付/                            # pm-deliver 产物
 │   ├── package.json
 │   ├── src/
 │   └── ...
 │
-├── design/                             # 研发链 · 设计段（pm-design-*）
+├── 设计/                                # 研发链 · 设计段（pm-design-*）
 │   ├── [项目名]-功能详细设计.md          # pm-design-1-func
 │   ├── [项目名]-数据库设计.md            # pm-design-2-db（新项目）
 │   ├── [项目名]-数据库变更设计.md        # pm-design-2-db（迭代项目）
-│   ├── db/
-│   │   ├── [项目名]-schema.sql          # 新项目：全量建表
-│   │   └── [项目名]-delta-[日期].sql    # 迭代项目：增量 DDL
-│   └── review/
+│   ├── 数据库/
+│   │   ├── [项目名]-表结构.sql           # 新项目：全量建表
+│   │   └── [项目名]-增量-[日期].sql      # 迭代项目：增量 DDL
+│   └── 评审/
 │       └── [项目名]-设计评审-[日期].md   # pm-design-3-review
 │
-├── backend/                            # 研发链 · pm-dev-1-backend（Maven 工程）
+├── 后端工程/                            # 研发链 · pm-dev-1-backend（Maven 工程）
 │
-├── frontend/                           # 研发链 · pm-dev-2-frontend（独立新工程，可选）
+├── 独立前端工程/                        # 研发链 · pm-dev-2-frontend（独立新工程，可选）
 │
-├── test/                               # 研发链 · pm-dev-3-test
+├── 测试/                                # 研发链 · pm-dev-3-test
 │   └── [项目名]-单元测试报告-[日期].md
 │
-└── review/                             # 研发链 · pm-dev-4-codereview
+└── 代码审查/                            # 研发链 · pm-dev-4-codereview
     └── [项目名]-代码审查报告-[日期].md
 ```
+
+> **命名约定**：产物目录与产物文件名一律中文；工具链/代码文件（`package.json`、`pom.xml`、`index.html`、`vite.config.ts`、`src/**`）与状态文件（`README.md`、`.pm-state.json`、`.pm-run.md`、`.pm-dev-run.md`）保持英文原名。中文命名的改造自 v1.5.0 起，**只对新项目生效，不迁移历史项目**。
 
 ### 目录创建规则
 
 - 首次执行时检查 `output/[项目名]/` 是否存在，不存在则创建骨架
 - 创建 `README.md` 和 `.pm-state.json` 初始文件
-- 只创建当前技能需要的子目录（pm-analyze 只建 analysis/，不建 vue/）
+- 只创建当前技能需要的子目录（pm-analyze 只建 `需求分析/`，不建 `前端交付/`）
 - **研发链（pm-design-* / pm-dev-*）独立运行时**：不要求 PM 链先跑完；若目录无
-  README / project-spec / .pm-state.json，由 pm-design-1-func 自行初始化最小骨架。
-  迭代项目复用已有 `backend/`、`design/db/*-schema.sql`，不重建
+  README / 项目规范 / .pm-state.json，由 pm-design-1-func 自行初始化最小骨架。
+  迭代项目复用已有 `后端工程/`、`设计/数据库/*-表结构.sql`，不重建
 
 ---
 
@@ -89,64 +95,64 @@ output/[项目名]/
 ### 需求分析（pm-analyze）
 | 产物 | 路径 | 生成时间 | 批次 |
 |------|------|---------|------|
-| 全量分析报告 | `analysis/analysis-report.md` | 2026-09-26 14:30 | B1 |
+| 全量分析报告 | `需求分析/需求分析报告.md` | 2026-09-26 14:30 | B1 |
 
 ### 原型（pm-prototype）
 | 产物 | 路径 | 端类型 | 页面数 | 生成时间 | 批次 |
 |------|------|--------|--------|---------|------|
-| Admin 原型站 | `prototypes/admin/` | 管理后台 | 8 | 2026-09-26 15:00 | B1 |
+| 管理后台原型站 | `原型/管理后台/` | 管理后台 | 8 | 2026-09-26 15:00 | B1 |
 
 ### PRD 文档（pm-prd）
 | 产物 | 路径 | 功能编号范围 | 生成时间 | 批次 |
 |------|------|------------|---------|------|
-| PRD v1.0 | `prd/[项目名]-PRD-v1.0.md` | F001-F012 | 2026-09-26 16:00 | B1 |
-| 测试用例 | `prd/[项目名]-test-cases.md` | T001-T036 | 2026-09-26 16:00 | B1 |
+| PRD v1.0 | `需求文档/[项目名]-PRD-v1.0.md` | F001-F012 | 2026-09-26 16:00 | B1 |
+| 测试用例 | `需求文档/[项目名]-测试用例.md` | T001-T036 | 2026-09-26 16:00 | B1 |
 
 ### 前端代码（pm-deliver）
 | 产物 | 路径 | 页面数 | 生成时间 | 批次 |
 |------|------|--------|---------|------|
-| Vue3 工程 | `vue/` | 8 | 2026-09-26 17:00 | B1 |
+| Vue3 工程 | `前端交付/` | 8 | 2026-09-26 17:00 | B1 |
 
 ### 详细设计（pm-design-1-func）
 | 产物 | 路径 | 功能编号范围 | 生成时间 | 批次 |
 |------|------|------------|---------|------|
-| 功能详细设计 | `design/[项目名]-功能详细设计.md` | F001-F011 | 2026-09-28 10:00 | B1 |
+| 功能详细设计 | `设计/[项目名]-功能详细设计.md` | F001-F011 | 2026-09-28 10:00 | B1 |
 
 ### 数据库设计（pm-design-2-db）
 | 产物 | 路径 | 表数 | 生成时间 | 批次 |
 |------|------|------|---------|------|
-| 数据库设计 | `design/[项目名]-数据库设计.md` | 5 | 2026-09-28 10:30 | B1 |
-| DDL | `design/db/[项目名]-schema.sql` | 5 | 2026-09-28 10:30 | B1 |
+| 数据库设计 | `设计/[项目名]-数据库设计.md` | 5 | 2026-09-28 10:30 | B1 |
+| DDL | `设计/数据库/[项目名]-表结构.sql` | 5 | 2026-09-28 10:30 | B1 |
 
 ### 设计评审（pm-design-3-review）
 | 产物 | 路径 | Blocker 数 | 生成时间 | 批次 |
 |------|------|-----------|---------|------|
-| 设计评审报告 | `design/review/[项目名]-设计评审-[日期].md` | 2 | 2026-09-28 11:00 | B1 |
+| 设计评审报告 | `设计/评审/[项目名]-设计评审-[日期].md` | 2 | 2026-09-28 11:00 | B1 |
 
 ### 后端代码（pm-dev-1-backend）
 | 产物 | 路径 | 接口数 | 生成时间 | 批次 |
 |------|------|--------|---------|------|
-| Spring Boot 工程 | `backend/` | 10 | 2026-09-28 12:00 | B1 |
+| Spring Boot 工程 | `后端工程/` | 10 | 2026-09-28 12:00 | B1 |
 
 ### 前端代码（pm-dev-2-frontend）
 | 产物 | 路径 | 页面数 | 生成时间 | 批次 |
 |------|------|--------|---------|------|
-| 独立前端工程 | `frontend/` | 6 | 2026-09-28 13:00 | B1 |
+| 独立前端工程 | `独立前端工程/` | 6 | 2026-09-28 13:00 | B1 |
 
 ### 单元测试（pm-dev-3-test）
 | 产物 | 路径 | 覆盖率 | 生成时间 | 批次 |
 |------|------|--------|---------|------|
-| 单元测试报告 | `test/[项目名]-单元测试报告-[日期].md` | 87% | 2026-09-28 14:00 | B1 |
+| 单元测试报告 | `测试/[项目名]-单元测试报告-[日期].md` | 87% | 2026-09-28 14:00 | B1 |
 
 ### 代码审查（pm-dev-4-codereview）
 | 产物 | 路径 | 严重问题数 | 生成时间 | 批次 |
 |------|------|-----------|---------|------|
-| 代码审查报告 | `review/[项目名]-代码审查报告-[日期].md` | 1 | 2026-09-28 15:00 | B1 |
+| 代码审查报告 | `代码审查/[项目名]-代码审查报告-[日期].md` | 1 | 2026-09-28 15:00 | B1 |
 
 ### 变更记录
 | 变更单 | 路径 | 变更类型 | 批次 |
 |--------|------|---------|------|
-| 批量导出功能 | `prd/changes/change-20261010-batch-export.md` | 新增 | B2 |
+| 批量导出功能 | `需求文档/变更单/变更-20261010-批量导出.md` | 新增 | B2 |
 ```
 
 ### 更新规则
@@ -159,9 +165,9 @@ output/[项目名]/
 
 ---
 
-## 三、共享规范文件 project-spec.md
+## 三、共享规范文件 项目规范.md
 
-`output/[项目名]/project-spec.md` 是跨批次积累的知识库，**只允许 append，不允许删除已有内容**：
+`output/[项目名]/项目规范.md` 是跨批次积累的知识库，**只允许 append，不允许删除已有内容**：
 
 ```markdown
 # [项目名] 项目规范
@@ -219,7 +225,7 @@ output/[项目名]/
 1. **pm-analyze**：首次执行时初始化"技术决策"和"业务术语表"
 2. **pm-prd**：追加"接口清单"
 3. **pm-deliver**：追加"组件使用约定"中发现的新约定
-4. **每个技能包执行前必须 Read project-spec.md**（如存在），确保与已有规范一致
+4. **每个技能包执行前必须 Read 项目规范.md**（如存在），确保与已有规范一致
 5. **pm-design-1-func**：可 append「技术决策」（错误码方案 / 分页规范）与「接口清单」新增 R 行；
    **不改动「接口清单」既有五列结构**
 6. **pm-design-2-db**：可补填「业务术语表」的 `数据库字段` 列（append-only，不删既有行）
@@ -234,7 +240,7 @@ output/[项目名]/
 |------|------|------|---------|
 | F | 功能 | F001, F002, ... | 分析报告功能清单 → PRD 功能章节 |
 | T | 测试用例 | T001, T002, ... | 测试用例文档 |
-| R | 接口 | R001, R002, ... | PRD 接口列表 → project-spec.md |
+| R | 接口 | R001, R002, ... | PRD 接口列表 → 项目规范.md |
 | P | 页面 | P001, P002, ... | 原型页面列表 → PRD 页面章节 |
 | C | 变更单 | C001, C002, ... | 变更单编号 |
 
@@ -291,7 +297,7 @@ output/[项目名]/
       "status": "completed",
       "startedAt": "2026-09-26T14:00:00Z",
       "completedAt": "2026-09-26T14:15:00Z",
-      "output": "analysis/analysis-report.md",
+      "output": "需求分析/需求分析报告.md",
       "counters": { "F": 12 }
     },
     {
@@ -299,7 +305,7 @@ output/[项目名]/
       "status": "completed",
       "startedAt": "2026-09-26T14:30:00Z",
       "completedAt": "2026-09-26T15:00:00Z",
-      "output": "prototypes/admin/",
+      "output": "原型/管理后台/",
       "counters": { "P": 8 }
     },
     {
@@ -371,15 +377,15 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 "devBaseline": null,
 "devPipeline": [
   { "step": "pm-design-1-func",  "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
-    "output": "design/[项目名]-功能详细设计.md", "counters": {} },
+    "output": "设计/[项目名]-功能详细设计.md", "counters": {} },
   { "step": "pm-design-2-db",    "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
-    "output": "design/db/[项目名]-schema.sql", "counters": {} },
+    "output": "设计/数据库/[项目名]-表结构.sql", "counters": {} },
   { "step": "pm-design-3-review", "status": "completed", "startedAt": "…Z", "completedAt": "…Z",
-    "output": "design/review/[项目名]-设计评审-[日期].md", "counters": {}, "blockerCount": 2 },
-  { "step": "pm-dev-1-backend",  "status": "completed", "output": "backend/", "counters": {} },
+    "output": "设计/评审/[项目名]-设计评审-[日期].md", "counters": {}, "blockerCount": 2 },
+  { "step": "pm-dev-1-backend",  "status": "completed", "output": "后端工程/", "counters": {} },
   { "step": "pm-dev-2-frontend", "status": "skipped",   "output": null, "counters": {}, "skipped": true },
-  { "step": "pm-dev-3-test",     "status": "completed", "output": "test/…-单元测试报告-[日期].md", "counters": {} },
-  { "step": "pm-dev-4-codereview", "status": "completed", "output": "review/…-代码审查报告-[日期].md",
+  { "step": "pm-dev-3-test",     "status": "completed", "output": "测试/…-单元测试报告-[日期].md", "counters": {} },
+  { "step": "pm-dev-4-codereview", "status": "completed", "output": "代码审查/…-代码审查报告-[日期].md",
     "counters": {}, "reviewBlockerCount": 1 }
 ]
 ```
@@ -403,16 +409,16 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 | 当前技能 | 前置依赖 | 检查文件 | 不满足时行为 |
 |----------|---------|---------|------------|
 | pm-analyze | 无（入口技能） | — | 直接执行 |
-| pm-prototype | pm-analyze 已完成 | `output/[项目名]/analysis/analysis-report.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 完成需求分析" |
-| pm-prd | pm-analyze 已完成 | `output/[项目名]/analysis/analysis-report.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 完成需求分析" |
-| pm-deliver | pm-prototype 已完成 | `output/[项目名]/prototypes/[端]/` 下至少有 1 个 HTML 文件 | ❌ 停止，提示"请先执行 pm-prototype 生成原型" |
-| pm-design-1-func | 无硬门禁（入口） | 有 PRD（`prd/*.md` 或 `--prd`）或有需求内容；无 `.pm-state.json` 则先初始化 | 直接执行 |
-| pm-design-2-db | pm-design-1-func 完成 | `design/[项目名]-功能详细设计.md` 存在 + devPipeline `pm-design-1-func`=completed | ❌ 停止，提示"请先执行 pm-design-1-func" |
-| pm-design-3-review | 1-func + 2-db 完成 | 功能详细设计.md + schema/delta SQL 均存在 | ❌ 停止，提示"请先完成功能详细设计与数据库设计" |
-| pm-dev-1-backend | 设计段完成 + 评审无搁置 Blocker | 功能详细设计.md + schema/delta SQL 存在；`design/review/*.md` 无「搁置待定」Blocker | ❌ 停止，提示"请先完成设计评审（Blocker 已解决）" |
-| pm-dev-2-frontend | 后端完成 | `backend/pom.xml` 存在 + devPipeline `pm-dev-1-backend`=completed | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
-| pm-dev-3-test | 后端完成 | `backend/` 存在 | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
-| pm-dev-4-codereview | 后端完成 | `backend/` 存在 | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
+| pm-prototype | pm-analyze 已完成 | `output/[项目名]/需求分析/需求分析报告.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 完成需求分析" |
+| pm-prd | pm-analyze 已完成 | `output/[项目名]/需求分析/需求分析报告.md` 存在 | ❌ 停止，提示"请先执行 pm-analyze 完成需求分析" |
+| pm-deliver | pm-prototype 已完成 | `output/[项目名]/原型/[端]/` 下至少有 1 个 HTML 文件 | ❌ 停止，提示"请先执行 pm-prototype 生成原型" |
+| pm-design-1-func | 无硬门禁（入口） | 有 PRD（`需求文档/*.md` 或 `--prd`）或有需求内容；无 `.pm-state.json` 则先初始化 | 直接执行 |
+| pm-design-2-db | pm-design-1-func 完成 | `设计/[项目名]-功能详细设计.md` 存在 + devPipeline `pm-design-1-func`=completed | ❌ 停止，提示"请先执行 pm-design-1-func" |
+| pm-design-3-review | 1-func + 2-db 完成 | 功能详细设计.md + 表结构/增量 SQL 均存在 | ❌ 停止，提示"请先完成功能详细设计与数据库设计" |
+| pm-dev-1-backend | 设计段完成 + 评审无搁置 Blocker | 功能详细设计.md + 表结构/增量 SQL 存在；`设计/评审/*.md` 无「搁置待定」Blocker | ❌ 停止，提示"请先完成设计评审（Blocker 已解决）" |
+| pm-dev-2-frontend | 后端完成 | `后端工程/pom.xml` 存在 + devPipeline `pm-dev-1-backend`=completed | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
+| pm-dev-3-test | 后端完成 | `后端工程/` 存在 | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
+| pm-dev-4-codereview | 后端完成 | `后端工程/` 存在 | ❌ 停止，提示"请先执行 pm-dev-1-backend" |
 
 ### 依赖检查执行规则
 
@@ -431,15 +437,15 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
 
 ```
 1. CLAUDE.md（如存在）→ 提取技术栈、组件约定、业务术语；若 CLAUDE.md 中声明了「参见 docs/component-spec.md」等自定义组件文档，一并读取（只读，不回写）
-2. output/[项目名]/project-spec.md（如存在）→ 提取已有技术决策、接口清单、组件约定
+2. output/[项目名]/项目规范.md（如存在）→ 提取已有技术决策、接口清单、组件约定
 3. output/[项目名]/.pm-state.json → 获取批次、计数器、pipeline 状态
 ```
 
 ### 铁律
 
-1. **先读后做**：未读取 project-spec.md 就开始生成产物 → 违规。每个技能包的 prompt.md 步骤 0 必须包含读取规范的动作
-2. **一致性校验**：如果生成的产物与 project-spec.md 中已有决策矛盾（如接口路径冲突、组件约定不同），必须向用户报告冲突并等待决策
-3. **反向沉淀**：每个技能包完成后，如果产生了新的可复用规范（如新发现的组件约定、接口规范），必须 append 到 project-spec.md；若 `CLAUDE.md` 存在，同步追加到其「迭代记录」节，保持两份规范一致，避免下次读到过时的 CLAUDE.md
+1. **先读后做**：未读取 项目规范.md 就开始生成产物 → 违规。每个技能包的 prompt.md 步骤 0 必须包含读取规范的动作
+2. **一致性校验**：如果生成的产物与 项目规范.md 中已有决策矛盾（如接口路径冲突、组件约定不同），必须向用户报告冲突并等待决策
+3. **反向沉淀**：每个技能包完成后，如果产生了新的可复用规范（如新发现的组件约定、接口规范），必须 append 到 项目规范.md；若 `CLAUDE.md` 存在，同步追加到其「迭代记录」节，保持两份规范一致，避免下次读到过时的 CLAUDE.md
 
 ---
 
@@ -456,7 +462,7 @@ pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend
    ```
 3. **PRD 中的变更标注**：变更功能在 PRD 中独立成节，标题格式 `### F015 用户导出优化（变更自 B1:F008）`
 4. **测试用例关联**：变更功能的测试用例必须包含回归测试项，验证原功能不受影响
-5. **project-spec.md 记录**：在"技术决策"章节追加变更批次的决策记录
+5. **项目规范.md 记录**：在"技术决策"章节追加变更批次的决策记录
 
 ### 变更类型
 
@@ -501,12 +507,12 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 | 触发时机 | 检查条件 | 暂停行为 |
 |---------|---------|---------|
 | pm-analyze 完成后 | 待澄清问题中 Blocker 数 > 0 | 暂停流程，提示用户处理 Blocker |
-| pm-prototype 启动前 | analysis-report.md 中 Blocker 未全部标记为 ✅ | 阻止启动，提示用户先解决 Blocker |
+| pm-prototype 启动前 | 需求分析报告.md 中 Blocker 未全部标记为 ✅ | 阻止启动，提示用户先解决 Blocker |
 | pm-prd 完成后 | PRD 中标注了"待确认"项 | 提醒用户确认，但不强制暂停 |
 | pm-deliver 启动前 | PRD 不存在或未标注批次 | 阻止启动 |
 | pm-design-3-review 后 | 设计评审 Blocker > 0 | 记 `PAUSE@design-blocker`，输出 Blocker 清单，暂停 |
-| pm-dev-1-backend 后 | `backend/` 无 pom.xml 或编译失败 | 记 FAIL，暂停 |
-| pm-dev-2-frontend 后 | `frontend/` 无 package.json（未 `--skip-frontend`） | 记 FAIL，暂停 |
+| pm-dev-1-backend 后 | `后端工程/` 无 pom.xml 或编译失败 | 记 FAIL，暂停 |
+| pm-dev-2-frontend 后 | `独立前端工程/` 无 package.json（未 `--skip-frontend`） | 记 FAIL，暂停 |
 | pm-dev-3-test 后 | 覆盖率未达标或单测未通过 | 记 FAIL，暂停 |
 | pm-dev-4-codereview 后 | 严重问题 > 0 | 记 `PAUSE@codereview`（报告完成，阻塞下游），暂停 |
 
@@ -599,19 +605,19 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 
 | 资产 | 来源 | 用途 |
 |------|------|------|
-| 表/字段命名约定 | 历史 `design/db/*-schema.sql` | 复用同义表/字段名（`t_` 前缀、snake_case） |
-| 通用实体 | 历史 `design/*-数据库设计.md`、`backend/` entity | 复用用户/部门/字典等公共实体 |
-| 错误码分段 | 历史 `design/*-功能详细设计.md`、`project-spec.md` | 新接口错误码不冲突 |
-| 响应/分页/鉴权约定 | 历史 `backend/` 的 `Result<T>`、分页、JWT | 沿用统一响应与鉴权模式 |
-| 接口风格 | 历史 `project-spec.md`「接口清单」、`backend/` controller | RESTful 路径/动词一致 |
-| 实体/DDL 映射 | 历史 `design/*-数据库设计.md` 的字段映射表 | 复用具名规则 |
+| 表/字段命名约定 | 历史 `设计/数据库/*-表结构.sql` | 复用同义表/字段名（`t_` 前缀、snake_case） |
+| 通用实体 | 历史 `设计/*-数据库设计.md`、`后端工程/` entity | 复用用户/部门/字典等公共实体 |
+| 错误码分段 | 历史 `设计/*-功能详细设计.md`、`项目规范.md` | 新接口错误码不冲突 |
+| 响应/分页/鉴权约定 | 历史 `后端工程/` 的 `Result<T>`、分页、JWT | 沿用统一响应与鉴权模式 |
+| 接口风格 | 历史 `项目规范.md`「接口清单」、`后端工程/` controller | RESTful 路径/动词一致 |
+| 实体/DDL 映射 | 历史 `设计/*-数据库设计.md` 的字段映射表 | 复用具名规则 |
 
 ### 规则
 
 1. **软参考，不阻塞**：参考目录找不到资产就跳过，不报错、不中断
 2. **复用留痕**：功能详细设计中注明「参考来源」（哪个历史项目的哪个文件/约定）
 3. **不自动改写历史项目**：只读，绝不回写参考项目
-4. **冲突优先自身**：当前项目 project-spec.md 已有决策优先于历史参考
+4. **冲突优先自身**：当前项目 项目规范.md 已有决策优先于历史参考
 
 ---
 
@@ -624,10 +630,10 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 ### 配置来源（按优先级）
 
 1. 入参 `--config <路径>`（优先）
-2. 约定名 `output/[项目名]/project-config.md`（自动检测）
+2. 约定名 `output/[项目名]/项目配置.md`（自动检测）
 3. 都没有 → 跳过本机制
 
-### 配置文档模板（`project-config.md`，8 节）
+### 配置文档模板（`项目配置.md`，8 节）
 
 ```markdown
 # [项目名] 项目初始化配置
@@ -670,12 +676,12 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 |--------|---------------------|---------------------------|
 | 1. 项目信息 | 项目性质参考 | 项目性质覆盖运行时探测（new/iteration） |
 | 2. 输入来源 | 需求/PRD 路径作为多格式抽取输入源 | PRD/需求路径覆盖 `--prd`/`--requirement` |
-| 3. 前端工程 | 作为「前端工程首轮匹配」定位来源 | git → clone 到 `frontend/`；本地 → `devBaseline` 引用 |
-| 4. 后端工程 | 不消费 | git → clone 到 `backend/`；本地 → `devBaseline` 引用 |
-| 5. DB 脚本 | 不消费 | `*.sql` 拷贝到 `design/db/` 作基线 |
+| 3. 前端工程 | 作为「前端工程首轮匹配」定位来源 | git → clone 到 `独立前端工程/`；本地 → `devBaseline` 引用 |
+| 4. 后端工程 | 不消费 | git → clone 到 `后端工程/`；本地 → `devBaseline` 引用 |
+| 5. DB 脚本 | 不消费 | `*.sql` 拷贝到 `设计/数据库/` 作基线 |
 | 6. 待开发模块 | 功能清单种子（标注来源「配置」） | 功能清单种子 |
 | 7. 参考模块 | 参考历史分析/术语（软参考） | 并入历史参考扫描目录（§十二） |
-| 8. 备注约束 | 分析约束 + append 技术决策 | 写入 project-spec「技术决策」+ 生成 CLAUDE.md |
+| 8. 备注约束 | 分析约束 + append 技术决策 | 写入 项目规范.md「技术决策」+ 生成 CLAUDE.md |
 
 > 工程拉取 / DB 基线 / CLAUDE.md 自动生成只由**研发链**触发；PM 链只读、不拉工程。
 
@@ -706,5 +712,5 @@ pm-analyze 支持从多种格式的输入中提取需求信息。
 1. **配置文档是入参不是产物**：不进 README 产物索引（同 `.pm-dev-run.md`），AI 不回写
 2. **无配置不阻塞**：软参考语义，找不到/不填就跳过
 3. **幂等**：工程/脚本已就位不重复拉取；CLAUDE.md 已存在不覆盖（仅补缺）
-4. **消费留痕**：功能详细设计「参考来源」注明「配置：project-config.md」
+4. **消费留痕**：功能详细设计「参考来源」注明「配置：项目配置.md」
 5. **过时提示**：读配置时若发现信息与实际不符（工程路径 / 分支 / DDL 已变），提示用户更新配置，不自行改写

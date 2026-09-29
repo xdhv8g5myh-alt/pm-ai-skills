@@ -15,7 +15,7 @@
 
 **依赖检查**（不满足则停止执行）：
 
-1. 检查 `output/[项目名]/analysis/analysis-report.md` 是否存在
+1. 检查 `output/[项目名]/需求分析/需求分析报告.md` 是否存在
    - **不存在** → ❌ 停止执行，输出：
      ```
      ❌ 前置依赖不满足：未找到需求分析报告。
@@ -28,7 +28,7 @@
 
 **Blocker 门禁检查**：
 
-4. Read `output/[项目名]/analysis/analysis-report.md` 的第 7 章（待澄清问题清单）
+4. Read `output/[项目名]/需求分析/需求分析报告.md` 的第 7 章（待澄清问题清单）
 5. 统计风险等级为"高"且状态标记为"待确认"的问题数量（= Blocker 遗留数）
 6. **Blocker 遗留 > 0** → 向用户输出：
    ```
@@ -43,9 +43,9 @@
 ## 步骤 0：读取项目规范（规范引用铁律）
 
 按顺序检查（**未读取不得进入步骤 1**）：
-1. **【强制】** `output/[项目名]/project-spec.md`：提取组件使用约定、设计规范、已有接口清单
+1. **【强制】** `output/[项目名]/项目规范.md`：提取组件使用约定、设计规范、已有接口清单
 2. 当前目录 `CLAUDE.md`：提取设计规范、已有组件库约定、页面命名规则
-3. `output/[项目名]/analysis/analysis-report.md`：提取端类型推荐和功能清单
+3. `output/[项目名]/需求分析/需求分析报告.md`：提取端类型推荐和功能清单
 4. 如果用户提供了参考的已有 HTML 文件路径，Read 该文件提取布局和组件使用风格
 
 ## 步骤 1：判断生成模式
@@ -67,15 +67,15 @@
 
 ### 脚本加载（必须严格按此顺序，放在 </body> 前）
 ```html
-<script src="../../_shared/vendor/vue.global.prod.js"></script>
-<script src="../../_shared/vendor/arco-vue.min.js"></script>
-<script src="../../_shared/proto-utils.js"></script>
+<script src="../../_公共资源/vendor/vue.global.prod.js"></script>
+<script src="../../_公共资源/vendor/arco-vue.min.js"></script>
+<script src="../../_公共资源/proto-utils.js"></script>
 ```
 
 ### CSS 引用（放在 <head> 中）
 ```html
-<link rel="stylesheet" href="../../_shared/vendor/arco.css"/>
-<link rel="stylesheet" href="../../_shared/theme.css"/>
+<link rel="stylesheet" href="../../_公共资源/vendor/arco.css"/>
+<link rel="stylesheet" href="../../_公共资源/theme.css"/>
 ```
 
 ### 关键约束（违反任何一条会导致页面空白）
@@ -114,10 +114,10 @@ proto-toolbar 按钮切换这四个状态。
 ## 步骤 3：读取基础模板
 
 使用 Read 工具读取目标端的 `_base.html`：
-- admin：`prototypes/admin/_base.html`
-- h5：`prototypes/h5/_base.html`
-- user-pc：`prototypes/user-pc/_base.html`
-- miniapp：`prototypes/miniapp/_base.html`
+- admin：`原型/管理后台/_base.html`
+- h5：`原型/H5/_base.html`
+- user-pc：`原型/用户前台/_base.html`
+- miniapp：`原型/小程序/_base.html`
 
 根据目标端，还需读取对应的端规格文件：
 - `${CLAUDE_SKILL_DIR}/prompts/admin-spec.md`（管理后台）
@@ -151,7 +151,7 @@ graph LR
   index --> page2[功能页2]
   page1 --> page2
 ```
-3. 打开方式说明：将 `output/prototypes/[端类型]/[项目名]/index.html` 拖入浏览器即可
+3. 打开方式说明：将 `output/原型/[端类型]/[项目名]/index.html` 拖入浏览器即可
 
 ## 步骤 7：更新项目管理文件
 
@@ -162,8 +162,8 @@ graph LR
 - `pipeline` 中 pm-prototype 的 `status` → `completed`，填入 `completedAt` 和 `output`
 - `counters.P` 更新为最后一个 P 编号
 
-### 7.3 追加 project-spec.md
-如果在生成过程中发现了新的组件使用约定，追加到 project-spec.md 的"组件使用约定"表格。
+### 7.3 追加 项目规范.md
+如果在生成过程中发现了新的组件使用约定，追加到 项目规范.md 的"组件使用约定"表格。
 
 ### 7.4 页面编号
 每个生成的页面在 index.html 导航页中标注 P 编号：
@@ -181,7 +181,7 @@ P002 用户列表 — user-list.html
 ## 输出目录结构
 
 ```
-output/prototypes/[端类型]/[项目名]/
+output/原型/[端类型]/[项目名]/
 ├── index.html          # 导航索引，列出所有页面（全量模式）
 ├── [功能1].html
 ├── [功能2].html

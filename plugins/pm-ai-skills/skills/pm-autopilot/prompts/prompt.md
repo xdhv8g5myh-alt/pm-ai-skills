@@ -50,7 +50,7 @@
 - 定位第一个非 PASS（且非跳过）步作为起点
 - 全部 PASS → 提示用户："所有步骤已完成。是否需要从某步重跑？"
 - 有暂停标记（`PAUSE@*`）→ 检查暂停条件是否已解除：
-  - `PAUSE@analyze-blocker`：re-check analysis-report.md 中 Blocker 遗留
+  - `PAUSE@analyze-blocker`：re-check 需求分析报告.md 中 Blocker 遗留
     - 遗留 = 0 → 解除暂停，从下一步继续
     - 遗留 > 0 → 再次暂停，输出未解决 Blocker 清单
 
@@ -112,7 +112,7 @@ BLOCKER_COUNT(待确认 Blocker 数)
 ### 1.3 subagent 返回后验证
 
 只检查关键产物存在性（不读全量）：
-- `output/[项目名]/analysis/analysis-report.md` 存在？
+- `output/[项目名]/需求分析/需求分析报告.md` 存在？
 - `output/[项目名]/.pm-state.json` 已更新？
 - `output/[项目名]/README.md` 已更新？
 
@@ -123,7 +123,7 @@ BLOCKER_COUNT(待确认 Blocker 数)
 
 ### 1.5 门禁检查（Blocker）
 
-Read `output/[项目名]/analysis/analysis-report.md` 第 7 章，统计风险等级=高且状态="待确认"的问题数：
+Read `output/[项目名]/需求分析/需求分析报告.md` 第 7 章，统计风险等级=高且状态="待确认"的问题数：
 
 - **Blocker > 0**：
   - run 文件：Step 1 STATUS = PASS（产物完成），**同时**记 `PAUSE@analyze-blocker`
@@ -147,7 +147,7 @@ Read `output/[项目名]/analysis/analysis-report.md` 第 7 章，统计风险�
 ### 2.0 Blocker re-check（仅 PAUSE@analyze-blocker 续做时）
 
 如果本批次曾因 `PAUSE@analyze-blocker` 暂停，dispatch 前再次检查：
-- Read analysis-report.md 第 7 章，确认"待确认" Blocker = 0
+- Read 需求分析报告.md 第 7 章，确认"待确认" Blocker = 0
 - 仍 > 0 → 再次暂停，不 dispatch pm-prototype
 
 ### 2.1 更新 run 文件
@@ -164,8 +164,8 @@ Step 2 STATUS = 进行中。
 执行前先 Read `[pm-common/project-management.md 的绝对路径]` 了解项目管理规范。
 
 上游产物路径：
-- 分析报告：output/[项目名]/analysis/analysis-report.md
-- 项目规范：output/[项目名]/project-spec.md
+- 分析报告：output/[项目名]/需求分析/需求分析报告.md
+- 项目规范：output/[项目名]/项目规范.md
 
 完成后只回报：
 STATUS(PASS|FAIL)
@@ -175,7 +175,7 @@ SUMMARY(一句话)
 
 ### 2.3 返回后验证
 
-- `output/[项目名]/prototypes/[端]/` 下有 HTML 文件？
+- `output/[项目名]/原型/[端]/` 下有 HTML 文件？
 - 有 index.html 导航页？
 
 ### 2.4 更新 run 文件 + 门禁检查
@@ -201,9 +201,9 @@ Step 3 STATUS = 进行中。
 执行前先 Read `[pm-common/project-management.md 的绝对路径]` 了解项目管理规范。
 
 上游产物路径：
-- 分析报告：output/[项目名]/analysis/analysis-report.md
-- 原型目录：output/[项目名]/prototypes/
-- 项目规范：output/[项目名]/project-spec.md
+- 分析报告：output/[项目名]/需求分析/需求分析报告.md
+- 原型目录：output/[项目名]/原型/
+- 项目规范：output/[项目名]/项目规范.md
 
 完成后只回报：
 STATUS(PASS|FAIL)
@@ -213,9 +213,9 @@ SUMMARY(一句话)
 
 ### 3.3 返回后验证
 
-- `output/[项目名]/prd/[项目名]-PRD-*.md` 存在？
-- `output/[项目名]/prd/[项目名]-test-cases.md` 存在？
-- `output/[项目名]/prd/[项目名]-estimate.md` 存在？
+- `output/[项目名]/需求文档/[项目名]-PRD-*.md` 存在？
+- `output/[项目名]/需求文档/[项目名]-测试用例.md` 存在？
+- `output/[项目名]/需求文档/[项目名]-工时估算.md` 存在？
 
 ### 3.4 更新 run 文件 + 门禁检查
 
@@ -242,12 +242,12 @@ Step 4 STATUS = 进行中。
 执行前先 Read `[pm-common/project-management.md 的绝对路径]` 了解项目管理规范。
 
 上游产物路径：
-- PRD：output/[项目名]/prd/
-- 原型目录：output/[项目名]/prototypes/
-- 项目规范：output/[项目名]/project-spec.md
+- PRD：output/[项目名]/需求文档/
+- 原型目录：output/[项目名]/原型/
+- 项目规范：output/[项目名]/项目规范.md
 
 **编排层约定（必须遵守）**：
-- 标注结果输出为 `output/[项目名]/prototypes/[端]/[页面名].annotated.html` **副本**，
+- 标注结果输出为 `output/[项目名]/原型/[端]/[页面名]-标注版.html` **副本**，
   **禁止覆盖原原型 HTML**——pm-deliver 仍需读取干净原型。
 - 编号需回写到 PRD 对应需求描述开头。
 
@@ -259,12 +259,12 @@ SUMMARY(一句话)
 
 ### 4.2 返回后验证
 
-- `output/[项目名]/prototypes/[端]/` 下存在 `*.annotated.html`？
+- `output/[项目名]/原型/[端]/` 下存在 `*-标注版.html`？
 - 原原型 HTML 文件未被覆盖（文件列表与 Step 2 一致）？
 
 ### 4.3 更新 run 文件 + 门禁检查
 
-- 存在 annotated 副本且原原型未被覆盖 → PASS，进入 Step 5
+- 存在标注版副本且原原型未被覆盖 → PASS，进入 Step 5
 - 不满足 → FAIL，暂停
 
 ---
@@ -285,9 +285,9 @@ Step 5 STATUS = 进行中。
 执行前先 Read `[pm-common/project-management.md 的绝对路径]` 了解项目管理规范。
 
 上游产物路径：
-- 原型目录：output/[项目名]/prototypes/（读取原原型，**忽略 .annotated.html 副本**）
-- PRD：output/[项目名]/prd/
-- 项目规范：output/[项目名]/project-spec.md
+- 原型目录：output/[项目名]/原型/（读取原原型，**忽略 -标注版.html 副本**）
+- PRD：output/[项目名]/需求文档/
+- 项目规范：output/[项目名]/项目规范.md
 
 完成后只回报：
 STATUS(PASS|FAIL)
@@ -297,8 +297,8 @@ SUMMARY(一句话)
 
 ### 5.3 返回后验证
 
-- `output/[项目名]/vue/package.json` 存在？
-- `output/[项目名]/vue/src/` 目录存在？
+- `output/[项目名]/前端交付/package.json` 存在？
+- `output/[项目名]/前端交付/src/` 目录存在？
 
 ### 5.4 更新 run 文件
 
@@ -326,7 +326,7 @@ SUMMARY(一句话)
 - pm-deliver：[SUMMARY]
 
 📁 产物索引：output/[项目名]/README.md
-📌 规格版原型（带需求编号标注）：output/[项目名]/prototypes/[端]/*.annotated.html
+📌 规格版原型（带需求编号标注）：output/[项目名]/原型/[端]/*-标注版.html
 
 🔒 如需冻结此批次（禁止修改），输入"冻结批次"
 🆕 如需开始新的迭代，输入"新批次"
@@ -357,7 +357,7 @@ SUMMARY(一句话)
 
 执行要点：
 - 产物一律落 `output/{项目名}/` 下各阶段子目录
-- 遵循规范引用铁律（先读 project-spec.md 再产出）
+- 遵循规范引用铁律（先读 项目规范.md 再产出）
 - 产物依赖门禁检查可跳过（autopilot 已在编排层保证依赖顺序）
 
 完成后只回报（不回传产物全文）：

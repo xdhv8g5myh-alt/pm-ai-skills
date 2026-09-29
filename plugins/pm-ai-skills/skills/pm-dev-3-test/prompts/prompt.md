@@ -4,15 +4,15 @@
 
 ## 步骤 0：门禁检查（硬门禁，可强制跳过）
 
-1. `backend/` 存在
+1. `后端工程/` 存在
    - 不存在 → ❌ 停止：`请先执行 pm-dev-1-backend`
 2. 用户强制跳过 → 记 `"dependencySkipped": true`
 
 ## 步骤 1：读取上下文
 
-1. 【用例依据】`design/[项目名]-功能详细设计.md`（接口业务规则/错误码/状态流转）
-2. 【被测对象】`backend/` 结构：`src/main/java` 下的 service/controller/mapper 清单
-3. 【契约复验（可选）】`frontend/`（只读核对 R 编号方法/路径/字段，不改前端）
+1. 【用例依据】`设计/[项目名]-功能详细设计.md`（接口业务规则/错误码/状态流转）
+2. 【被测对象】`后端工程/` 结构：`src/main/java` 下的 service/controller/mapper 清单
+3. 【契约复验（可选）】`独立前端工程/`（只读核对 R 编号方法/路径/字段，不改前端）
 4. `.pm-state.json`（读 `devProjectType`）
 
 ## 步骤 2：扫描 + 写/补单测
@@ -36,7 +36,7 @@
 
 ## 步骤 5：出报告
 
-写入 `output/[项目名]/test/[项目名]-单元测试报告-[日期].md`：
+写入 `output/[项目名]/测试/[项目名]-单元测试报告-[日期].md`：
 
 ```markdown
 # 单元测试报告
@@ -67,7 +67,7 @@
 ### 6.1 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-dev-3-test` 条目：
-`{"step":"pm-dev-3-test","status":"completed","startedAt":null,"completedAt":"…Z","output":"test/[项目名]-单元测试报告-[日期].md","counters":{}}`。时间戳 UTC 带 `Z`。
+`{"step":"pm-dev-3-test","status":"completed","startedAt":null,"completedAt":"…Z","output":"测试/[项目名]-单元测试报告-[日期].md","counters":{}}`。时间戳 UTC 带 `Z`。
 
 ### 6.2 更新 README.md
 
@@ -80,7 +80,7 @@
 2. 覆盖了 Service 业务规则/错误码/状态流转
 3. 覆盖率是实测值，未编造；失败如实列出
 4. 迭代项目聚焦新增/修改类
-5. 报告落在 `test/`（绝对路径核对过）
+5. 报告落在 `测试/`（绝对路径核对过）
 6. devPipeline 条目 6 keys 齐全，时间戳 UTC 带 `Z`
 7. README 表 5 列
 
@@ -89,7 +89,7 @@
 只回（不倒全文）：
 
 ```
-✅ 单元测试报告：`output/[项目名]/test/[项目名]-单元测试报告-[日期].md`
+✅ 单元测试报告：`output/[项目名]/测试/[项目名]-单元测试报告-[日期].md`
 
 - 测试 [x] 个 · 通过 [y] · 失败 [z]
 - 覆盖率 [行%]（目标 85%）

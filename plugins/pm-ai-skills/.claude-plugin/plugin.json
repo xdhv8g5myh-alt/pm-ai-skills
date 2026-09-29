@@ -1,6 +1,6 @@
 {
   "name": "pm-ai-skills",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "产品经理 + 研发全流程技能包：需求分析 → 原型 → PRD → 前端交付，含全流程自动编排、原型标注、设计稿反推、PRD 评审自查；研发链（功能详细设计 → 数据库设计 → 设计评审 → Spring Boot 后端 → 独立前端 → 单元测试 → 代码审查）",
   "author": {
     "name": "panl83",

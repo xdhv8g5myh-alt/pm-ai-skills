@@ -16,8 +16,8 @@ description: 当用户意图涉及写PRD、生成PRD、需求文档、产品需�
 
 ## 铁律（不可违反）
 
-1. **产物依赖门禁**：启动前必须检查 `output/[项目名]/analysis/analysis-report.md` 是否存在，不存在则停止并提示"请先执行 pm-analyze 完成需求分析"
-2. **规范引用铁律**：执行前必须读取 `project-spec.md`（如存在），确保 PRD 中的接口命名、数据格式与已有规范一致；未读取不得开始生成
+1. **产物依赖门禁**：启动前必须检查 `output/[项目名]/需求分析/需求分析报告.md` 是否存在，不存在则停止并提示"请先执行 pm-analyze 完成需求分析"
+2. **规范引用铁律**：执行前必须读取 `项目规范.md`（如存在），确保 PRD 中的接口命名、数据格式与已有规范一致；未读取不得开始生成
 3. **禁止空泛描述**：每个功能点必须描述"是什么、为什么、怎么做"，禁止只写功能名称
 4. **组件必须绑定**：每个 UI 功能点必须标注对应的 Arco Design Vue 组件名（`ATable` / `AForm` 等）
 5. **测试用例三维覆盖**：每个功能点必须有正常流程 + 边界值 + 异常流程三条测试用例
@@ -31,30 +31,30 @@ description: 当用户意图涉及写PRD、生成PRD、需求文档、产品需�
 ## 执行流程概览
 
 ```
-读取上下文（CLAUDE.md + project-spec.md + .pm-state.json + analysis-report.md）【规范引用铁律】
+读取上下文（CLAUDE.md + 项目规范.md + .pm-state.json + 需求分析报告.md）【规范引用铁律】
     ↓
-产物依赖检查：analysis-report.md 存在？pm-analyze completed？【硬门禁】
+产物依赖检查：需求分析报告.md 存在？pm-analyze completed？【硬门禁】
     ↓
 判断模式（完整PRD or 变更单）+ 判断批次类型（新建 or 变更）
     ↓
 生成文档，变更功能独立成节并溯源【变更溯源】
     ↓
-写入 output/[项目名]/prd/
+写入 output/[项目名]/需求文档/
     ↓
-更新 README.md + .pm-state.json + project-spec.md
+更新 README.md + .pm-state.json + 项目规范.md
 ```
 
 ## output-contract
 
 | 产物 | 路径 | 模式 |
 |------|------|------|
-| 完整 PRD | `output/[项目名]/prd/[项目名]-PRD-v1.0.md` | 完整模式，含 F/R 编号 |
-| 测试用例 | `output/[项目名]/prd/[项目名]-test-cases.md` | 完整模式，含 T 编号关联 F 编号 |
-| 工时估算 | `output/[项目名]/prd/[项目名]-estimate.md` | 完整模式 |
-| 变更单 | `output/[项目名]/prd/changes/change-[日期]-[功能名].md` | 变更单模式，标注变更自 B[N]:F[XXX] |
-| 评审报告 | `output/[项目名]/prd/[项目名]-review-[日期].md` | 两种模式都产出，由步骤 3.6 调用 pm-review 生成 |
+| 完整 PRD | `output/[项目名]/需求文档/[项目名]-PRD-v1.0.md` | 完整模式，含 F/R 编号 |
+| 测试用例 | `output/[项目名]/需求文档/[项目名]-测试用例.md` | 完整模式，含 T 编号关联 F 编号 |
+| 工时估算 | `output/[项目名]/需求文档/[项目名]-工时估算.md` | 完整模式 |
+| 变更单 | `output/[项目名]/需求文档/变更单/变更-[日期]-[功能名].md` | 变更单模式，标注变更自 B[N]:F[XXX] |
+| 评审报告 | `output/[项目名]/需求文档/[项目名]-评审自查-[日期].md` | 两种模式都产出，由步骤 3.6 调用 pm-review 生成 |
 
-下游技能（pm-deliver）可从 `output/[项目名]/prd/` 读取技术规格约束。
+下游技能（pm-deliver）可从 `output/[项目名]/需求文档/` 读取技术规格约束。
 
 ---
 

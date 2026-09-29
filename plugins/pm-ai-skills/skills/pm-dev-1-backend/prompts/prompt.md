@@ -6,32 +6,32 @@
 
 ### 0.1 硬门禁（可强制跳过）
 
-1. `design/[项目名]-功能详细设计.md` 存在 且 `design/db/[项目名]-schema.sql`（或 delta SQL）存在
+1. `设计/[项目名]-功能详细设计.md` 存在 且 `设计/数据库/[项目名]-表结构.sql`（或 增量 SQL）存在
    - 缺任一 → ❌ 停止：`请先完成功能详细设计与数据库设计`
 2. 用户强制跳过 → 记 `"dependencySkipped": true`
 
 ### 0.2 软门禁（评审 Blocker）
 
 - 读 `.pm-state.json` 中 `pm-design-3-review` 条目的 `blockerCount`
-- 或读最新 `design/review/*-设计评审-*.md` 的「二、Blocker」，看是否仍有「搁置待定」Blocker
+- 或读最新 `设计/评审/*-设计评审-*.md` 的「二、Blocker」，看是否仍有「搁置待定」Blocker
 - **有搁置 Blocker → 停止**：输出 Blocker 清单，提示「请先解决设计评审 Blocker 或确认带问题推进」
 - 用户明确「继续/带问题推进」→ 继续，但在 SUMMARY 里标注
 
 ## 步骤 1：读取上下文
 
-1. 【主输入】`design/[项目名]-功能详细设计.md`（接口设计块：R 编号/method/URL/请求/响应/错误码/业务规则）
-2. `design/db/[项目名]-schema.sql`（或 delta SQL）：表结构与 DDL
-3. `output/[项目名]/project-spec.md`（响应格式 pre-seed：`{code:0,message:"ok",data:{}}`、baseURL、技术决策）
+1. 【主输入】`设计/[项目名]-功能详细设计.md`（接口设计块：R 编号/method/URL/请求/响应/错误码/业务规则）
+2. `设计/数据库/[项目名]-表结构.sql`（或 增量 SQL）：表结构与 DDL
+3. `output/[项目名]/项目规范.md`（响应格式 pre-seed：`{code:0,message:"ok",data:{}}`、baseURL、技术决策）
 4. `.pm-state.json`：读 `devProjectType`（new/iteration）
 
 ## 步骤 2：判定性质 + 工程骨架
 
 ### 2.1 新项目（devProjectType == "new"）
 
-创建 `backend/` Maven 工程：
+创建 `后端工程/` Maven 工程：
 
 ```
-backend/
+后端工程/
 ├── pom.xml                       # Spring Boot 3.x + MyBatis-Plus + MySQL + JUnit 5 + Mockito
 ├── src/main/java/com/[项目包名]/
 │   ├── [AppName]Application.java
@@ -55,7 +55,7 @@ backend/
 
 ### 2.2 迭代项目（devProjectType == "iteration"）
 
-**就地增改**现有 `backend/`：
+**就地增改**现有 `后端工程/`：
 - 盘点现有包结构、`Result`、鉴权、分页约定，沿用不另起
 - 新增：新 controller/service/mapper/entity/po/vo（对应「新增」接口/表）
 - 修改：只改「修改」接口对应的类
@@ -73,7 +73,7 @@ backend/
 
 ## 步骤 4：编译 + 基线测试（交付门槛）
 
-1. `cd backend && mvn -q compile` 必须通过
+1. `cd 后端工程 && mvn -q compile` 必须通过
 2. `mvn -q test` 跑基线测试
 3. **环境性失败**（如无 MySQL 实例导致 `@SpringBootTest` 起不来）：明确标注「环境性失败 + 原因」，
    不冒充通过；Mockito 纯单测应能通过
@@ -83,7 +83,7 @@ backend/
 ### 5.1 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-dev-1-backend` 条目：
-`{"step":"pm-dev-1-backend","status":"completed","startedAt":null,"completedAt":"…Z","output":"backend/","counters":{}}`。时间戳 UTC 带 `Z`。
+`{"step":"pm-dev-1-backend","status":"completed","startedAt":null,"completedAt":"…Z","output":"后端工程/","counters":{}}`。时间戳 UTC 带 `Z`。
 
 ### 5.2 更新 README.md
 
@@ -105,7 +105,7 @@ backend/
 只回（不倒全文）：
 
 ```
-✅ 后端工程：`output/[项目名]/backend/`
+✅ 后端工程：`output/[项目名]/后端工程/`
 
 - 项目性质：新项目（新建）/ 迭代（就地增改）
 - 实现接口 R [n] 个 · 新增/修改类 [m] 个

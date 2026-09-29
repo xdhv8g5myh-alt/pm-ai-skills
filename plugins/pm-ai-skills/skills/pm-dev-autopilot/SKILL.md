@@ -19,7 +19,7 @@ description: 研发链全流程自动编排器（pm-design-1-func → pm-design-
 - 触发词：自动跑研发、一键开发、全自动设计开发、研发编排、自动生成后端、一键做全栈
 - 参数：
   - `--project [项目名]`
-  - `--prd [PRD 路径]` / `--requirement [需求文本或文件]`（输入来源，二选一；缺省探测 `prd/`）
+  - `--prd [PRD 路径]` / `--requirement [需求文本或文件]`（输入来源，二选一；缺省探测 `需求文档/`）
   - `--iterate`（强制迭代模式）
   - `--ref [参考目录]`（历史参考，默认 `D:/pm-ai/pm-ai-projects/output/`）
   - `--config [配置文档路径]`（项目初始化配置，接既有工程时定位/拉取工程、导入 DB 基线、生成 CLAUDE.md）
@@ -39,7 +39,7 @@ description: 研发链全流程自动编排器（pm-design-1-func → pm-design-
 
 `pm-design-1-func → pm-design-2-db → pm-design-3-review → pm-dev-1-backend → [pm-dev-2-frontend] → pm-dev-3-test → pm-dev-4-codereview` 严格串行。
 
-> pm-dev-2-frontend 可选（`--skip-frontend` 跳过）：PM 可能停在原型，根本不生成前端代码。跳过不影响后续 test/codereview 完成判定。
+> pm-dev-2-frontend 可选（`--skip-frontend` 跳过）：PM 可能停在原型，根本不生成前端代码。跳过不影响后续 测试/代码审查 完成判定。
 
 ### dispatch 五动作（每步固定）
 
@@ -53,9 +53,9 @@ description: 研发链全流程自动编排器（pm-design-1-func → pm-design-
 
 | 门禁点 | 检查条件 | 暂停行为 |
 |--------|---------|---------|
-| pm-design-3-review 后 | `design/review/*.md` 中 Blocker > 0 | 记 `PAUSE@design-blocker`，输出 Blocker 清单，暂停 |
-| pm-dev-1-backend 后 | `backend/pom.xml` 缺失或编译失败 | 记 FAIL，暂停 |
-| pm-dev-2-frontend 后 | `frontend/package.json` 缺失（未 `--skip-frontend`） | 记 FAIL，暂停 |
+| pm-design-3-review 后 | `设计/评审/*.md` 中 Blocker > 0 | 记 `PAUSE@design-blocker`，输出 Blocker 清单，暂停 |
+| pm-dev-1-backend 后 | `后端工程/pom.xml` 缺失或编译失败 | 记 FAIL，暂停 |
+| pm-dev-2-frontend 后 | `独立前端工程/package.json` 缺失（未 `--skip-frontend`） | 记 FAIL，暂停 |
 | pm-dev-3-test 后 | 覆盖率未达标或单测未通过 | 记 FAIL，暂停 |
 | pm-dev-4-codereview 后 | 严重问题 > 0 | 记 `PAUSE@codereview`（报告完成，阻塞下游），暂停 |
 

@@ -35,7 +35,7 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 
 `pm-analyze → pm-prototype → pm-prd → pm-annotate → pm-deliver` 严格顺序依赖，**串行 dispatch，不并行**。
 
-> pm-annotate 是可选步骤（`--skip-annotate` 可跳过）：它把 PRD 需求编号标注到原型页面上并回写 PRD，产出供人工评审的「规格版原型」。标注输出为 `[页面].annotated.html` 副本，**不覆盖原原型**——pm-deliver 读的仍是干净原型。
+> pm-annotate 是可选步骤（`--skip-annotate` 可跳过）：它把 PRD 需求编号标注到原型页面上并回写 PRD，产出供人工评审的「规格版原型」。标注输出为 `[页面]-标注版.html` 副本，**不覆盖原原型**——pm-deliver 读的仍是干净原型。
 
 ### dispatch 五动作（每步固定）
 
@@ -49,11 +49,11 @@ description: 产品需求全流程自动化编排器（pm-analyze → pm-prototy
 
 | 门禁点 | 检查条件 | 暂停行为 |
 |--------|---------|---------|
-| pm-analyze 后 | analysis-report.md 中风险等级=高且状态="待确认"的问题数 > 0 | 记 `PAUSE@analyze-blocker`，输出 Blocker 清单，暂停 |
-| pm-prototype 后 | `prototypes/[端]/` 下 HTML 文件数 = 0 | 记 FAIL，暂停 |
+| pm-analyze 后 | 需求分析报告.md 中风险等级=高且状态="待确认"的问题数 > 0 | 记 `PAUSE@analyze-blocker`，输出 Blocker 清单，暂停 |
+| pm-prototype 后 | `原型/[端]/` 下 HTML 文件数 = 0 | 记 FAIL，暂停 |
 | pm-prd 后 | PRD 文件存在 且 测试用例文件存在 | 不满足则记 FAIL，暂停 |
-| pm-annotate 后 | `prototypes/[端]/` 下存在 `*.annotated.html` | 不满足则记 FAIL，暂停（`--skip-annotate` 时记跳过） |
-| pm-deliver 后 | `vue/` 目录存在且含 package.json | 不满足则记 FAIL，暂停 |
+| pm-annotate 后 | `原型/[端]/` 下存在 `*-标注版.html` | 不满足则记 FAIL，暂停（`--skip-annotate` 时记跳过） |
+| pm-deliver 后 | `前端交付/` 目录存在且含 package.json | 不满足则记 FAIL，暂停 |
 
 **状态模型（关键）**：Blocker 属"门禁暂停"，**独立于步骤 STATUS**。pm-analyze subagent 只要产物齐全即返回 PASS（分析已完成），Blocker 遗留不作为步骤 FAIL。
 

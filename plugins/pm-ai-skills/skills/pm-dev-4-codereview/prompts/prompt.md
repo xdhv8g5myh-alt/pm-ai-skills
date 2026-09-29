@@ -4,16 +4,16 @@
 
 ## 步骤 0：门禁检查（硬门禁，可强制跳过）
 
-1. `backend/` 存在
+1. `后端工程/` 存在
    - 不存在 → ❌ 停止：`请先执行 pm-dev-1-backend`
 2. 用户强制跳过 → 记 `"dependencySkipped": true`
 
 ## 步骤 1：读取上下文
 
-1. 【计划一致性】`design/[项目名]-功能详细设计.md`（核对实现是否符合设计）
-2. 【被测对象】`backend/src/main/java` 全量代码
-3. 【前端（可选）】`frontend/src/`（存在才审查）
-4. 【辅助】`test/*-单元测试报告-*.md`（参考，不作为判定）
+1. 【计划一致性】`设计/[项目名]-功能详细设计.md`（核对实现是否符合设计）
+2. 【被测对象】`后端工程/src/main/java` 全量代码
+3. 【前端（可选）】`独立前端工程/src/`（存在才审查）
+4. 【辅助】`测试/*-单元测试报告-*.md`（参考，不作为判定）
 5. `.pm-state.json`（读 `devProjectType`）
 
 ## 步骤 2：后端审查
@@ -47,7 +47,7 @@
 
 ## 步骤 5：出报告
 
-写入 `output/[项目名]/review/[项目名]-代码审查报告-[日期].md`：
+写入 `output/[项目名]/代码审查/[项目名]-代码审查报告-[日期].md`：
 
 ```markdown
 # 代码审查报告
@@ -84,7 +84,7 @@
 ### 6.1 更新 .pm-state.json
 
 `devPipeline` 插入/更新 `pm-dev-4-codereview` 条目：
-`{"step":"pm-dev-4-codereview","status":"completed","startedAt":null,"completedAt":"…Z","output":"review/[项目名]-代码审查报告-[日期].md","counters":{},"reviewBlockerCount":N}`（N = 严重问题数）。时间戳 UTC 带 `Z`。
+`{"step":"pm-dev-4-codereview","status":"completed","startedAt":null,"completedAt":"…Z","output":"代码审查/[项目名]-代码审查报告-[日期].md","counters":{},"reviewBlockerCount":N}`（N = 严重问题数）。时间戳 UTC 带 `Z`。
 
 ### 6.2 更新 README.md
 
@@ -97,7 +97,7 @@
 2. 安全六项（SQL 注入/XSS/认证授权/脱敏/文件上传/参数校验）都查了
 3. 严重问题数 = `reviewBlockerCount`，与报告一致
 4. 迭代项目兼容性/回归风险已核对
-5. 报告落在 `review/`（绝对路径核对过）
+5. 报告落在 `代码审查/`（绝对路径核对过）
 6. devPipeline 条目 6+ keys 齐全，时间戳 UTC 带 `Z`
 7. README 表 5 列
 8. 未修改任何代码
@@ -107,7 +107,7 @@
 只回（不倒全文）：
 
 ```
-✅ 代码审查报告：`output/[项目名]/review/[项目名]-代码审查报告-[日期].md`
+✅ 代码审查报告：`output/[项目名]/代码审查/[项目名]-代码审查报告-[日期].md`
 
 🔴 严重 [a] 项（必须修复）
   - [文件:行] — [一句话说清问题]

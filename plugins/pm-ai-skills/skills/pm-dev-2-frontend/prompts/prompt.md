@@ -4,23 +4,23 @@
 
 ## 步骤 0：门禁检查（硬门禁，可强制跳过）
 
-1. `backend/pom.xml` 存在 且 `.pm-state.json` 中 `pm-dev-1-backend` = `completed`
+1. `后端工程/pom.xml` 存在 且 `.pm-state.json` 中 `pm-dev-1-backend` = `completed`
    - 不满足 → ❌ 停止：`请先执行 pm-dev-1-backend 完成后端`
 2. 用户传 `--skip-frontend` → 本步标「跳过」：`.pm-state.json` 条目记 `"status":"skipped","skipped":true,"output":null`，直接结束
 3. 用户强制跳过依赖 → 记 `"dependencySkipped": true`
 
 ## 步骤 1：读取上下文
 
-1. 【主契约】`design/[项目名]-功能详细设计.md`（R 编号/method/URL/请求/响应，作为 `src/api/[模块].ts` 与 `types` 依据）
-2. 【UIUE】`prototypes/[端]/*.html`（干净原型，**忽略 `.annotated.html`**；无则从设计推导页面结构）
+1. 【主契约】`设计/[项目名]-功能详细设计.md`（R 编号/method/URL/请求/响应，作为 `src/api/[模块].ts` 与 `types` 依据）
+2. 【UIUE】`原型/[端]/*.html`（干净原型，**忽略 `-标注版.html`**；无则从设计推导页面结构）
 3. 【脚手架】Read `${CLAUDE_SKILL_DIR}/../pm-deliver/prompts/vue3-scaffold-spec.md`
-4. `output/[项目名]/project-spec.md`（baseURL、组件约定）
+4. `output/[项目名]/项目规范.md`（baseURL、组件约定）
 5. `.pm-state.json`（读 `devProjectType`）
 
 ## 步骤 2：判定性质
 
-- `new` → 新建 `frontend/`
-- `iteration` → 若已有 `frontend/` 就地增改；无则新建
+- `new` → 新建 `独立前端工程/`
+- `iteration` → 若已有 `独立前端工程/` 就地增改；无则新建
 
 ## 步骤 3：工程骨架（复用脚手架，去 mock）
 
@@ -33,13 +33,13 @@
 
 ## 步骤 4：构建验证
 
-`cd frontend && npm install && npm run build` 必须通过（无 Node 环境则明确标注「环境性未验证」，但代码结构必须完整）。
+`cd 独立前端工程 && npm install && npm run build` 必须通过（无 Node 环境则明确标注「环境性未验证」，但代码结构必须完整）。
 
 ## 步骤 5：落盘与更新
 
 ### 5.1 更新 .pm-state.json
 
-- 正常完成：`{"step":"pm-dev-2-frontend","status":"completed","startedAt":null,"completedAt":"…Z","output":"frontend/","counters":{}}`
+- 正常完成：`{"step":"pm-dev-2-frontend","status":"completed","startedAt":null,"completedAt":"…Z","output":"独立前端工程/","counters":{}}`
 - 跳过：`{"step":"pm-dev-2-frontend","status":"skipped","startedAt":null,"completedAt":null,"output":null,"counters":{},"skipped":true}`
 - 时间戳 UTC 带 `Z`
 
@@ -50,7 +50,7 @@
 
 ## 步骤 6：自检
 
-1. 产物在 `frontend/`，未写 `vue/`
+1. 产物在 `独立前端工程/`，未写 `前端交付/`
 2. `src/api/` 无 mock 分支；request.ts 有 `{code,message,data}` 解包 + JWT 头
 3. `src/api/[模块].ts` 覆盖设计里的 R 编号接口，走 `/api/v1`
 4. types 对齐响应 schema 字段名
@@ -63,7 +63,7 @@
 只回（不倒全文）：
 
 ```
-✅ 前端工程：`output/[项目名]/frontend/`（或"已跳过"）
+✅ 前端工程：`output/[项目名]/独立前端工程/`（或"已跳过"）
 
 - 页面 [n] 个 · 封装接口 [m] 个
 - 构建：通过 / 环境性未验证(注明原因)

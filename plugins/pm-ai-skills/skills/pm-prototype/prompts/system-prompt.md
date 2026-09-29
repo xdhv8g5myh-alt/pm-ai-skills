@@ -6,15 +6,15 @@
 
 ### 脚本加载（必须严格按此顺序，放在 </body> 前）
 ```html
-<script src="../../_shared/vendor/vue.global.prod.js"></script>
-<script src="../../_shared/vendor/arco-vue.min.js"></script>
-<script src="../../_shared/proto-utils.js"></script>
+<script src="../../_公共资源/vendor/vue.global.prod.js"></script>
+<script src="../../_公共资源/vendor/arco-vue.min.js"></script>
+<script src="../../_公共资源/proto-utils.js"></script>
 ```
 
 ### CSS 引用（放在 <head> 中）
 ```html
-<link rel="stylesheet" href="../../_shared/vendor/arco.css"/>
-<link rel="stylesheet" href="../../_shared/theme.css"/>
+<link rel="stylesheet" href="../../_公共资源/vendor/arco.css"/>
+<link rel="stylesheet" href="../../_公共资源/theme.css"/>
 ```
 
 ### 关键约束（违反任何一条会导致页面空白）
@@ -61,7 +61,7 @@ proto-toolbar 按钮切换这四个状态。
 ## 输出目录结构
 
 ```
-output/prototypes/[端类型]/[项目名]/
+output/原型/[端类型]/[项目名]/
 ├── index.html          # 导航索引，列出所有页面
 ├── [功能1].html
 ├── [功能2].html
@@ -78,4 +78,4 @@ graph LR
   index --> page2[功能页2]
   page1 --> page2
 ```
-3. 打开方式说明：将 `output/prototypes/[端类型]/[项目名]/index.html` 拖入浏览器即可
+3. 打开方式说明：将 `output/原型/[端类型]/[项目名]/index.html` 拖入浏览器即可

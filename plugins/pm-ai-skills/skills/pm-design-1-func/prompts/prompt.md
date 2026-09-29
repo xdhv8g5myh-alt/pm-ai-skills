@@ -16,31 +16,31 @@
 
 | 模式 | 判定 | 说明 |
 |------|------|------|
-| 模式 A（有 PRD） | `output/[项目名]/prd/*-PRD-*.md` 存在，或用户 `--prd <路径>` | 消费 PRD 已分配的 F/R |
+| 模式 A（有 PRD） | `output/[项目名]/需求文档/*-PRD-*.md` 存在，或用户 `--prd <路径>` | 消费 PRD 已分配的 F/R |
 | 模式 B（只有需求） | 用户 `--requirement` 或对话内贴需求 | 自行推导功能/接口/实体，自分配 F/R |
 
 ### 0.2 项目性质
 
 | 性质 | 判定 | 行为 |
 |------|------|------|
-| 新项目 | 目标目录无 `backend/`、无 `design/db/*-schema.sql`、无历史 devPipeline 批次 | 全量设计，从零起 |
-| 迭代项目 | 已有 `backend/` 或 `schema.sql` 或 `.pm-state.json` 有 devPipeline 历史，或用户 `--iterate` | 先盘点现状，增量变更 |
+| 新项目 | 目标目录无 `后端工程/`、无 `设计/数据库/*-表结构.sql`、无历史 devPipeline 批次 | 全量设计，从零起 |
+| 迭代项目 | 已有 `后端工程/` 或 `表结构.sql` 或 `.pm-state.json` 有 devPipeline 历史，或用户 `--iterate` | 先盘点现状，增量变更 |
 
 ### 0.3 初始化骨架（如缺）
 
-若 `output/[项目名]/` 下无 README.md / project-spec.md / .pm-state.json，按 project-management.md §一 创建最小骨架：
+若 `output/[项目名]/` 下无 README.md / 项目规范.md / .pm-state.json，按 project-management.md §一 创建最小骨架：
 - `.pm-state.json` 写入 `devProjectType`（new/iteration）+ 空 `devPipeline[]` + `counters`（继承现有或初始 `{F:0,T:0,R:0,P:0,C:0}`）
 - 时间戳一律 UTC ISO-8601 带 `Z`
 
 ### 0.4 检测并消费项目初始化配置（可选）
 
-检测顺序：① `--config <路径>` ② `output/[项目名]/project-config.md`。都不存在 → 跳过本步（现状兼容）。
+检测顺序：① `--config <路径>` ② `output/[项目名]/项目配置.md`。都不存在 → 跳过本步（现状兼容）。
 
 存在则 Read，并按 project-management.md §十三 消费：
 - **项目性质**：配置「1. 项目信息」覆盖 0.2 的运行时判定
 - **输入来源**：配置「2. 输入来源」的 PRD/需求路径覆盖 0.1
-- **前后端工程**：配置「3/4」git 地址 → clone 到 `backend/` / `frontend/`；本地路径 → 记录到 `devBaseline` 引用（不拷贝大工程）；已就位则跳过（幂等）
-- **DB 脚本基线**：配置「5」的 `*.sql` 拷贝到 `design/db/`（保留原文件名，作基线）
+- **前后端工程**：配置「3/4」git 地址 → clone 到 `后端工程/` / `独立前端工程/`；本地路径 → 记录到 `devBaseline` 引用（不拷贝大工程）；已就位则跳过（幂等）
+- **DB 脚本基线**：配置「5」的 `*.sql` 拷贝到 `设计/数据库/`（保留原文件名，作基线）
 - **生成 CLAUDE.md**：配置含前后端工程时，从工程探测生成 `output/[项目名]/CLAUDE.md`（技术栈/常用命令/已有模块/接口规范），已存在仅补缺
 - **待开发模块**：配置「6」作为功能清单种子（进入步骤 3 的 F 提炼）
 - **参考模块**：配置「7」并入历史参考目录（步骤 1 的扫描范围）
@@ -50,18 +50,18 @@
 按顺序读取（未读完不得进入步骤 2）：
 
 1. `output/[项目名]/CLAUDE.md`（如存在；接既有工程时由 0.4 生成）：技术栈、已有模块、接口规范
-2. 【强制】`output/[项目名]/project-spec.md`：已有技术决策、接口清单、术语表
+2. 【强制】`output/[项目名]/项目规范.md`：已有技术决策、接口清单、术语表
 3. `output/[项目名]/.pm-state.json`：批次、counters、devPipeline 状态
-4. 模式 A：`prd/*-PRD-*.md`（ch6 接口表、3.2 字段说明表 + 校验矩阵、ch5 实体树）
-5. 佐证（存在则读）：`prototypes/[端]/*.html`（读 `const MOCK_DATA` 的真实字段名）；`analysis/analysis-report.md`
+4. 模式 A：`需求文档/*-PRD-*.md`（ch6 接口表、3.2 字段说明表 + 校验矩阵、ch5 实体树）
+5. 佐证（存在则读）：`原型/[端]/*.html`（读 `const MOCK_DATA` 的真实字段名）；`需求分析/需求分析报告.md`
 6. 【历史参考 · 软参考】扫描参考目录（默认 `D:/pm-ai/pm-ai-projects/output/`，可 `--ref <路径>`，含配置「7. 参考模块」）：
-   历史 `design/db/*-schema.sql`、`design/*-功能详细设计.md`、`backend/` controller/entity、`project-spec.md`，
+   历史 `设计/数据库/*-表结构.sql`、`设计/*-功能详细设计.md`、`后端工程/` controller/entity、`项目规范.md`，
    建立「可复用资产基线」：表/字段命名、错误码分段、`Result<T>`/分页/鉴权约定、通用实体。找不到就跳过，不阻塞。
 
 ## 步骤 2：现状盘点（迭代项目必做，新项目跳过）
 
-读现有 `backend/` 工程结构（pom.xml、现有 entity/mapper/service/controller）、现有 `schema.sql`、
-project-spec 接口清单 → 产出「现状清单」：已有表、已有接口、已有实体、既有约定。
+读现有 `后端工程/` 工程结构（pom.xml、现有 entity/mapper/service/controller）、现有 `表结构.sql`、
+项目规范 接口清单 → 产出「现状清单」：已有表、已有接口、已有实体、既有约定。
 作为变更基线，写进功能详细设计的「一、现状清单」节。
 
 ## 步骤 3：提炼接口种子
@@ -73,7 +73,7 @@ project-spec 接口清单 → 产出「现状清单」：已有表、已有接�
 
 ## 步骤 4：生成功能详细设计
 
-写入 `output/[项目名]/design/[项目名]-功能详细设计.md`。结构：
+写入 `output/[项目名]/设计/[项目名]-功能详细设计.md`。结构：
 
 ```markdown
 # [项目名] 功能详细设计
@@ -139,7 +139,7 @@ project-spec 接口清单 → 产出「现状清单」：已有表、已有接�
 - 写入/更新顶层 `devProjectType`；迭代项目写 `devBaseline`（既有工程路径 / schema 路径 / 历史批次引用）
 - 独立跑/迭代：把分配的 F/R 写入**顶层** `counters.F/R`
 - `devPipeline` 插入条目（splice 到拓扑正确位置，不是 push；重跑先摘旧条目再插）：
-  `{"step":"pm-design-1-func","status":"completed","startedAt":null,"completedAt":"…Z","output":"design/[项目名]-功能详细设计.md","counters":{}}`
+  `{"step":"pm-design-1-func","status":"completed","startedAt":null,"completedAt":"…Z","output":"设计/[项目名]-功能详细设计.md","counters":{}}`
 - 时间戳 UTC 带 `Z`
 
 ### 5.2 更新 README.md
@@ -147,7 +147,7 @@ project-spec 接口清单 → 产出「现状清单」：已有表、已有接�
 在 `### 详细设计（pm-design-1-func）` 章节追加一行（固定 5 列：产物/路径/功能编号范围/生成时间/批次）。
 该章节追加在产物清单末尾（`### 变更记录` 之前）；首次执行时按此列结构创建。
 
-### 5.3 更新 project-spec.md
+### 5.3 更新项目规范.md
 
 - 「接口清单」append 新 R 行（模式 B / 迭代新增），**不改既有五列**
 - 若引入错误码方案/分页规范，append 一行到「技术决策」
@@ -157,7 +157,7 @@ project-spec 接口清单 → 产出「现状清单」：已有表、已有接�
 1. 每个 R 都有 方法/URL、请求参数、成功响应、错误码、业务规则、状态流转
 2. 响应字段名对齐 MOCK_DATA / PRD，无自造字段
 3. 编号：接链消费、独立跑续编；无 FUN-XXXXX；counters 类型未扩展
-4. project-spec 既有列未改
+4. 项目规范 既有列未改
 5. 迭代项目每个接口/实体标注 新增/修改/复用，且有「现状清单」
 6. 历史参考有「参考来源」留痕
 7. 时间戳 UTC 带 `Z`；devPipeline 条目 6 keys 齐全（startedAt/completedAt/output/counters 都在，无值写 null）
@@ -168,7 +168,7 @@ project-spec 接口清单 → 产出「现状清单」：已有表、已有接�
 只回（不倒全文）：
 
 ```
-✅ 功能详细设计：`output/[项目名]/design/[项目名]-功能详细设计.md`
+✅ 功能详细设计：`output/[项目名]/设计/[项目名]-功能详细设计.md`
 
 - 项目性质：新项目 / 迭代
 - 输入来源：PRD / 需求

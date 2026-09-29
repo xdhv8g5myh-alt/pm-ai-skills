@@ -46,7 +46,7 @@ description: 当用户意图涉及原型标注、页面标注、需求标注、�
 | 回写后的 PRD | 用户指定的 prd.md | 需求描述开头回写编号 `[N]` |
 
 > **pm-autopilot 编排场景**：由 autopilot 调用时（Step 4），标注结果必须输出为
-> `prototypes/[端]/[页面名].annotated.html` **副本**，禁止覆盖原原型 HTML ——
+> `原型/[端]/[页面名]-标注版.html` **副本**，禁止覆盖原原型 HTML ——
 > 因为 pm-deliver 仍需读取干净原型转 Vue，角标 DOM 不得混入生成的代码。
 > 手动单独调用本技能时仍为原地标注。
 

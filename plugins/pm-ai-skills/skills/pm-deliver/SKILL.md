@@ -16,8 +16,8 @@ description: 当用户意图涉及转Vue、前端交付、HTML转Vue、交付代
 
 ## 铁律（不可违反）
 
-1. **产物依赖门禁**：启动前必须检查 `output/[项目名]/prototypes/[端]/` 下至少有 1 个 HTML 文件，不满足则停止并提示"请先执行 pm-prototype 生成原型"；同时检查 `.pm-state.json` 中 pm-prototype 的 status 是否为 `completed`
-2. **规范引用铁律**：执行前必须读取 `project-spec.md`（如存在），提取接口规范、组件约定作为转换约束；未读取不得开始转换
+1. **产物依赖门禁**：启动前必须检查 `output/[项目名]/原型/[端]/` 下至少有 1 个 HTML 文件，不满足则停止并提示"请先执行 pm-prototype 生成原型"；同时检查 `.pm-state.json` 中 pm-prototype 的 status 是否为 `completed`
+2. **规范引用铁律**：执行前必须读取 `项目规范.md`（如存在），提取接口规范、组件约定作为转换约束；未读取不得开始转换
 3. **必须先 Read 原型文件**：转换前必须读取所有目标 HTML 文件，不得凭记忆生成
 4. **类型安全**：所有 props、API 响应、Mock 数据必须有 TypeScript interface，禁止使用 `any`
 5. **Mock 数据隔离**：所有 mock 数据必须在 `import.meta.env.DEV` 条件下返回，生产路径保留注释
@@ -38,9 +38,9 @@ description: 当用户意图涉及转Vue、前端交付、HTML转Vue、交付代
     ↓
 按 prompt.md 中的转换规则执行
     ↓
-写入 output/[项目名]/vue/ 或已有工程目录
+写入 output/[项目名]/前端交付/ 或已有工程目录
     ↓
-更新 README.md + .pm-state.json + project-spec.md
+更新 README.md + .pm-state.json + 项目规范.md
     ↓
 如全部步骤完成，提示用户可"冻结批次"
 ```
@@ -49,7 +49,7 @@ description: 当用户意图涉及转Vue、前端交付、HTML转Vue、交付代
 
 | 产物 | 路径（全量） | 路径（增量） |
 |------|------------|------------|
-| 完整项目 | `output/[项目名]/vue/` | — |
+| 完整项目 | `output/[项目名]/前端交付/` | — |
 | 新增视图 | — | `src/views/[PageName]View.vue` |
 | 新增路由 | — | 追加到 `src/router/index.ts` |
 | 新增 API | — | `src/api/[module].ts` + `src/api/mock/[module].ts` |

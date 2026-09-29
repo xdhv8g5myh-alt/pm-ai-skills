@@ -28,9 +28,9 @@
 
 ### 0.2 判定项目性质 + 输入来源 + 参考目录 + 配置文档
 
-- **配置文档**：`--config <路径>` 或 `output/[项目名]/project-config.md`（可选，见 pm-common §十三）；存在则读，其「1 项目信息 / 2 输入来源」覆盖下述判定；工程拉取/DB 基线/CLAUDE.md 由 Step 1 的 pm-design-1-func 消费
-- **项目性质**：`--iterate` 或目标目录已有 `backend/`/`schema.sql`/devPipeline 历史 → 迭代；否则新项目
-- **输入来源**：`--prd <路径>` → 模式 A；`--requirement <文本/文件>` → 模式 B；都未传 → 探测 `output/[项目名]/prd/*-PRD-*.md` 是否存在，存在即模式 A，否则询问
+- **配置文档**：`--config <路径>` 或 `output/[项目名]/项目配置.md`（可选，见 pm-common §十三）；存在则读，其「1 项目信息 / 2 输入来源」覆盖下述判定；工程拉取/DB 基线/CLAUDE.md 由 Step 1 的 pm-design-1-func 消费
+- **项目性质**：`--iterate` 或目标目录已有 `后端工程/`/`表结构.sql`/devPipeline 历史 → 迭代；否则新项目
+- **输入来源**：`--prd <路径>` → 模式 A；`--requirement <文本/文件>` → 模式 B；都未传 → 探测 `output/[项目名]/需求文档/*-PRD-*.md` 是否存在，存在即模式 A，否则询问
 - **参考目录**：`--ref <路径>`，缺省 `D:/pm-ai/pm-ai-projects/output/`（配置「7. 参考模块」并入）
 - 把判定结果写进 run 文件头部
 
@@ -50,10 +50,10 @@
 - 定位第一个非 PASS（且非跳过）步作为起点
 - 全部 PASS → 提示「研发链所有步骤已完成。是否从某步重跑？」
 - 有 `PAUSE@*` 标记 → 检查暂停条件是否解除：
-  - `PAUSE@design-blocker`：re-check 最新 `design/review/*.md` 的 Blocker
+  - `PAUSE@design-blocker`：re-check 最新 `设计/评审/*.md` 的 Blocker
     - 遗留 = 0 → 解除，从下一步继续
     - 遗留 > 0 → 再次暂停，输出未解决 Blocker 清单
-  - `PAUSE@codereview`：re-check 最新 `review/*.md` 严重问题是否已修复应答
+  - `PAUSE@codereview`：re-check 最新 `代码审查/*.md` 严重问题是否已修复应答
     - 已全部应答 → 解除；否则再次暂停
 
 ### 0.5 创建/更新 run 文件
@@ -97,7 +97,7 @@
 
 项目性质：[新项目/迭代] | 输入来源：[PRD 路径 / 需求文本] | 参考目录：[路径]
 
-（有配置文档时附上）项目初始化配置：[--config 路径 / project-config.md 路径]
+（有配置文档时附上）项目初始化配置：[--config 路径 / 项目配置.md 路径]
 
 （模式 B 时附上）用户需求内容：[需求文本或文件路径]
 
@@ -109,7 +109,7 @@ SUMMARY(一句话)
 
 ### 1.3 返回后验证
 
-- `output/[项目名]/design/[项目名]-功能详细设计.md` 存在？
+- `output/[项目名]/设计/[项目名]-功能详细设计.md` 存在？
 - `.pm-state.json` 出现 `devPipeline` 且 `pm-design-1-func` completed？
 
 ### 1.4 更新 run 文件 → 1.5 门禁（无）→ Step 2
@@ -118,11 +118,11 @@ SUMMARY(一句话)
 
 ## Step 2：dispatch pm-design-2-db 数据库设计
 
-dispatch prompt（同上模板，role 改为「数据库设计」），上游产物路径：功能详细设计、project-spec、PRD ch5。
+dispatch prompt（同上模板，role 改为「数据库设计」），上游产物路径：功能详细设计、项目规范、PRD ch5。
 
 验证：
-- 新项目：`design/db/[项目名]-schema.sql` 存在？
-- 迭代项目：`design/db/[项目名]-delta-*.sql` 存在？
+- 新项目：`设计/数据库/[项目名]-表结构.sql` 存在？
+- 迭代项目：`设计/数据库/[项目名]-增量-*.sql` 存在？
 
 ---
 
@@ -130,7 +130,7 @@ dispatch prompt（同上模板，role 改为「数据库设计」），上游产
 
 dispatch prompt（role「设计评审」），回报多一行 `BLOCKER_COUNT(Blocker 数)`。
 
-验证：`design/review/[项目名]-设计评审-[日期].md` 存在？
+验证：`设计/评审/[项目名]-设计评审-[日期].md` 存在？
 
 ### 3.x 门禁检查（设计 Blocker）
 
@@ -145,11 +145,11 @@ dispatch prompt（role「设计评审」），回报多一行 `BLOCKER_COUNT(Blo
 
 ## Step 4：dispatch pm-dev-1-backend 后端 TDD
 
-dispatch prompt（role「后端开发」），上游产物：功能详细设计、schema/delta SQL、project-spec。
+dispatch prompt（role「后端开发」），上游产物：功能详细设计、表结构/增量 SQL、项目规范。
 
 验证：
-- `backend/pom.xml` 存在？
-- `backend/src/main/java` 存在？
+- `后端工程/pom.xml` 存在？
+- `后端工程/src/main/java` 存在？
 
 门禁：pom.xml 缺失或 subagent 回报编译失败 → FAIL，暂停。
 
@@ -161,7 +161,7 @@ dispatch prompt（role「后端开发」），上游产物：功能详细设计�
 
 dispatch prompt（role「前端工程」），上游产物：功能详细设计、原型（干净 HTML）、后端。
 
-验证：`frontend/package.json` 存在？
+验证：`独立前端工程/package.json` 存在？
 
 门禁：未 `--skip-frontend` 但 package.json 缺失 → FAIL，暂停。
 
@@ -169,9 +169,9 @@ dispatch prompt（role「前端工程」），上游产物：功能详细设计�
 
 ## Step 6：dispatch pm-dev-3-test 单元测试
 
-dispatch prompt（role「单元测试」），上游产物：功能详细设计、backend/、frontend/（可选）。
+dispatch prompt（role「单元测试」），上游产物：功能详细设计、后端工程/、独立前端工程/（可选）。
 
-验证：`test/[项目名]-单元测试报告-[日期].md` 存在？
+验证：`测试/[项目名]-单元测试报告-[日期].md` 存在？
 
 门禁：报告标注覆盖率未达标或单测未通过 → FAIL，暂停。
 
@@ -181,7 +181,7 @@ dispatch prompt（role「单元测试」），上游产物：功能详细设计�
 
 dispatch prompt（role「代码审查」），回报多一行 `BLOCKER_COUNT(严重问题数)`。
 
-验证：`review/[项目名]-代码审查报告-[日期].md` 存在？
+验证：`代码审查/[项目名]-代码审查报告-[日期].md` 存在？
 
 ### 7.x 门禁检查（审查严重问题）
 
@@ -240,7 +240,7 @@ dispatch prompt（role「代码审查」），回报多一行 `BLOCKER_COUNT(严
 
 执行要点：
 - 产物一律落 `output/{项目名}/` 下各阶段子目录
-- 遵循规范引用铁律（先读 project-spec.md 再产出）
+- 遵循规范引用铁律（先读 项目规范.md 再产出）
 - 产物依赖门禁检查可跳过（autopilot 已在编排层保证依赖顺序）
 
 完成后只回报（不回传产物全文）：
