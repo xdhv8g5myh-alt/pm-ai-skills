@@ -158,6 +158,8 @@
       resizeTimer = setTimeout(positionMarkers, 100);
     });
     window.addEventListener('load', positionMarkers);
+    /* Arco Design 组件 Flex/Grid 布局在首次 paint 后才稳定，追加补偿重定位 */
+    setTimeout(positionMarkers, 300);
   }
 
   if (document.readyState === 'loading') {

@@ -8,6 +8,10 @@
  * 数据来源：`需求文档/[项目名]-PRD-*.md` 的功能点与接口清单。
  * 键 = 标注编号（与页面内 `<i class="pm-anno-anchor" data-n="N">` 的 N 一一对应，1-999）。
  * 每个条目的 title 固定为「需求描述：[功能名]」，html 由以下片段按需拼装。
+ *
+ * ⚠️ JS 字符串转义铁律：html 值内所有 ASCII 单引号 ' 必须转义为 \'
+ * （例：隐藏\'车型报价\'、AMessage.success(\'保存成功\')）
+ * 漏转义会导致整个文件 syntax error，所有 tooltip 静默失效。
  */
 window.PM_ANNOTATE_TOOLTIPS = {
   1: {
