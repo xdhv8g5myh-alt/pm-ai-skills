@@ -5,7 +5,7 @@
 ## 前置约定
 
 - 路径变量：`output/[项目名]/` 为项目根，所有产物按 `pm-common/project-management.md` 目录骨架存放
-- **先定位 products 仓库根**：即包含 `output/` 的那个仓库（默认 `D:/pm-ai/pm-ai-projects`）；**所有 `output/...` 路径一律拼成绝对路径后使用**，避免 cwd 不在产物仓库时把产物写错位置
+- **output 根**：以当前 cwd 为产物根；`output/` 目录不存在则自动创建；所有 `output/...` 路径拼成绝对路径后使用（`[cwd]/output/[项目名]/...`）
 - run 文件：`output/[项目名]/.pm-run.md`（autopilot 运行态，不进产物索引）
 - 被编排技能 prompt.md（subagent 必读）：
   - pm-analyze：`${CLAUDE_SKILL_DIR}/../pm-analyze/prompts/prompt.md`

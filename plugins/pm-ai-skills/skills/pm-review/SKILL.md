@@ -61,10 +61,8 @@ description: 当用户意图涉及 PRD 评审、PRD 自查、需求自查、评�
 > PRD 末尾追加 `## 评审自查结论` 小节（链到报告 + 列 Blocker），并更新 README 与
 > `.pm-state.json` 的 `reviewBlockerCount`。**本技能自身保持对 PRD 只读。**
 
-> **产物在另一个仓库（必须先定位仓库根）**：本技能装在 pm-ai-skills 插件里，
-> 但产物在含 `output/` 目录的 **products 仓库**（本机为 `D:\pm-ai\pm-ai-projects`）。
-> 当前会话的 cwd 不在 products 仓库时，`output/` 是相对路径，**会写错位置**。
-> **先定位 products 仓库根，再拼绝对路径**；定位不到时直接问用户，不要猜。
+> 产物路径：以当前 cwd 为产物根，`output/[项目名]/需求文档/` 下写报告；
+> 所有 `output/...` 路径拼成绝对路径后使用（`[cwd]/output/[项目名]/...`）。
 
 本技能是流水线的软门禁：报告供人工评审使用，不影响 pm-autopilot 的走向。
 

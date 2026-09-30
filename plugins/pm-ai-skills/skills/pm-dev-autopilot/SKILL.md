@@ -21,7 +21,7 @@ description: 研发链全流程自动编排器（pm-design-1-func → pm-design-
   - `--project [项目名]`
   - `--prd [PRD 路径]` / `--requirement [需求文本或文件]`（输入来源，二选一；缺省探测 `需求文档/`）
   - `--iterate`（强制迭代模式）
-  - `--ref [参考目录]`（历史参考，默认 `D:/pm-ai/pm-ai-projects/output/`）
+  - `--ref [参考目录]`（历史参考，默认 cwd 下的 `output/`，不存在则跳过）
   - `--config [配置文档路径]`（项目初始化配置，接既有工程时定位/拉取工程、导入 DB 基线、生成 CLAUDE.md）
   - `--from [step]`（强制从某步重跑）
   - `--skip-frontend`（跳过前端步骤）
