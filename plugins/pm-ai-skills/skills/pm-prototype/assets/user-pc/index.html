@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用户前台 PC 原型导航</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif; }
+    .index-wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    .index-header { text-align: center; margin-bottom: 48px; }
+    .index-header h1 { font-size: 32px; font-weight: 700; color: #1d2129; margin-bottom: 8px; }
+    .index-header p { font-size: 15px; color: #86909c; }
+    .index-badge { display: inline-block; background: #165dff; color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 12px; letter-spacing: .05em; }
+    .nav-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .nav-card { background: #fff; border-radius: 12px; padding: 28px 28px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); display: flex; flex-direction: column; gap: 10px; transition: box-shadow .2s, transform .15s; }
+    .nav-card:hover { box-shadow: 0 6px 20px rgba(22,93,255,.12); transform: translateY(-2px); }
+    .nav-card-top { display: flex; align-items: flex-start; gap: 14px; }
+    .nav-card-icon { font-size: 36px; flex-shrink: 0; line-height: 1; }
+    .nav-card-info { flex: 1; }
+    .nav-card-name { font-size: 17px; font-weight: 600; color: #1d2129; margin-bottom: 4px; }
+    .nav-card-file { font-size: 12px; color: #c9cdd4; font-family: monospace; }
+    .nav-card-desc { font-size: 13px; color: #86909c; line-height: 1.7; }
+    .nav-card-footer { display: flex; justify-content: flex-end; }
+    .nav-open-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 16px; background: #165dff; color: #fff; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; transition: background .15s; }
+    .nav-open-btn:hover { background: #4080ff; }
+    .index-footer { text-align: center; margin-top: 48px; font-size: 12px; color: #c9cdd4; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="index-wrap">
+      <div class="index-header">
+        <div class="index-badge">PROTOTYPE</div>
+        <h1>⚡ VibePM 用户前台 PC</h1>
+        <p>以下是所有用户端 PC 原型页面，点击"打开"可直接预览对应页面</p>
+      </div>
+
+      <div class="nav-grid">
+        <div class="nav-card" v-for="page in pages" :key="page.file">
+          <div class="nav-card-top">
+            <div class="nav-card-icon">{{ page.icon }}</div>
+            <div class="nav-card-info">
+              <div class="nav-card-name">{{ page.name }}</div>
+              <div class="nav-card-file">{{ page.file }}</div>
+            </div>
+          </div>
+          <div class="nav-card-desc">{{ page.desc }}</div>
+          <div class="nav-card-footer">
+            <a :href="'./' + page.file" class="nav-open-btn">打开 →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="index-footer">用户前台 PC 原型 · 共 {{ pages.length }} 个页面 · VibePM</div>
+    </div>
+
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">用户前台 PC</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('原型导航')
+        const pages = ref([
+          {
+            file: 'home.html',
+            icon: '🏠',
+            name: '首页',
+            desc: 'Hero 大图区 + 核心功能卡片网格 + 热门项目列表，平台主入口页面。'
+          },
+          {
+            file: 'list.html',
+            icon: '🔍',
+            name: '发现 / 列表页',
+            desc: '左侧分类筛选侧栏 + 右侧内容列表，支持搜索、筛选、排序，含四种状态。'
+          },
+          {
+            file: 'detail.html',
+            icon: '📄',
+            name: '详情页',
+            desc: '左主内容（标题/正文/评论）+ 右侧信息栏（状态/字段/推荐），两列布局。'
+          },
+          {
+            file: 'profile.html',
+            icon: '👤',
+            name: '个人中心',
+            desc: '用户头像/统计信息 + Tabs（我的项目/收藏/动态），支持编辑资料弹窗。'
+          },
+          {
+            file: 'checkout.html',
+            icon: '🛒',
+            name: '结算/确认页',
+            desc: '左侧步骤条 + 表单，右侧订单摘要卡，点击提交跳转成功页或首页。'
+          }
+        ])
+        return { pageTitle, pages }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

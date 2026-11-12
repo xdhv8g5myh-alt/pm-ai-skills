@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>发现 · H5 原型</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  .search-wrap {
+    padding: 10px 12px;
+    background: #fff;
+    border-bottom: 1px solid #f2f3f5;
+  }
+  .filter-tabs {
+    background: #fff;
+    border-bottom: 1px solid #f2f3f5;
+  }
+  .filter-tabs .arco-tabs-nav {
+    padding: 0 8px;
+  }
+  .list-wrap {
+    padding: 8px 0;
+  }
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .item-time {
+    font-size: 11px;
+    color: #c9cdd4;
+    margin-left: auto;
+  }
+  .state-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    flex-direction: column;
+    gap: 12px;
+  }
+</style>
+</head>
+<body class="h5-body">
+<div id="app" v-cloak>
+  <div class="h5-phone">
+
+    <!-- 状态栏 -->
+    <div class="h5-status">
+      <span>9:41</span>
+      <span>🔋</span>
+    </div>
+
+    <!-- 顶部导航 -->
+    <div class="h5-navbar">
+      <span class="h5-navbar-title">发现</span>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="h5-content" style="padding:0;">
+
+      <!-- 搜索框 -->
+      <div class="search-wrap">
+        <a-input
+          v-model="searchText"
+          placeholder="搜索内容..."
+          allow-clear
+          style="border-radius:20px;"
+        >
+          <template #prefix>🔍</template>
+        </a-input>
+      </div>
+
+      <!-- 筛选 Tab -->
+      <div class="filter-tabs">
+        <a-tabs v-model:active-key="filterKey" :animation="true" size="small">
+          <a-tab-pane key="all" title="全部"></a-tab-pane>
+          <a-tab-pane key="ongoing" title="进行中"></a-tab-pane>
+          <a-tab-pane key="done" title="已完成"></a-tab-pane>
+          <a-tab-pane key="cancelled" title="已取消"></a-tab-pane>
+        </a-tabs>
+      </div>
+
+      <!-- 加载中状态 -->
+      <div v-if="pageState === 'loading'" class="state-wrap">
+        <a-spin tip="加载中..." :size="28"></a-spin>
+      </div>
+
+      <!-- 空数据状态 -->
+      <div v-else-if="pageState === 'empty'" class="state-wrap">
+        <a-empty description="暂无数据" style="padding:32px 0;">
+          <template #extra>
+            <a-button type="primary" size="small" href="./form.html">立即发布</a-button>
+          </template>
+        </a-empty>
+      </div>
+
+      <!-- 出错状态 -->
+      <div v-else-if="pageState === 'error'" class="state-wrap">
+        <a-result status="500" style="padding:0;">
+          <template #subtitle>
+            <span style="font-size:13px;">请求失败，请稍后重试</span>
+          </template>
+          <template #extra>
+            <a-button type="primary" size="small" @click="pageState='normal'">重试</a-button>
+          </template>
+        </a-result>
+      </div>
+
+      <!-- 正常列表 -->
+      <div v-else class="list-wrap">
+        <div v-for="item in filteredList" :key="item.id">
+          <a href="./detail.html" class="h5-cell" style="text-decoration:none;">
+            <div class="h5-cell-icon">{{ item.icon }}</div>
+            <div class="h5-cell-body">
+              <div class="h5-cell-title">{{ item.title }}</div>
+              <div class="item-meta">
+                <a-tag :color="item.tagColor" size="mini">{{ item.status }}</a-tag>
+                <span style="font-size:11px;color:#86909c;">{{ item.owner }}</span>
+                <span class="item-time">{{ item.time }}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- 底部占位 -->
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- 底部 TabBar -->
+    <div class="h5-tabbar">
+      <a href="./home.html" class="h5-tab" :class="{active: activeTab==='home'}">
+        <span class="h5-tab-icon">🏠</span>
+        <span class="h5-tab-label">首页</span>
+      </a>
+      <a href="./list.html" class="h5-tab" :class="{active: activeTab==='list'}">
+        <span class="h5-tab-icon">📋</span>
+        <span class="h5-tab-label">发现</span>
+      </a>
+      <a href="./form.html" class="h5-tab">
+        <span class="h5-tab-icon">✏️</span>
+        <span class="h5-tab-label">发布</span>
+      </a>
+      <a href="#" class="h5-tab">
+        <span class="h5-tab-icon">👤</span>
+        <span class="h5-tab-label">我的</span>
+      </a>
+    </div>
+
+    <!-- Proto 调试条 -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">H5 移动端</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳ 加载中</button>
+      <button @click="pageState='empty'">📭 空数据</button>
+      <button @click="pageState='error'">⚠ 出错</button>
+      <button @click="pageState='normal'">✅ 正常</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref, computed } = Vue
+createApp({
+  setup() {
+    const pageTitle = ref('列表页')
+    const activeTab = ref('list')
+    const pageState = ref('normal')
+    const searchText = ref('')
+    const filterKey = ref('all')
+
+    const allItems = ref([
+      {
+        id: 1, icon: '📌',
+        title: '2024 年度产品规划评审',
+        status: '进行中', statusKey: 'ongoing', tagColor: 'arcoblue',
+        owner: '张三', time: '10分钟前'
+      },
+      {
+        id: 2, icon: '✅',
+        title: 'App 3.0 版本需求文档',
+        status: '已完成', statusKey: 'done', tagColor: 'green',
+        owner: '李四', time: '1小时前'
+      },
+      {
+        id: 3, icon: '🚀',
+        title: '用户增长专项方案',
+        status: '进行中', statusKey: 'ongoing', tagColor: 'arcoblue',
+        owner: '王五', time: '2小时前'
+      },
+      {
+        id: 4, icon: '📊',
+        title: 'Q3 运营数据汇总报告',
+        status: '已完成', statusKey: 'done', tagColor: 'green',
+        owner: '赵六', time: '昨天'
+      },
+      {
+        id: 5, icon: '⚡',
+        title: '支付模块性能优化方案',
+        status: '已取消', statusKey: 'cancelled', tagColor: 'gray',
+        owner: '孙七', time: '昨天'
+      },
+      {
+        id: 6, icon: '🎨',
+        title: 'UI 设计规范 v2.0',
+        status: '进行中', statusKey: 'ongoing', tagColor: 'arcoblue',
+        owner: '周八', time: '前天'
+      },
+      {
+        id: 7, icon: '🔔',
+        title: '消息推送功能改版计划',
+        status: '已完成', statusKey: 'done', tagColor: 'green',
+        owner: '吴九', time: '3天前'
+      },
+      {
+        id: 8, icon: '🛡️',
+        title: '数据安全审查方案',
+        status: '进行中', statusKey: 'ongoing', tagColor: 'arcoblue',
+        owner: '郑十', time: '本周'
+      },
+    ])
+
+    const filteredList = computed(() => {
+      let list = allItems.value
+      if (filterKey.value !== 'all') {
+        list = list.filter(item => item.statusKey === filterKey.value)
+      }
+      if (searchText.value.trim()) {
+        const kw = searchText.value.trim().toLowerCase()
+        list = list.filter(item => item.title.toLowerCase().includes(kw))
+      }
+      return list
+    })
+
+    window.__protoApp = { pageState }
+    return { pageTitle, activeTab, pageState, searchText, filterKey, filteredList }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

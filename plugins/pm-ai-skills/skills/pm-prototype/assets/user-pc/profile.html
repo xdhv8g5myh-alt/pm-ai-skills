@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibePM — 个人中心</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif; }
+    .pc-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px; background: #fff; border-bottom: 1px solid #e5e6eb;
+      display: flex; align-items: center; padding: 0 40px; gap: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .pc-logo { font-size: 20px; font-weight: 700; color: var(--color-primary,#165dff); margin-right: 16px; white-space: nowrap; }
+    .pc-nav { display: flex; align-items: center; gap: 4px; flex: 1; }
+    .pc-nav-item { padding: 6px 14px; border-radius: 6px; font-size: 14px; color: #4e5969; cursor: pointer; text-decoration: none; transition: .15s; }
+    .pc-nav-item:hover, .pc-nav-item.active { color: var(--color-primary,#165dff); background: rgba(22,93,255,.06); }
+    .pc-header-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .pc-main { min-height: 100vh; padding-top: 64px; background: #f5f5f5; }
+    .pc-footer { background: #1d2129; color: rgba(255,255,255,.6); text-align: center; padding: 24px; font-size: 13px; }
+
+    /* Profile hero */
+    .profile-hero { background: linear-gradient(135deg,#165dff 0%,#7b61ff 100%); padding: 48px 0 0; }
+    .profile-hero-inner { max-width: 1000px; margin: 0 auto; padding: 0 24px; display: flex; gap: 24px; align-items: flex-end; }
+    .profile-hero-info { flex: 1; padding-bottom: 24px; color: #fff; }
+    .profile-name { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .profile-bio { font-size: 14px; opacity: .8; margin-bottom: 16px; }
+    .profile-stats { display: flex; gap: 32px; }
+    .profile-stat { text-align: center; }
+    .profile-stat-num { font-size: 22px; font-weight: 700; }
+    .profile-stat-label { font-size: 12px; opacity: .75; margin-top: 2px; }
+
+    /* Content */
+    .profile-content { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    .pc-list-item { background: #fff; border-radius: 8px; padding: 20px 24px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); cursor: pointer; transition: .15s; }
+    .pc-list-item:hover { box-shadow: 0 3px 12px rgba(22,93,255,.1); transform: translateY(-1px); }
+    .pc-list-icon { width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg,#165dff,#7b61ff); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .pc-list-body { flex: 1; }
+    .pc-list-title { font-size: 15px; font-weight: 600; color: #1d2129; margin-bottom: 4px; }
+    .pc-list-desc { font-size: 13px; color: #86909c; }
+    .pc-list-right { text-align: right; flex-shrink: 0; }
+
+    /* Activity */
+    .activity-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f2f3f5; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: #165dff; margin-top: 6px; flex-shrink: 0; }
+    .activity-text { font-size: 14px; color: #4e5969; flex: 1; line-height: 1.6; }
+    .activity-time { font-size: 12px; color: #c9cdd4; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <!-- Header -->
+    <header class="pc-header">
+      <div class="pc-logo">⚡ VibePM</div>
+      <nav class="pc-nav">
+        <a href="./home.html" class="pc-nav-item" :class="{active:activePage==='home'}">首页</a>
+        <a href="./list.html" class="pc-nav-item" :class="{active:activePage==='list'}">发现</a>
+        <a href="./detail.html" class="pc-nav-item" :class="{active:activePage==='detail'}">详情</a>
+        <a href="./checkout.html" class="pc-nav-item" :class="{active:activePage==='checkout'}">结算</a>
+      </nav>
+      <div class="pc-header-right">
+        <a-input-search placeholder="搜索..." style="width:200px"></a-input-search>
+        <a-button type="text">
+          <template #icon><icon-notification></icon-notification></template>
+        </a-button>
+        <a href="./profile.html">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);cursor:pointer" :size="32">U</a-avatar>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="pc-main">
+      <!-- Profile Hero -->
+      <div class="profile-hero">
+        <div class="profile-hero-inner">
+          <a-avatar :size="96" style="background:linear-gradient(135deg,#fff3,#fff1);border:3px solid rgba(255,255,255,.3);font-size:40px;flex-shrink:0;margin-bottom:24px">张</a-avatar>
+          <div class="profile-hero-info">
+            <div class="profile-name">张小明</div>
+            <div class="profile-bio">高级产品经理 · 专注 B2C 健康科技方向 · 5 年产品经验</div>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <div class="profile-stat-num">32</div>
+                <div class="profile-stat-label">项目</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-num">128</div>
+                <div class="profile-stat-label">文档</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-num">256</div>
+                <div class="profile-stat-label">关注者</div>
+              </div>
+              <div class="profile-stat">
+                <div class="profile-stat-num">89</div>
+                <div class="profile-stat-label">关注中</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding-bottom:24px">
+            <a-button @click="editModalVisible=true" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4)">
+              <template #icon><icon-edit></icon-edit></template>
+              编辑资料
+            </a-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="background:#fff;border-bottom:1px solid #e5e6eb;">
+        <div style="max-width:1000px;margin:0 auto;padding:0 24px">
+          <a-tabs v-model:active-key="activeTab" :default-active-key="'projects'" style="margin-bottom:0">
+            <a-tab-pane key="projects" title="我的项目"></a-tab-pane>
+            <a-tab-pane key="favorites" title="收藏"></a-tab-pane>
+            <a-tab-pane key="activity" title="动态"></a-tab-pane>
+          </a-tabs>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="profile-content">
+        <!-- My Projects -->
+        <template v-if="activeTab === 'projects'">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <span style="font-size:14px;color:#4e5969">共 <strong style="color:#1d2129">{{ myProjects.length }}</strong> 个项目</span>
+            <a-button type="primary" size="small">
+              <template #icon><icon-plus></icon-plus></template>
+              新建项目
+            </a-button>
+          </div>
+          <a href="./detail.html" style="text-decoration:none" v-for="proj in myProjects" :key="proj.id">
+            <div class="pc-list-item">
+              <div class="pc-list-icon">{{ proj.icon }}</div>
+              <div class="pc-list-body">
+                <div class="pc-list-title">{{ proj.name }}</div>
+                <div class="pc-list-desc">{{ proj.desc }}</div>
+              </div>
+              <div class="pc-list-right">
+                <a-tag :color="proj.statusColor" style="margin-bottom:6px">{{ proj.status }}</a-tag>
+                <div style="font-size:12px;color:#c9cdd4;margin-top:4px">{{ proj.time }}</div>
+              </div>
+            </div>
+          </a>
+        </template>
+
+        <!-- Favorites -->
+        <template v-else-if="activeTab === 'favorites'">
+          <a href="./detail.html" style="text-decoration:none" v-for="fav in favorites" :key="fav.id">
+            <div class="pc-list-item">
+              <div class="pc-list-icon">{{ fav.icon }}</div>
+              <div class="pc-list-body">
+                <div class="pc-list-title">{{ fav.name }}</div>
+                <div class="pc-list-desc">{{ fav.desc }}</div>
+              </div>
+              <div class="pc-list-right">
+                <a-tag :color="fav.statusColor">{{ fav.status }}</a-tag>
+                <div style="font-size:12px;color:#c9cdd4;margin-top:4px">收藏于 {{ fav.time }}</div>
+              </div>
+            </div>
+          </a>
+        </template>
+
+        <!-- Activity -->
+        <template v-else-if="activeTab === 'activity'">
+          <div style="background:#fff;border-radius:10px;padding:20px 24px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+            <div class="activity-item" v-for="act in activities" :key="act.id">
+              <div class="activity-dot" :style="{background: act.color}"></div>
+              <div class="activity-text" v-html="act.text"></div>
+              <div class="activity-time">{{ act.time }}</div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </main>
+
+    <footer class="pc-footer">© 2025 VibePM · 智能产品协作平台 · 用户前台原型</footer>
+
+    <!-- Edit Profile Modal -->
+    <a-modal v-model:visible="editModalVisible" title="编辑个人资料" @ok="editModalVisible=false" ok-text="保存">
+      <a-form :model="editForm" layout="vertical" style="margin-top:8px">
+        <a-form-item label="姓名">
+          <a-input v-model="editForm.name" placeholder="请输入姓名"></a-input>
+        </a-form-item>
+        <a-form-item label="个人简介">
+          <a-textarea v-model="editForm.bio" placeholder="介绍一下自己..." :auto-size="{minRows:3}"></a-textarea>
+        </a-form-item>
+        <a-form-item label="职位">
+          <a-input v-model="editForm.title" placeholder="请输入职位"></a-input>
+        </a-form-item>
+        <a-form-item label="所在城市">
+          <a-input v-model="editForm.city" placeholder="请输入所在城市"></a-input>
+        </a-form-item>
+        <a-form-item label="个人网站">
+          <a-input v-model="editForm.website" placeholder="https://..."></a-input>
+        </a-form-item>
+      </a-form>
+    </a-modal>
+
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">用户前台 PC</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳ 加载中</button>
+      <button @click="pageState='empty'">📭 空数据</button>
+      <button @click="pageState='error'">⚠️ 出错</button>
+      <button @click="pageState='normal'">✅ 正常</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref, reactive } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('个人中心')
+        const activePage = ref('profile')
+        const pageState = ref('normal')
+        const activeTab = ref('projects')
+        const editModalVisible = ref(false)
+
+        const editForm = reactive({
+          name: '张小明',
+          bio: '高级产品经理 · 专注 B2C 健康科技方向 · 5 年产品经验',
+          title: '高级产品经理',
+          city: '上海',
+          website: ''
+        })
+
+        const myProjects = ref([
+          { id: 1, icon: '📱', name: '家庭健康管理小程序 v2.0', desc: '基于 AI 的家庭用药提醒与健康档案管理，支持多成员共享', status: '进行中', statusColor: 'blue', time: '今天更新' },
+          { id: 2, icon: '🏥', name: '医疗预约挂号小程序', desc: '在线预约、智能导诊、电子病历查询一体化平台', status: '评审中', statusColor: 'orange', time: '昨天更新' },
+          { id: 3, icon: '🛒', name: '电商后台管理系统 v3', desc: '商品/订单/用户管理，内置多维数据看板', status: '已完成', statusColor: 'green', time: '3天前' },
+          { id: 4, icon: '📊', name: '数据分析平台原型', desc: '多数据源接入，拖拽式报表搭建，BI 可视化', status: '规划中', statusColor: 'purple', time: '1周前' },
+          { id: 5, icon: '🎓', name: '在线学习 LMS 系统', desc: '课程/学员/作业一体化管理，集成直播录播', status: '进行中', statusColor: 'blue', time: '2周前' },
+          { id: 6, icon: '💬', name: '企业 IM 产品设计稿', desc: '支持多层级组织架构、消息已读、视频会议', status: '已归档', statusColor: 'gray', time: '1个月前' }
+        ])
+
+        const favorites = ref([
+          { id: 1, icon: '🔧', name: 'DevOps 工具链集成方案', desc: 'CI/CD 流水线可视化配置，自动化测试报告聚合', status: '进行中', statusColor: 'blue', time: '2天前' },
+          { id: 2, icon: '🏢', name: '集团线索平台重构方案', desc: 'B2B 销售线索全生命周期管理，接入 AI 评分', status: '评审中', statusColor: 'orange', time: '3天前' },
+          { id: 3, icon: '🎯', name: '用户增长实验平台', desc: 'A/B 测试管理、流量分配、实验结果分析一站式', status: '已完成', statusColor: 'green', time: '1周前' },
+          { id: 4, icon: '🌐', name: '多语言内容管理系统', desc: '支持 12 种语言，翻译工作流与版本管理', status: '规划中', statusColor: 'purple', time: '2周前' },
+          { id: 5, icon: '🔐', name: '企业单点登录 SSO 方案', desc: 'OAuth2 + SAML 双协议支持，统一身份认证', status: '进行中', statusColor: 'blue', time: '3周前' }
+        ])
+
+        const activities = ref([
+          { id: 1, text: '创建了新项目 <strong>家庭健康管理小程序 v2.0</strong>', time: '2小时前', color: '#165dff' },
+          { id: 2, text: '在 <strong>医疗预约挂号小程序</strong> 中发布了评论', time: '5小时前', color: '#7b61ff' },
+          { id: 3, text: '收藏了 <strong>DevOps 工具链集成方案</strong>', time: '昨天 14:30', color: '#ff7d00' },
+          { id: 4, text: '完成了 <strong>电商后台管理系统 v3</strong> 的全部里程碑', time: '3天前', color: '#00b42a' },
+          { id: 5, text: '邀请 <strong>王前端、陈测试</strong> 加入 <strong>数据分析平台原型</strong>', time: '5天前', color: '#165dff' },
+          { id: 6, text: '更新了 <strong>在线学习 LMS 系统</strong> 的需求文档 v1.3', time: '1周前', color: '#7b61ff' },
+          { id: 7, text: '关注了 <strong>李产品</strong>', time: '2周前', color: '#86909c' }
+        ])
+
+        return { pageTitle, activePage, pageState, activeTab, editModalVisible, editForm, myProjects, favorites, activities }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

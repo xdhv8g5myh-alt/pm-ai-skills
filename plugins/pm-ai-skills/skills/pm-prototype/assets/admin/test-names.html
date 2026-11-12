@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>组件名检测</title></head>
+<body>
+<pre id="out">检测中...</pre>
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script>
+const app = Vue.createApp({template:'<div>test</div>'});
+app.use(ArcoVue);
+// Get all globally registered component names
+const names = Object.keys(app._context.components).sort();
+document.getElementById('out').textContent = '共 ' + names.length + ' 个组件:\n' + names.join('\n');
+</script>
+</body>
+</html>

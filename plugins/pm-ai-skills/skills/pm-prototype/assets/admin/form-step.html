@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>分步表单 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  .role-option { border:1px solid var(--proto-border); border-radius:6px; padding:12px 16px; cursor:pointer; transition:.15s; margin-bottom:8px; }
+  .role-option:hover { border-color:#165dff; background:#f0f5ff; }
+  .role-option.selected { border-color:#165dff; background:#f0f5ff; }
+  .role-option-name { font-weight:600; font-size:14px; color:var(--color-text-1); margin-bottom:2px; }
+  .role-option-desc { font-size:12px; color:var(--color-text-3); }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <!-- 左侧边栏 -->
+  <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
+    <div class="pro-brand">
+      <div class="pro-brand-icon">⚡</div>
+      <span v-show="!collapsed" class="pro-brand-name">管理系统</span>
+    </div>
+    <a-menu
+      :collapsed="collapsed"
+      :selected-keys="selectedKeys"
+      :open-keys="openKeys"
+      @menu-item-click="onMenuClick"
+      @sub-menu-click="onSubMenuClick"
+      style="border:none;width:100%;flex:1"
+    >
+      <a-menu-item key="dashboard">
+        <template #icon><icon-home></icon-home></template>
+        <a href="./dashboard.html">数据概览</a>
+      </a-menu-item>
+      <a-sub-menu key="list-group">
+        <template #icon><icon-apps></icon-apps></template>
+        <template #title>业务管理</template>
+        <a-menu-item key="list"><a href="./list.html">数据列表</a></a-menu-item>
+        <a-menu-item key="form-add"><a href="./form-add.html">新增数据</a></a-menu-item>
+        <a-menu-item key="detail"><a href="./detail.html">数据详情</a></a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="system">
+        <template #icon><icon-settings></icon-settings></template>
+        <template #title>系统管理</template>
+        <a-menu-item key="user-mgmt"><a href="./user-role.html">用户管理</a></a-menu-item>
+        <a-menu-item key="role-mgmt"><a href="./permission-tree.html">角色权限</a></a-menu-item>
+        <a-menu-item key="log"><a href="./log-list.html">操作日志</a></a-menu-item>
+      </a-sub-menu>
+      <a-menu-item key="help">
+        <template #icon><icon-question-circle></icon-question-circle></template>
+        帮助中心
+      </a-menu-item>
+    </a-menu>
+  </aside>
+
+  <!-- 顶部导航栏 -->
+  <header class="pro-navbar" :style="{ left: collapsed ? '48px' : '220px' }">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a-button type="text" style="color:var(--color-text-2)" @click="collapsed = !collapsed">
+        <template #icon>
+          <icon-menu-fold v-if="!collapsed"></icon-menu-fold>
+          <icon-menu-unfold v-else></icon-menu-unfold>
+        </template>
+      </a-button>
+      <a-breadcrumb>
+        <a-breadcrumb-item>
+          <a href="./dashboard.html" style="color:var(--color-text-3)">首页</a>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>业务管理</a-breadcrumb-item>
+        <a-breadcrumb-item>{{ pageTitle }}</a-breadcrumb-item>
+      </a-breadcrumb>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <div style="display:flex;align-items:center;gap:8px;width:200px;height:32px;padding:0 12px;border:1px solid var(--proto-border);border-radius:20px;background:rgba(0,0,0,.04);color:var(--color-text-3);cursor:pointer;font-size:13px;margin-right:8px">
+        <icon-search style="font-size:14px;flex-shrink:0"></icon-search>
+        <span>搜索页面...</span>
+      </div>
+      <a-tooltip content="消息通知">
+        <a-badge :count="noticeCount" :offset="[-2,4]">
+          <a-button type="text" style="color:var(--color-text-2)">
+            <template #icon><icon-notification style="font-size:18px"></icon-notification></template>
+          </a-button>
+        </a-badge>
+      </a-tooltip>
+      <a-tooltip content="全屏">
+        <a-button type="text" style="color:var(--color-text-2)">
+          <template #icon><icon-fullscreen style="font-size:18px"></icon-fullscreen></template>
+        </a-button>
+      </a-tooltip>
+      <!-- 主题色选择 -->
+      <div style="display:flex;align-items:center;gap:4px;padding:0 6px">
+        <span
+          v-for="t in themePresets" :key="t.key"
+          :title="t.name"
+          @click="applyTheme(t.key)"
+          :style="{
+            display:'inline-block', width:'14px', height:'14px',
+            borderRadius:'50%', background:t.color, cursor:'pointer',
+            boxShadow: themeKey===t.key ? '0 0 0 2px #fff,0 0 0 4px '+t.color : 'none',
+            transition:'box-shadow .15s'
+          }"
+        ></span>
+      </div>
+
+      <a-tooltip :content="isDark ? '切换浅色' : '切换深色'">
+        <a-button type="text" style="color:var(--color-text-2);font-size:16px;padding:0 8px;line-height:1" @click="toggleTheme">
+          {{ isDark ? '☀️' : '🌙' }}
+        </a-button>
+      </a-tooltip>
+      <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
+      <a-dropdown trigger="click">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseenter="this.style.background='rgba(0,0,0,.04)'" onmouseleave="this.style.background=''">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);font-size:14px" :size="32">管</a-avatar>
+          <span style="font-size:14px;color:var(--color-text-1)">管理员</span>
+          <icon-down style="font-size:12px;color:var(--color-text-3)"></icon-down>
+        </div>
+        <template #content>
+          <a-doption>个人信息</a-doption>
+          <a-doption>修改密码</a-doption>
+          <a-doption disabled>系统设置</a-doption>
+          <a-divider style="margin:4px 0"></a-divider>
+          <a-doption><a href="./login.html" style="color:inherit">退出登录</a></a-doption>
+        </template>
+      </a-dropdown>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="pro-main" :style="{ marginLeft: collapsed ? '48px' : '220px' }">
+    <div class="pro-content">
+
+      <!-- loading 态 -->
+      <div v-if="pageState === 'loading'" style="display:flex;align-items:center;justify-content:center;min-height:400px">
+        <a-spin tip="加载中..." :size="32"></a-spin>
+      </div>
+
+      <!-- error 态 -->
+      <a-result v-else-if="pageState === 'error'" status="500" title="加载失败" subtitle="请求数据时出现错误，请稍后重试" style="padding:80px 0">
+        <template #extra>
+          <a-button type="primary" @click="pageState='normal'">重新加载</a-button>
+        </template>
+      </a-result>
+
+      <!-- empty 态 -->
+      <a-card v-else-if="pageState === 'empty'" class="general-card" style="padding:60px 0;text-align:center">
+        <a-empty description="暂无内容" style="padding:40px 0"></a-empty>
+      </a-card>
+
+      <!-- 正常内容 -->
+      <template v-else>
+        <a-card class="general-card" :body-style="{ padding: '32px 40px' }">
+
+          <!-- 步骤条 -->
+          <a-steps :current="currentStep" style="margin-bottom:32px">
+            <a-step title="基本信息" description="填写基础资料"></a-step>
+            <a-step title="权限配置" description="设置角色与数据权限"></a-step>
+            <a-step title="确认提交" description="核对并提交"></a-step>
+          </a-steps>
+
+          <a-divider style="margin:0 0 28px 0"></a-divider>
+
+          <!-- 步骤1：基本信息 -->
+          <div v-show="currentStep === 1">
+            <a-form :model="form1" layout="vertical">
+              <a-grid :cols="2" :col-gap="24">
+                <a-grid-item>
+                  <a-form-item label="姓名" required>
+                    <a-input v-model="form1.name" placeholder="请输入姓名"></a-input>
+                  </a-form-item>
+                </a-grid-item>
+                <a-grid-item>
+                  <a-form-item label="手机号" required>
+                    <a-input v-model="form1.phone" placeholder="请输入手机号"></a-input>
+                  </a-form-item>
+                </a-grid-item>
+                <a-grid-item>
+                  <a-form-item label="邮箱">
+                    <a-input v-model="form1.email" placeholder="请输入邮箱地址"></a-input>
+                  </a-form-item>
+                </a-grid-item>
+                <a-grid-item>
+                  <a-form-item label="部门" required>
+                    <a-select v-model="form1.dept" placeholder="请选择部门">
+                      <a-option value="tech">技术部</a-option>
+                      <a-option value="product">产品部</a-option>
+                      <a-option value="ops">运营部</a-option>
+                      <a-option value="market">市场部</a-option>
+                      <a-option value="finance">财务部</a-option>
+                      <a-option value="hr">人事部</a-option>
+                    </a-select>
+                  </a-form-item>
+                </a-grid-item>
+                <a-grid-item>
+                  <a-form-item label="职位">
+                    <a-input v-model="form1.position" placeholder="请输入职位名称"></a-input>
+                  </a-form-item>
+                </a-grid-item>
+                <a-grid-item>
+                  <a-form-item label="入职日期">
+                    <a-date-picker v-model="form1.joinDate" style="width:100%" placeholder="请选择入职日期"></a-date-picker>
+                  </a-form-item>
+                </a-grid-item>
+                <a-grid-item :span="2">
+                  <a-form-item label="备注">
+                    <a-textarea v-model="form1.remark" placeholder="请输入备注信息（选填）" :max-length="200" show-word-limit :auto-size="{ minRows: 3, maxRows: 5 }"></a-textarea>
+                  </a-form-item>
+                </a-grid-item>
+              </a-grid>
+            </a-form>
+          </div>
+
+          <!-- 步骤2：权限配置 -->
+          <div v-show="currentStep === 2">
+            <a-grid :cols="2" :col-gap="32">
+              <!-- 角色选择 -->
+              <a-grid-item>
+                <div style="font-size:14px;font-weight:600;color:var(--color-text-1);margin-bottom:14px">选择角色</div>
+                <div
+                  v-for="role in roles"
+                  :key="role.value"
+                  class="role-option"
+                  :class="{ selected: selectedRole === role.value }"
+                  @click="selectedRole = role.value"
+                >
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <a-radio :model-value="selectedRole === role.value" @change="selectedRole = role.value"></a-radio>
+                    <div>
+                      <div class="role-option-name">{{ role.label }}</div>
+                      <div class="role-option-desc">{{ role.desc }}</div>
+                    </div>
+                  </div>
+                </div>
+              </a-grid-item>
+              <!-- 数据权限 -->
+              <a-grid-item>
+                <div style="font-size:14px;font-weight:600;color:var(--color-text-1);margin-bottom:14px">数据权限范围</div>
+                <a-tree
+                  :data="orgTree"
+                  checkable
+                  default-expand-all
+                  :default-checked-keys="['dept-tech','dept-product']"
+                ></a-tree>
+              </a-grid-item>
+            </a-grid>
+          </div>
+
+          <!-- 步骤3：确认提交 -->
+          <div v-show="currentStep === 3">
+            <a-alert type="info" style="margin-bottom:20px">
+              <template #title>请仔细核对以下信息，确认无误后再点击"提交"</template>
+            </a-alert>
+            <a-descriptions :column="2" bordered style="margin-bottom:20px">
+              <a-descriptions-item label="姓名">{{ form1.name || '（未填写）' }}</a-descriptions-item>
+              <a-descriptions-item label="手机号">{{ form1.phone || '（未填写）' }}</a-descriptions-item>
+              <a-descriptions-item label="邮箱">{{ form1.email || '（未填写）' }}</a-descriptions-item>
+              <a-descriptions-item label="部门">{{ deptMap[form1.dept] || '（未选择）' }}</a-descriptions-item>
+              <a-descriptions-item label="职位">{{ form1.position || '（未填写）' }}</a-descriptions-item>
+              <a-descriptions-item label="入职日期">{{ form1.joinDate || '（未选择）' }}</a-descriptions-item>
+              <a-descriptions-item label="角色">
+                <a-tag color="arcoblue">{{ roleMap[selectedRole] || '（未选择）' }}</a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="备注">{{ form1.remark || '（无）' }}</a-descriptions-item>
+            </a-descriptions>
+          </div>
+
+          <!-- 底部按钮 -->
+          <div style="display:flex;justify-content:center;gap:12px;margin-top:32px;padding-top:24px;border-top:1px solid var(--proto-border)">
+            <a-button v-if="currentStep > 1" @click="currentStep--">上一步</a-button>
+            <a-button type="primary" @click="nextStep">
+              {{ currentStep === 3 ? '提 交' : '下一步' }}
+            </a-button>
+            <a-button @click="$router.go(-1)">取消</a-button>
+          </div>
+
+        </a-card>
+      </template>
+    </div>
+  </main>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <button @click="setPageState('loading')">⏳ 加载中</button>
+    <button @click="setPageState('empty')">📭 空数据</button>
+    <button @click="setPageState('error')">⚠️ 出错</button>
+    <button @click="setPageState('normal')">✅ 正常</button>
+    <span class="proto-sep">|</span>
+    <button @click="currentStep=1">Step 1</button>
+    <button @click="currentStep=2">Step 2</button>
+    <button @click="currentStep=3">Step 3</button>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref, reactive } = Vue
+
+createApp({
+  setup() {
+    const collapsed    = ref(false)
+    const selectedKeys = ref(['form-add'])
+    const openKeys     = ref(['list-group'])
+    const pageTitle    = ref('分步表单')
+    const noticeCount  = ref(3)
+    const pageState    = ref('normal')
+    const currentStep  = ref(1)
+    const selectedRole = ref('admin')
+
+    const form1 = reactive({
+      name: '张三', phone: '138****6789', email: 'zhangsan@example.com',
+      dept: 'tech', position: '高级工程师', joinDate: '2025-09-01', remark: ''
+    })
+
+    const roles = [
+      { value: 'super', label: '超级管理员', desc: '拥有系统全部权限，包括用户管理和系统配置' },
+      { value: 'admin', label: '管理员',     desc: '拥有大部分管理权限，不能修改系统核心配置' },
+      { value: 'editor', label: '编辑者',    desc: '可以新增和编辑内容，无删除及管理权限' },
+      { value: 'viewer', label: '查看者',    desc: '仅可查看数据，不能进行任何编辑操作' },
+    ]
+    const roleMap = { super: '超级管理员', admin: '管理员', editor: '编辑者', viewer: '查看者' }
+    const deptMap = { tech: '技术部', product: '产品部', ops: '运营部', market: '市场部', finance: '财务部', hr: '人事部' }
+
+    const orgTree = ref([
+      {
+        key: 'company', title: '公司',
+        children: [
+          { key: 'dept-tech',    title: '技术部',
+            children: [{ key: 'team-fe', title: '前端组' }, { key: 'team-be', title: '后端组' }]
+          },
+          { key: 'dept-product', title: '产品部' },
+          { key: 'dept-ops',     title: '运营部' },
+          { key: 'dept-market',  title: '市场部' },
+        ]
+      }
+    ])
+
+    function nextStep() {
+      if (currentStep.value < 3) currentStep.value++
+      else window.location.href = './result-success.html'
+    }
+
+    const isDark = ref(localStorage.getItem('proto-theme') === 'dark')
+    function toggleTheme() {
+      isDark.value = !isDark.value
+      if (isDark.value) {
+        document.body.setAttribute('arco-theme', 'dark')
+        localStorage.setItem('proto-theme', 'dark')
+      } else {
+        document.body.removeAttribute('arco-theme')
+        localStorage.setItem('proto-theme', 'light')
+      }
+    }
+    if (isDark.value) document.body.setAttribute('arco-theme', 'dark')
+
+    const THEMES = {
+      blue:     { name:'品牌蓝', color:'#165dff', p1:'233 241 255', p5:'61 126 255',  p6:'22 93 255',   p7:'18 72 199'  },
+      techBlue: { name:'科技蓝', color:'#4080ff', p1:'232 240 255', p5:'90 155 255',  p6:'64 128 255',  p7:'50 100 200' },
+      green:    { name:'生机绿', color:'#00b42a', p1:'235 255 239', p5:'0 210 50',    p6:'0 180 42',    p7:'0 140 33'   },
+      cyan:     { name:'清新青', color:'#0fc6c2', p1:'228 254 253', p5:'40 215 212',  p6:'15 198 194',  p7:'11 153 150' },
+      orange:   { name:'活力橙', color:'#ff7d00', p1:'255 247 232', p5:'255 158 0',   p6:'255 125 0',   p7:'200 95 0'   },
+    }
+    const themePresets = Object.entries(THEMES).map(([key, v]) => ({ key, ...v }))
+    const themeKey = ref(localStorage.getItem('proto-theme-color') || 'blue')
+
+    function applyTheme(key) {
+      const t = THEMES[key]; if (!t) return
+      themeKey.value = key
+      const r = document.documentElement
+      r.style.setProperty('--primary-1', t.p1)
+      r.style.setProperty('--primary-5', t.p5)
+      r.style.setProperty('--primary-6', t.p6)
+      r.style.setProperty('--primary-7', t.p7)
+      localStorage.setItem('proto-theme-color', key)
+    }
+    applyTheme(themeKey.value)
+
+    function setPageState(s) { pageState.value = s }
+
+    const NAV_MAP = {
+      dashboard: './dashboard.html', list: './list.html', 'form-add': './form-add.html',
+      detail: './detail.html', 'list-filter': './list-filter.html', 'list-card': './list-card.html',
+      'form-step': './form-step.html', profile: './profile.html', 'result-success': './result-success.html',
+      'exception-404': './exception-404.html', 'user-role': './user-role.html',
+      'permission-tree': './permission-tree.html', 'log-list': './log-list.html',
+      'user-mgmt': './user-role.html', 'role-mgmt': './permission-tree.html',
+      log: './log-list.html', help: './index.html',
+      index: './index.html', login: './login.html'
+    }
+    function onMenuClick(key) {
+      selectedKeys.value = [key]
+      if (NAV_MAP[key]) window.location.href = NAV_MAP[key]
+    }
+    function onSubMenuClick(key, openedKeys) { openKeys.value = openedKeys }
+
+    window.__protoApp = { pageState }
+    return {
+      collapsed, selectedKeys, openKeys, pageTitle, noticeCount, pageState,
+      currentStep, form1, selectedRole, roles, roleMap, deptMap, orgTree,
+      nextStep, setPageState, onMenuClick, onSubMenuClick
+    }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

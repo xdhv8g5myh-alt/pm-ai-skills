@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>操作失败 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  html, body { height: 100%; margin: 0; }
+  #app { min-height: 100vh; background: #f2f3f5; display: flex; align-items: center; justify-content: center; padding-bottom: 44px; }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+
+  <!-- 简化版：不带侧边栏和顶部导航，全屏居中 -->
+  <a-card class="general-card" :body-style="{ padding: '60px 40px' }" style="max-width:600px">
+    <a-result status="error" title="操作失败" subtitle="抱歉，您的请求未能成功处理。">
+      <template #extra>
+        <a-space>
+          <a-button type="primary" size="large" @click="retry">
+            <template #icon><icon-refresh></icon-refresh></template>
+            重新尝试
+          </a-button>
+          <a-button size="large" @click="goBack">
+            <template #icon><icon-arrow-left></icon-arrow-left></template>
+            返回上一页
+          </a-button>
+          <a-button size="large" href="./dashboard.html">
+            <template #icon><icon-home></icon-home></template>
+            返回首页
+          </a-button>
+        </a-space>
+      </template>
+    </a-result>
+
+    <!-- 失败详情 -->
+    <div style="margin-top:16px;padding-top:20px;border-top:1px solid var(--proto-border)">
+      <div style="font-size:13px;color:var(--color-text-3);line-height:1.8">
+        <div>• 错误编号：ERR20251112003</div>
+        <div>• 错误类型：网络请求超时</div>
+        <div>• 发生时间：2025-11-12 10:30:22</div>
+        <div>• 建议：请检查网络连接后重试，或稍后再试</div>
+      </div>
+    </div>
+  </a-card>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+
+createApp({
+  setup() {
+    const pageTitle = ref('操作失败')
+
+    function retry() {
+      ArcoVue.Message && ArcoVue.Message.info('正在重试...')
+      setTimeout(() => { window.location.href = './form-add.html' }, 800)
+    }
+    function goBack() {
+      if (window.history.length > 1) window.history.back()
+      else window.location.href = './dashboard.html'
+    }
+
+    return { pageTitle, retry, goBack }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

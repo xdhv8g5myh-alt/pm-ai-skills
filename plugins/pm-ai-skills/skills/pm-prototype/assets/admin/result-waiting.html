@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>处理中 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  html, body { height: 100%; margin: 0; }
+  #app { min-height: 100vh; background: #f2f3f5; display: flex; align-items: center; justify-content: center; padding-bottom: 44px; }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+
+  <!-- 简化版：不带侧边栏和顶部导航，全屏居中 -->
+  <div class="result-page">
+    <!-- 加载动画 -->
+    <div class="waiting-anim"></div>
+
+    <!-- 标题 -->
+    <div class="result-title">处理中，请稍候</div>
+
+    <!-- 描述 -->
+    <div class="result-desc">
+      您请求的操作正在后台处理，预计需要 1-2 分钟完成。处理完成后将通过邮件通知您。
+    </div>
+
+    <!-- 按钮区 -->
+    <div style="display:flex;gap:12px">
+      <a-button type="primary" size="large" href="./dashboard.html">
+        <template #icon><icon-home></icon-home></template>
+        返回首页
+      </a-button>
+      <a-button size="large" @click="checkProgress">
+        <template #icon><icon-refresh></icon-refresh></template>
+        查看进度
+      </a-button>
+    </div>
+
+    <!-- 进度提示条 -->
+    <div style="width:320px;margin-top:32px">
+      <a-progress :percent="progress" :show-text="true" status="normal" />
+      <div style="font-size:12px;color:var(--color-text-3);margin-top:8px;text-align:center">
+        当前进度：{{ progress }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref, onMounted, onUnmounted } = Vue
+
+createApp({
+  setup() {
+    const pageTitle = ref('处理中')
+    const progress  = ref(35)
+    let timer = null
+
+    onMounted(() => {
+      timer = setInterval(() => {
+        if (progress.value < 90) {
+          progress.value += Math.floor(Math.random() * 8) + 2
+          if (progress.value > 90) progress.value = 90
+        }
+      }, 1500)
+    })
+    onUnmounted(() => {
+      if (timer) clearInterval(timer)
+    })
+
+    function checkProgress() {
+      ArcoVue.Message && ArcoVue.Message.info('正在查询最新进度...')
+    }
+
+    return { pageTitle, progress, checkProgress }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

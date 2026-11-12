@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>首页 · H5 原型</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+</style>
+</head>
+<body class="h5-body">
+<div id="app" v-cloak>
+  <div class="h5-phone">
+
+    <!-- 状态栏 -->
+    <div class="h5-status">
+      <span>9:41</span>
+      <span>🔋</span>
+    </div>
+
+    <!-- 顶部导航 -->
+    <div class="h5-navbar">
+      <span class="h5-navbar-title">首页</span>
+      <span class="h5-navbar-action">🔔</span>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="h5-content">
+
+      <!-- Banner 区 -->
+      <div class="h5-banner">
+        <div style="font-size:18px;font-weight:700;margin-bottom:6px;">欢迎使用 · 产品原型演示</div>
+        <div style="font-size:13px;opacity:.85;">探索功能，发现更多可能</div>
+      </div>
+
+      <!-- 快捷入口网格 -->
+      <div class="h5-section">
+        <div class="h5-section-title">快捷入口</div>
+        <div class="h5-grid">
+          <a href="./list.html" class="h5-grid-item">
+            <div class="h5-grid-icon">📝</div>
+            <div class="h5-grid-label">待办</div>
+          </a>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">💬</div>
+            <div class="h5-grid-label">消息</div>
+          </div>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">⭐</div>
+            <div class="h5-grid-label">收藏</div>
+          </div>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">🕐</div>
+            <div class="h5-grid-label">历史</div>
+          </div>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">📊</div>
+            <div class="h5-grid-label">报告</div>
+          </div>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">📈</div>
+            <div class="h5-grid-label">统计</div>
+          </div>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">⚙️</div>
+            <div class="h5-grid-label">设置</div>
+          </div>
+          <div class="h5-grid-item">
+            <div class="h5-grid-icon">❓</div>
+            <div class="h5-grid-label">帮助</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最新内容列表 -->
+      <div class="h5-section">
+        <div class="h5-section-title">最新动态</div>
+        <div v-for="item in latestList" :key="item.id">
+          <a href="./detail.html" class="h5-cell" style="text-decoration:none;">
+            <div class="h5-cell-icon">{{ item.icon }}</div>
+            <div class="h5-cell-body">
+              <div class="h5-cell-title">{{ item.title }}</div>
+              <div class="h5-cell-desc">{{ item.desc }}</div>
+            </div>
+            <div class="h5-cell-right">
+              <a-tag :color="item.tagColor" size="mini">{{ item.tag }}</a-tag>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- 底部占位，防止被 TabBar 遮挡 -->
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- 底部 TabBar -->
+    <div class="h5-tabbar">
+      <a href="./home.html" class="h5-tab" :class="{active: activeTab==='home'}">
+        <span class="h5-tab-icon">🏠</span>
+        <span class="h5-tab-label">首页</span>
+      </a>
+      <a href="./list.html" class="h5-tab" :class="{active: activeTab==='list'}">
+        <span class="h5-tab-icon">📋</span>
+        <span class="h5-tab-label">发现</span>
+      </a>
+      <a href="./form.html" class="h5-tab">
+        <span class="h5-tab-icon">✏️</span>
+        <span class="h5-tab-label">发布</span>
+      </a>
+      <a href="#" class="h5-tab">
+        <span class="h5-tab-icon">👤</span>
+        <span class="h5-tab-label">我的</span>
+      </a>
+    </div>
+
+    <!-- Proto 调试条 -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">H5 移动端</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+    </div>
+
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+createApp({
+  setup() {
+    const pageTitle = ref('首页')
+    const activeTab = ref('home')
+
+    const latestList = ref([
+      {
+        id: 1, icon: '📌',
+        title: '项目启动会议已安排',
+        desc: '明日 10:00 · 会议室 A3',
+        tag: '进行中', tagColor: 'arcoblue'
+      },
+      {
+        id: 2, icon: '✅',
+        title: '季度报告已完成审核',
+        desc: '财务部 · 2 小时前',
+        tag: '已完成', tagColor: 'green'
+      },
+      {
+        id: 3, icon: '⚡',
+        title: '系统升级通知',
+        desc: '本周六凌晨 2:00 停机维护',
+        tag: '通知', tagColor: 'orange'
+      },
+      {
+        id: 4, icon: '📊',
+        title: '本月数据汇总报告',
+        desc: '运营部 · 今日 09:30',
+        tag: '新建', tagColor: 'purple'
+      },
+      {
+        id: 5, icon: '🔔',
+        title: '待审批事项提醒',
+        desc: '您有 3 条待处理事项',
+        tag: '待处理', tagColor: 'red'
+      },
+    ])
+
+    return { pageTitle, activeTab, latestList }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

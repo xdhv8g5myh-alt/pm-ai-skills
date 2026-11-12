@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>详情 — 小程序原型</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    body { margin: 0; background: #e8e8e8; display: flex; justify-content: center; align-items: flex-start; padding: 24px 0 80px; min-height: 100vh; }
+    .mp-shell {
+      width: 375px; min-height: 700px; background: #fff;
+      border-radius: 40px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,.25), 0 0 0 2px #d0d0d0;
+      display: flex; flex-direction: column; position: relative;
+    }
+    .mp-statusbar {
+      height: 44px; background: #000; color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; font-size: 13px; flex-shrink: 0;
+    }
+    .mp-navbar {
+      height: 44px; background: #fff; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; flex-shrink: 0;
+    }
+    .mp-navbar-back { position: absolute; left: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; text-decoration: none; display: flex; align-items: center; }
+    .mp-navbar-title { font-size: 16px; font-weight: 600; color: #191919; }
+    .mp-navbar-more { position: absolute; right: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; }
+    .mp-content { flex: 1; overflow-y: auto; background: #f7f8fa; padding-bottom: 72px; }
+    .mp-section { background: #fff; border-radius: 10px; margin: 10px; overflow: hidden; }
+    .mp-section-title { font-size: 14px; font-weight: 600; color: #333; padding: 14px 16px 8px; }
+    .mp-cell { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f5f5f5; gap: 12px; }
+    .mp-cell:last-child { border-bottom: none; }
+    .mp-cell-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .mp-cell-body { flex: 1; }
+    .mp-cell-title { font-size: 14px; color: #191919; }
+    .mp-cell-desc { font-size: 12px; color: #999; margin-top: 2px; }
+    .mp-cell-right { font-size: 13px; color: #bbb; }
+    .mp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .mp-tag-green { background: #e8f7ee; color: #07c160; }
+    .mp-tag-blue { background: #e8f3ff; color: #1677ff; }
+    .mp-tag-orange { background: #fff3e8; color: #ff7d00; }
+    .mp-tag-gray { background: #f2f3f5; color: #86909c; }
+    .mp-tag-red { background: #ffe8e8; color: #f53f3f; }
+    /* 详情顶部信息卡 */
+    .detail-info-card {
+      padding: 16px;
+    }
+    .detail-avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .detail-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #07c160, #10aeff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .detail-author-info { flex: 1; }
+    .detail-author-name { font-size: 14px; font-weight: 600; color: #191919; }
+    .detail-author-role { font-size: 12px; color: #86909c; margin-top: 2px; }
+    .detail-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #191919;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .detail-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    /* 进度条 */
+    .progress-bar-wrap {
+      padding: 4px 0 8px;
+    }
+    .progress-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #86909c;
+      margin-bottom: 6px;
+    }
+    .progress-bar-track {
+      height: 6px;
+      background: #f2f3f5;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #07c160, #10aeff);
+      transition: width .6s ease;
+    }
+    /* 内容段落 */
+    .detail-para {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .detail-para:last-child { margin-bottom: 0; }
+    /* 字段行 */
+    .field-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .field-row:last-child { border-bottom: none; }
+    .field-label {
+      width: 72px;
+      font-size: 13px;
+      color: #86909c;
+      flex-shrink: 0;
+    }
+    .field-value {
+      font-size: 13px;
+      color: #191919;
+      flex: 1;
+    }
+    /* 底部操作栏 */
+    .mp-action-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+    }
+    .mp-action-btn {
+      flex: 1;
+      height: 40px;
+      border-radius: 20px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mp-action-btn-ghost { background: #f2f3f5; color: #333; }
+    .mp-action-btn-primary { background: #07c160; color: #fff; }
+    /* 评论区 */
+    .comment-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e8f3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .comment-name { font-size: 13px; font-weight: 600; color: #191919; }
+    .comment-time { font-size: 11px; color: #bbb; margin-left: auto; }
+    .comment-text { font-size: 13px; color: #333; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="mp-shell">
+      <!-- 状态栏 -->
+      <div class="mp-statusbar">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:12px">
+          <span>●●●</span><span>WiFi</span><span>🔋</span>
+        </span>
+      </div>
+
+      <!-- 导航栏 -->
+      <div class="mp-navbar">
+        <a href="./list.html" class="mp-navbar-back">‹</a>
+        <span class="mp-navbar-title">详情</span>
+        <span class="mp-navbar-more">⋯</span>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="mp-content">
+        <!-- loading 态 -->
+        <div v-if="pageState==='loading'" style="display:flex;justify-content:center;align-items:center;height:300px">
+          <a-spin tip="加载中..." size="large"></a-spin>
+        </div>
+
+        <!-- empty 态 -->
+        <div v-else-if="pageState==='empty'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
+          <div style="font-size:48px">📭</div>
+          <div style="font-size:14px">内容不存在或已删除</div>
+          <a href="./list.html" style="font-size:13px;color:#07c160;text-decoration:none">返回列表</a>
+        </div>
+
+        <!-- error 态 -->
+        <div v-else-if="pageState==='error'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
+          <div style="font-size:48px">⚠️</div>
+          <div style="font-size:14px;color:#f53f3f">加载失败</div>
+          <a-button type="primary" size="small" @click="pageState='normal'" style="background:#07c160;border-color:#07c160">点击重试</a-button>
+        </div>
+
+        <!-- normal 态 -->
+        <div v-else>
+          <!-- 顶部信息卡 -->
+          <div class="mp-section" style="margin-top:10px">
+            <div class="detail-info-card">
+              <div class="detail-avatar-row">
+                <div class="detail-avatar">📝</div>
+                <div class="detail-author-info">
+                  <div class="detail-author-name">张明华</div>
+                  <div class="detail-author-role">产品经理 · 电商事业部</div>
+                </div>
+                <span class="mp-tag mp-tag-orange">评审中</span>
+              </div>
+              <div class="detail-title">用户中心改版 v2.0 — 账号安全与权限管理需求说明</div>
+              <div class="detail-meta">
+                <span class="mp-tag mp-tag-green">需求</span>
+                <span style="font-size:12px;color:#bbb">2026-09-15 创建</span>
+                <span style="font-size:12px;color:#bbb">· 更新于 3 小时前</span>
+              </div>
+            </div>
+            <div style="padding:0 16px 16px">
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-label">
+                  <span>整体进度</span>
+                  <span>{{ detail.progress }}%</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" :style="{width: detail.progress + '%'}"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 内容详情 -->
+          <div class="mp-section">
+            <div class="mp-section-title">需求背景</div>
+            <div style="padding:0 16px 16px">
+              <div class="detail-para">当前用户中心账号安全能力较弱，缺乏二次验证机制，导致近期出现多起账号盗用投诉。同时权限体系混乱，不同角色所能操作的功能边界不清晰，亟需统一梳理。</div>
+              <div class="detail-para">本次改版聚焦「安全」与「权限」两大模块：引入手机/邮箱二次验证、设备管理、登录日志；同时建立 RBAC 权限模型，支持管理员、运营、普通用户三级角色细粒度配置。</div>
+              <div class="detail-para">预计覆盖 MAU 120 万用户，上线后安全投诉率目标降低 60%，权限相关客服工单减少 40%。</div>
+            </div>
+          </div>
+
+          <!-- 字段信息 -->
+          <div class="mp-section">
+            <div class="mp-section-title">需求信息</div>
+            <div class="field-row" v-for="field in detail.fields" :key="field.label">
+              <div class="field-label">{{ field.label }}</div>
+              <div class="field-value">
+                <span v-if="field.tag" class="mp-tag" :class="field.tagClass">{{ field.value }}</span>
+                <span v-else>{{ field.value }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 评论区 -->
+          <div class="mp-section">
+            <div class="mp-section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px">
+              <span>讨论（{{ comments.length }}）</span>
+              <span style="font-size:12px;color:#07c160;cursor:pointer">全部 ›</span>
+            </div>
+            <div class="comment-item" v-for="c in comments" :key="c.id">
+              <div class="comment-header">
+                <div class="comment-avatar">{{ c.avatar }}</div>
+                <div class="comment-name">{{ c.name }}</div>
+                <div class="comment-time">{{ c.time }}</div>
+              </div>
+              <div class="comment-text">{{ c.text }}</div>
+            </div>
+          </div>
+
+          <div style="height:16px"></div>
+        </div>
+      </div>
+
+      <!-- 底部操作栏 -->
+      <div class="mp-action-bar" v-if="pageState==='normal'">
+        <button class="mp-action-btn mp-action-btn-ghost" @click="()=>{}">驳回需求</button>
+        <button class="mp-action-btn mp-action-btn-primary" @click="showConfirm=true">确认通过</button>
+      </div>
+
+      <!-- 通过确认弹窗 -->
+      <a-modal
+        v-model:visible="showConfirm"
+        title="确认通过评审？"
+        ok-text="确认通过"
+        cancel-text="再想想"
+        @ok="handleConfirm"
+        :modal-style="{width:'300px'}"
+      >
+        <p style="font-size:14px;color:#333;margin:0">通过后该需求将流转至「设计排期」阶段，确认继续吗？</p>
+      </a-modal>
+    </div>
+
+    <!-- Proto Toolbar -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">小程序</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳</button>
+      <button @click="pageState='empty'">📭</button>
+      <button @click="pageState='error'">⚠️</button>
+      <button @click="pageState='normal'">✅</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('详情')
+        const pageState = ref('normal')
+        const showConfirm = ref(false)
+
+        const detail = ref({
+          progress: 45,
+          fields: [
+            { label:'类型', value:'功能需求', tag:true, tagClass:'mp-tag-green' },
+            { label:'优先级', value:'P0 紧急', tag:true, tagClass:'mp-tag-red' },
+            { label:'截止日期', value:'2026-10-15', tag:false },
+            { label:'负责人', value:'张明华', tag:false },
+            { label:'协作人', value:'李晓雨、陈伟明、王芳', tag:false },
+            { label:'进度', value:'评审中 → 设计排期', tag:false },
+          ]
+        })
+
+        const comments = ref([
+          { id:1, avatar:'👨', name:'陈伟明', time:'2小时前', text:'二次验证这块建议优先支持短信，邮箱验证延迟较高，会影响用户体验。' },
+          { id:2, avatar:'👩', name:'李晓雨', time:'昨天', text:'权限管理页面 UI 已经开始出稿，会在明天同步给大家。' },
+          { id:3, avatar:'🧑', name:'王芳', time:'2天前', text:'RBAC 模型这边需要和后端对齐一下数据结构，@陈伟明 你这边方便排一个对齐会议吗？' },
+        ])
+
+        function handleConfirm() {
+          showConfirm.value = false
+          detail.value.progress = 60
+        }
+
+        return { pageTitle, pageState, detail, comments, showConfirm, handleConfirm }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>请注意 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  html, body { height: 100%; margin: 0; }
+  #app { min-height: 100vh; background: #f2f3f5; display: flex; align-items: center; justify-content: center; padding-bottom: 44px; }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+
+  <!-- 简化版：不带侧边栏和顶部导航，全屏居中 -->
+  <div class="result-page">
+    <!-- 警告图标 -->
+    <div class="result-icon" style="font-size:80px">⚠️</div>
+
+    <!-- 标题 -->
+    <div class="result-title">请注意</div>
+
+    <!-- 描述 -->
+    <div class="result-desc">
+      检测到部分数据可能存在异常，建议核实后再继续操作。继续操作可能会导致数据不一致。
+    </div>
+
+    <!-- 警告详情 -->
+    <a-card class="general-card" :body-style="{ padding: '16px 20px' }" style="max-width:460px;margin-bottom:28px;text-align:left">
+      <a-alert type="warning" style="margin-bottom:12px">
+        <template #title>
+          <span style="font-weight:500">发现 3 条异常数据</span>
+        </template>
+        <div style="font-size:12px;line-height:1.8">
+          <div>• 订单金额字段存在 1 处校验异常</div>
+          <div>• 关联用户已被停用</div>
+          <div>• 部分必填字段缺失</div>
+        </div>
+      </a-alert>
+    </a-card>
+
+    <!-- 按钮区 -->
+    <div style="display:flex;gap:12px">
+      <a-button type="primary" size="large" @click="goBack">
+        <template #icon><icon-arrow-left></icon-arrow-left></template>
+        返回检查
+      </a-button>
+      <a-button status="danger" size="large" @click="confirmContinue">
+        <template #icon><icon-exclamation-circle></icon-exclamation-circle></template>
+        仍要继续
+      </a-button>
+    </div>
+  </div>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+
+createApp({
+  setup() {
+    const pageTitle = ref('请注意')
+
+    function goBack() {
+      if (window.history.length > 1) window.history.back()
+      else window.location.href = './list.html'
+    }
+    function confirmContinue() {
+      ArcoVue.Message && ArcoVue.Message.warning('已确认继续操作')
+      setTimeout(() => { window.location.href = './result-fail.html' }, 800)
+    }
+
+    return { pageTitle, goBack, confirmContinue }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibePM — 首页</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif; }
+    .pc-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px; background: #fff; border-bottom: 1px solid #e5e6eb;
+      display: flex; align-items: center; padding: 0 40px; gap: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .pc-logo { font-size: 20px; font-weight: 700; color: var(--color-primary,#165dff); margin-right: 16px; white-space: nowrap; }
+    .pc-nav { display: flex; align-items: center; gap: 4px; flex: 1; }
+    .pc-nav-item { padding: 6px 14px; border-radius: 6px; font-size: 14px; color: #4e5969; cursor: pointer; text-decoration: none; transition: .15s; }
+    .pc-nav-item:hover, .pc-nav-item.active { color: var(--color-primary,#165dff); background: rgba(22,93,255,.06); }
+    .pc-header-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .pc-main { min-height: 100vh; padding-top: 64px; background: #f5f5f5; }
+    .pc-hero { background: linear-gradient(135deg, #165dff 0%, #7b61ff 100%); color: #fff; padding: 80px 40px; text-align: center; }
+    .pc-hero h1 { font-size: 40px; font-weight: 700; margin: 0 0 16px; }
+    .pc-hero p { font-size: 18px; opacity: .85; margin: 0 0 32px; }
+    .pc-hero-btns { display: flex; gap: 12px; justify-content: center; }
+    .pc-section { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+    .pc-section-title { font-size: 24px; font-weight: 700; color: #1d2129; margin-bottom: 24px; }
+    .pc-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .pc-card { background: #fff; border-radius: 10px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: box-shadow .2s; cursor: pointer; }
+    .pc-card:hover { box-shadow: 0 4px 16px rgba(22,93,255,.12); }
+    .pc-card-icon { font-size: 32px; margin-bottom: 12px; }
+    .pc-card-title { font-size: 16px; font-weight: 600; color: #1d2129; margin-bottom: 6px; }
+    .pc-card-desc { font-size: 13px; color: #86909c; line-height: 1.6; }
+    .pc-list-item { background: #fff; border-radius: 8px; padding: 20px 24px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); cursor: pointer; transition: .15s; }
+    .pc-list-item:hover { box-shadow: 0 3px 12px rgba(22,93,255,.1); transform: translateY(-1px); }
+    .pc-list-icon { width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg,#165dff,#7b61ff); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .pc-list-body { flex: 1; }
+    .pc-list-title { font-size: 15px; font-weight: 600; color: #1d2129; margin-bottom: 4px; }
+    .pc-list-desc { font-size: 13px; color: #86909c; }
+    .pc-list-right { text-align: right; flex-shrink: 0; }
+    .pc-footer { background: #1d2129; color: rgba(255,255,255,.6); text-align: center; padding: 24px; font-size: 13px; }
+    .section-bg-white { background: #fff; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <!-- Header -->
+    <header class="pc-header">
+      <div class="pc-logo">⚡ VibePM</div>
+      <nav class="pc-nav">
+        <a href="./home.html" class="pc-nav-item" :class="{active:activePage==='home'}">首页</a>
+        <a href="./list.html" class="pc-nav-item" :class="{active:activePage==='list'}">发现</a>
+        <a href="./detail.html" class="pc-nav-item" :class="{active:activePage==='detail'}">详情</a>
+        <a href="./checkout.html" class="pc-nav-item" :class="{active:activePage==='checkout'}">结算</a>
+      </nav>
+      <div class="pc-header-right">
+        <a-input-search placeholder="搜索..." style="width:200px"></a-input-search>
+        <a-button type="text">
+          <template #icon><icon-notification></icon-notification></template>
+        </a-button>
+        <a href="./profile.html">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);cursor:pointer" :size="32">U</a-avatar>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="pc-main">
+      <!-- Hero -->
+      <div class="pc-hero">
+        <h1>智能产品协作平台</h1>
+        <p>从需求到交付，一站式 AI 驱动的产品研发协作工具，让团队效率提升 3 倍</p>
+        <div class="pc-hero-btns">
+          <a-button type="primary" size="large" style="background:#fff;color:#165dff;border:none;font-weight:600">
+            立即开始
+          </a-button>
+          <a-button size="large" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4)">
+            了解更多
+          </a-button>
+        </div>
+      </div>
+
+      <!-- 核心功能 -->
+      <div class="pc-section">
+        <div class="pc-section-title">核心功能</div>
+        <div class="pc-card-grid">
+          <div class="pc-card" v-for="feat in features" :key="feat.title">
+            <div class="pc-card-icon">{{ feat.icon }}</div>
+            <div class="pc-card-title">{{ feat.title }}</div>
+            <div class="pc-card-desc">{{ feat.desc }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 热门项目 -->
+      <div class="section-bg-white">
+        <div class="pc-section">
+          <div class="pc-section-title">热门项目</div>
+          <template v-if="pageState === 'loading'">
+            <a-skeleton v-for="i in 4" :key="i" style="margin-bottom:12px" :animation="true">
+              <a-skeleton-line :rows="2"></a-skeleton-line>
+            </a-skeleton>
+          </template>
+          <template v-else-if="pageState === 'empty'">
+            <a-empty description="暂无热门项目" style="padding:48px 0"></a-empty>
+          </template>
+          <template v-else-if="pageState === 'error'">
+            <a-result status="error" title="加载失败" subtitle="网络异常，请稍后重试">
+              <template #extra>
+                <a-button type="primary" @click="pageState='normal'">重新加载</a-button>
+              </template>
+            </a-result>
+          </template>
+          <template v-else>
+            <a href="./detail.html" style="text-decoration:none">
+              <div class="pc-list-item" v-for="proj in hotProjects" :key="proj.id">
+                <div class="pc-list-icon">{{ proj.icon }}</div>
+                <div class="pc-list-body">
+                  <div class="pc-list-title">{{ proj.name }}</div>
+                  <div class="pc-list-desc">{{ proj.desc }}</div>
+                </div>
+                <div class="pc-list-right">
+                  <a-tag :color="proj.statusColor" style="margin-bottom:6px">{{ proj.status }}</a-tag>
+                  <div style="font-size:12px;color:#c9cdd4;margin-top:4px">{{ proj.time }}</div>
+                </div>
+              </div>
+            </a>
+          </template>
+        </div>
+      </div>
+    </main>
+
+    <footer class="pc-footer">© 2025 VibePM · 智能产品协作平台 · 用户前台原型</footer>
+
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">用户前台 PC</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳ 加载中</button>
+      <button @click="pageState='empty'">📭 空数据</button>
+      <button @click="pageState='error'">⚠️ 出错</button>
+      <button @click="pageState='normal'">✅ 正常</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('首页')
+        const activePage = ref('home')
+        const pageState = ref('normal')
+
+        const features = ref([
+          { icon: '🤖', title: '需求分析', desc: 'AI 自动识别用户故事、优先级建议，结构化整理需求文档，减少遗漏。' },
+          { icon: '🎨', title: '原型生成', desc: '基于需求描述一键生成交互原型，支持多端预览，快速验证设计思路。' },
+          { icon: '📝', title: 'PRD 文档', desc: '智能生成标准 PRD 文档，自动关联原型与需求，保持文档与设计同步。' },
+          { icon: '🚀', title: '前端交付', desc: '从原型一键导出前端代码，减少重复劳动，加速研发交付周期。' }
+        ])
+
+        const hotProjects = ref([
+          { id: 1, icon: '📱', name: '家庭健康管理小程序 v2.0', desc: '基于 AI 的家庭用药提醒与健康档案管理系统，支持多人共享', status: '进行中', statusColor: 'blue', time: '今天 14:30' },
+          { id: 2, icon: '🏢', name: '集团线索平台重构', desc: 'B2B 销售线索全生命周期管理，接入 AI 评分与自动分配', status: '评审中', statusColor: 'orange', time: '今天 11:20' },
+          { id: 3, icon: '🛒', name: '电商后台管理系统', desc: '商品/订单/用户三端管理，内置数据看板与报表导出功能', status: '已完成', statusColor: 'green', time: '昨天 18:00' },
+          { id: 4, icon: '📊', name: '数据分析平台', desc: '多数据源接入，拖拽式报表搭建，支持定时推送与钉钉告警', status: '规划中', statusColor: 'purple', time: '前天 09:15' },
+          { id: 5, icon: '🎓', name: '在线学习管理系统', desc: '课程管理、学员跟踪、作业批改一体化，集成直播与录播', status: '进行中', statusColor: 'blue', time: '2025-01-18' },
+          { id: 6, icon: '🔧', name: 'DevOps 工具链集成', desc: 'CI/CD 流水线可视化配置，自动化测试报告聚合展示', status: '待启动', statusColor: 'gray', time: '2025-01-15' }
+        ])
+
+        return { pageTitle, activePage, pageState, features, hotProjects }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

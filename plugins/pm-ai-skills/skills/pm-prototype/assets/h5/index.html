@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>H5 移动端原型库</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  body { background:#f2f3f5; min-height:100vh; }
+  .index-wrap { max-width:700px; margin:0 auto; padding:40px 24px 80px; }
+  .index-header { margin-bottom:36px; text-align:center; }
+  .index-brand { display:inline-flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .index-brand-icon {
+    width:48px; height:48px; border-radius:12px;
+    background:linear-gradient(135deg,#165dff,#7b61ff);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:26px;
+    box-shadow:0 4px 12px rgba(22,93,255,.3);
+  }
+  .index-brand-name { font-size:22px; font-weight:800; color:#1d2129; }
+  .index-subtitle { font-size:14px; color:#86909c; margin-top:4px; }
+  .page-card {
+    cursor:pointer;
+    transition:transform .15s, box-shadow .15s;
+    border-radius:10px !important;
+  }
+  .page-card:hover {
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(22,93,255,.14) !important;
+  }
+  .card-icon { font-size:36px; margin-bottom:10px; line-height:1; }
+  .card-title { font-size:15px; font-weight:700; color:#1d2129; margin-bottom:6px; }
+  .card-desc { font-size:13px; color:#86909c; line-height:1.6; margin-bottom:14px; min-height:38px; }
+  .index-footer {
+    text-align:center; margin-top:28px; padding:16px 20px;
+    background:rgba(255,255,255,.7); border-radius:10px;
+    font-size:13px; color:#86909c; border:1px solid #e5e6eb;
+  }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <div class="index-wrap">
+
+    <!-- 顶部标题 -->
+    <div class="index-header">
+      <div class="index-brand">
+        <div class="index-brand-icon">📱</div>
+        <span class="index-brand-name">H5 移动端原型库</span>
+      </div>
+      <div class="index-subtitle">基于 Vue 3 + Arco Design Vue CDN · 5 个移动端页面模板 · 演示可用</div>
+    </div>
+
+    <!-- 页面卡片 -->
+    <a-grid :cols="2" :col-gap="16" :row-gap="16">
+      <a-grid-item v-for="page in pages" :key="page.href">
+        <a-card
+          hoverable
+          class="page-card"
+          :body-style="{ padding: '20px 18px 16px' }"
+          @click="goto(page.href)"
+        >
+          <div class="card-icon">{{ page.icon }}</div>
+          <div class="card-title">{{ page.title }}</div>
+          <div class="card-desc">{{ page.desc }}</div>
+          <a-space size="mini">
+            <a-button type="primary" size="small" :href="page.href" @click.stop>查看页面</a-button>
+            <a-tag v-if="page.tag" size="small" :color="page.tagColor">{{ page.tag }}</a-tag>
+          </a-space>
+        </a-card>
+      </a-grid-item>
+    </a-grid>
+
+    <!-- 底部说明 -->
+    <div class="index-footer">
+      <a-space size="medium" wrap>
+        <span>页面状态切换：</span>
+        <a-tag color="arcoblue" size="small">✅ 正常</a-tag>
+        <a-tag color="orange" size="small">⏳ 加载中</a-tag>
+        <a-tag color="gray" size="small">📭 空数据</a-tag>
+        <a-tag color="red" size="small">⚠ 出错</a-tag>
+        <span>· 通过页面底部调试条切换</span>
+      </a-space>
+    </div>
+  </div>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">H5 移动端</span>
+    <span class="proto-sep">·</span>
+    <span>导航总览</span>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">点击卡片进入各页面</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+createApp({
+  setup() {
+    const pages = ref([
+      {
+        icon: '🏠', title: '首页',
+        desc: 'Banner 区、8 格快捷入口网格、最新内容列表，带底部 TabBar。',
+        href: './home.html', tag: 'TabBar', tagColor: 'arcoblue'
+      },
+      {
+        icon: '📋', title: '列表页',
+        desc: '搜索框、筛选 Tab、8 条数据，支持加载中/空数据/出错三状态。',
+        href: './list.html', tag: 'TabBar', tagColor: 'arcoblue'
+      },
+      {
+        icon: '📄', title: '详情页',
+        desc: '信息卡片、内容描述、字段列表，底部双按钮操作栏。',
+        href: './detail.html', tag: '无 TabBar', tagColor: 'gray'
+      },
+      {
+        icon: '✏️', title: '表单页',
+        desc: '完整表单：标题/类型/优先级/截止日期/描述/附件，底部提交操作。',
+        href: './form.html', tag: '无 TabBar', tagColor: 'gray'
+      },
+      {
+        icon: '✅', title: '成功页',
+        desc: '提交成功结果页，包含参考编号和返回首页/查看详情入口。',
+        href: './success.html', tag: '无 TabBar', tagColor: 'gray'
+      },
+    ])
+
+    function goto(href) { window.location.href = href }
+
+    return { pages, goto }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

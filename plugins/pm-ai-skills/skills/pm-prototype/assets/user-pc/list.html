@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibePM — 发现</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif; }
+    .pc-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px; background: #fff; border-bottom: 1px solid #e5e6eb;
+      display: flex; align-items: center; padding: 0 40px; gap: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .pc-logo { font-size: 20px; font-weight: 700; color: var(--color-primary,#165dff); margin-right: 16px; white-space: nowrap; }
+    .pc-nav { display: flex; align-items: center; gap: 4px; flex: 1; }
+    .pc-nav-item { padding: 6px 14px; border-radius: 6px; font-size: 14px; color: #4e5969; cursor: pointer; text-decoration: none; transition: .15s; }
+    .pc-nav-item:hover, .pc-nav-item.active { color: var(--color-primary,#165dff); background: rgba(22,93,255,.06); }
+    .pc-header-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .pc-main { min-height: 100vh; padding-top: 64px; background: #f5f5f5; }
+    .pc-footer { background: #1d2129; color: rgba(255,255,255,.6); text-align: center; padding: 24px; font-size: 13px; }
+
+    /* Filter bar */
+    .filter-bar { background: #fff; border-bottom: 1px solid #e5e6eb; padding: 16px 40px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .filter-bar-label { font-size: 13px; color: #4e5969; white-space: nowrap; }
+
+    /* Body layout */
+    .list-body { max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; gap: 20px; }
+
+    /* Sidebar */
+    .list-sidebar { width: 220px; flex-shrink: 0; }
+    .sidebar-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .sidebar-title { padding: 14px 16px; font-size: 13px; font-weight: 600; color: #86909c; border-bottom: 1px solid #f2f3f5; }
+    .sidebar-item { padding: 11px 16px; font-size: 14px; color: #4e5969; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: .12s; }
+    .sidebar-item:hover { background: #f7f8fa; color: #165dff; }
+    .sidebar-item.active { color: #165dff; background: rgba(22,93,255,.06); font-weight: 600; }
+    .sidebar-count { font-size: 12px; color: #c9cdd4; background: #f2f3f5; border-radius: 20px; padding: 1px 7px; }
+    .sidebar-item.active .sidebar-count { background: rgba(22,93,255,.1); color: #165dff; }
+
+    /* Content area */
+    .list-content { flex: 1; min-width: 0; }
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .content-header-left { font-size: 14px; color: #4e5969; }
+    .content-header-left strong { color: #1d2129; }
+
+    .pc-list-item { background: #fff; border-radius: 8px; padding: 20px 24px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.05); cursor: pointer; transition: .15s; }
+    .pc-list-item:hover { box-shadow: 0 3px 12px rgba(22,93,255,.1); transform: translateY(-1px); }
+    .pc-list-icon { width: 48px; height: 48px; border-radius: 10px; background: linear-gradient(135deg,#165dff,#7b61ff); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .pc-list-body { flex: 1; min-width: 0; }
+    .pc-list-title { font-size: 15px; font-weight: 600; color: #1d2129; margin-bottom: 5px; }
+    .pc-list-desc { font-size: 13px; color: #86909c; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pc-list-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .pc-list-author { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #86909c; }
+    .pc-list-right { text-align: right; flex-shrink: 0; min-width: 100px; }
+    .pc-list-views { font-size: 12px; color: #c9cdd4; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <!-- Header -->
+    <header class="pc-header">
+      <div class="pc-logo">⚡ VibePM</div>
+      <nav class="pc-nav">
+        <a href="./home.html" class="pc-nav-item" :class="{active:activePage==='home'}">首页</a>
+        <a href="./list.html" class="pc-nav-item" :class="{active:activePage==='list'}">发现</a>
+        <a href="./detail.html" class="pc-nav-item" :class="{active:activePage==='detail'}">详情</a>
+        <a href="./checkout.html" class="pc-nav-item" :class="{active:activePage==='checkout'}">结算</a>
+      </nav>
+      <div class="pc-header-right">
+        <a-input-search placeholder="搜索..." style="width:200px"></a-input-search>
+        <a-button type="text">
+          <template #icon><icon-notification></icon-notification></template>
+        </a-button>
+        <a href="./profile.html">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);cursor:pointer" :size="32">U</a-avatar>
+        </a>
+      </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div style="padding-top:64px">
+      <div class="filter-bar">
+        <span class="filter-bar-label">筛选：</span>
+        <a-input-search v-model="searchVal" placeholder="搜索项目名称..." style="width:220px" allow-clear></a-input-search>
+        <a-select v-model="filterType" placeholder="类型" style="width:140px" allow-clear>
+          <a-option value="requirement">需求分析</a-option>
+          <a-option value="prototype">原型设计</a-option>
+          <a-option value="prd">产品文档</a-option>
+          <a-option value="dev">开发交付</a-option>
+        </a-select>
+        <a-select v-model="filterStatus" placeholder="状态" style="width:130px" allow-clear>
+          <a-option value="active">进行中</a-option>
+          <a-option value="review">评审中</a-option>
+          <a-option value="done">已完成</a-option>
+          <a-option value="plan">规划中</a-option>
+        </a-select>
+        <a-select v-model="sortBy" placeholder="排序" style="width:130px">
+          <a-option value="latest">最新更新</a-option>
+          <a-option value="hot">最热门</a-option>
+          <a-option value="create">创建时间</a-option>
+        </a-select>
+        <a-button type="primary" style="margin-left:auto">
+          <template #icon><icon-search></icon-search></template>
+          搜索
+        </a-button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <main class="pc-main" style="padding-top:0">
+      <div class="list-body">
+        <!-- Sidebar -->
+        <aside class="list-sidebar">
+          <div class="sidebar-card">
+            <div class="sidebar-title">分类</div>
+            <div
+              v-for="cat in categories"
+              :key="cat.key"
+              class="sidebar-item"
+              :class="{active: activeCategory === cat.key}"
+              @click="activeCategory = cat.key"
+            >
+              <span>{{ cat.label }}</span>
+              <span class="sidebar-count">{{ cat.count }}</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Content -->
+        <div class="list-content">
+          <div class="content-header">
+            <div class="content-header-left">
+              共 <strong>{{ items.length }}</strong> 个项目
+            </div>
+            <a-radio-group v-model="viewMode" type="button" size="small">
+              <a-radio value="list">
+                <template #radio><icon-list></icon-list></template>
+              </a-radio>
+              <a-radio value="card">
+                <template #radio><icon-apps></icon-apps></template>
+              </a-radio>
+            </a-radio-group>
+          </div>
+
+          <!-- Loading state -->
+          <template v-if="pageState === 'loading'">
+            <a-skeleton v-for="i in 5" :key="i" style="margin-bottom:12px;background:#fff;border-radius:8px;padding:20px" :animation="true">
+              <a-skeleton-line :rows="3"></a-skeleton-line>
+            </a-skeleton>
+          </template>
+
+          <!-- Empty state -->
+          <template v-else-if="pageState === 'empty'">
+            <div style="background:#fff;border-radius:10px;padding:80px 0">
+              <a-empty description="暂无匹配的项目，尝试调整筛选条件">
+                <template #extra>
+                  <a-button type="primary" @click="pageState='normal'">清除筛选</a-button>
+                </template>
+              </a-empty>
+            </div>
+          </template>
+
+          <!-- Error state -->
+          <template v-else-if="pageState === 'error'">
+            <div style="background:#fff;border-radius:10px">
+              <a-result status="error" title="加载失败" subtitle="网络异常，请检查网络连接后重试">
+                <template #extra>
+                  <a-button type="primary" @click="pageState='normal'">重新加载</a-button>
+                </template>
+              </a-result>
+            </div>
+          </template>
+
+          <!-- Normal state -->
+          <template v-else>
+            <a href="./detail.html" style="text-decoration:none" v-for="item in items" :key="item.id">
+              <div class="pc-list-item">
+                <div class="pc-list-icon">{{ item.icon }}</div>
+                <div class="pc-list-body">
+                  <div class="pc-list-title">{{ item.title }}</div>
+                  <div class="pc-list-desc">{{ item.desc }}</div>
+                  <div class="pc-list-meta">
+                    <div class="pc-list-author">
+                      <a-avatar :size="20" style="background:#165dff;font-size:10px">{{ item.author[0] }}</a-avatar>
+                      {{ item.author }}
+                    </div>
+                    <a-tag v-for="tag in item.tags" :key="tag" size="small">{{ tag }}</a-tag>
+                    <span style="font-size:12px;color:#c9cdd4">{{ item.time }}</span>
+                  </div>
+                </div>
+                <div class="pc-list-right">
+                  <a-tag :color="item.statusColor">{{ item.status }}</a-tag>
+                  <div class="pc-list-views">👁 {{ item.views }} 浏览</div>
+                </div>
+              </div>
+            </a>
+
+            <div style="display:flex;justify-content:center;padding:20px 0">
+              <a-pagination :total="80" :default-page-size="8" show-total show-jumper></a-pagination>
+            </div>
+          </template>
+        </div>
+      </div>
+    </main>
+
+    <footer class="pc-footer">© 2025 VibePM · 智能产品协作平台 · 用户前台原型</footer>
+
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">用户前台 PC</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳ 加载中</button>
+      <button @click="pageState='empty'">📭 空数据</button>
+      <button @click="pageState='error'">⚠️ 出错</button>
+      <button @click="pageState='normal'">✅ 正常</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('发现')
+        const activePage = ref('list')
+        const pageState = ref('normal')
+        const searchVal = ref('')
+        const filterType = ref(null)
+        const filterStatus = ref(null)
+        const sortBy = ref('latest')
+        const activeCategory = ref('all')
+        const viewMode = ref('list')
+
+        const categories = ref([
+          { key: 'all', label: '全部', count: 128 },
+          { key: 'requirement', label: '需求分析', count: 35 },
+          { key: 'prototype', label: '原型设计', count: 42 },
+          { key: 'prd', label: '产品文档', count: 28 },
+          { key: 'dev', label: '开发交付', count: 23 }
+        ])
+
+        const items = ref([
+          { id: 1, icon: '📱', title: '家庭健康管理小程序 v2.0', desc: '基于 AI 的家庭用药提醒与健康档案管理系统，支持多人共享健康数据', author: '张小明', tags: ['小程序', 'AI', '健康'], status: '进行中', statusColor: 'blue', time: '2小时前', views: 1289 },
+          { id: 2, icon: '🏢', title: '集团线索平台重构方案', desc: 'B2B 销售线索全生命周期管理，接入 AI 智能评分与自动分配引擎', author: '李产品', tags: ['B2B', '销售', '线索'], status: '评审中', statusColor: 'orange', time: '5小时前', views: 876 },
+          { id: 3, icon: '🛒', title: '电商后台管理系统 PRD', desc: '商品/订单/用户三端管理，内置多维数据看板与报表导出功能', author: '王设计', tags: ['电商', '管理后台'], status: '已完成', statusColor: 'green', time: '1天前', views: 2341 },
+          { id: 4, icon: '📊', title: '数据分析平台原型', desc: '多数据源接入，拖拽式报表搭建，支持定时推送与钉钉告警通知', author: '刘分析', tags: ['数据', 'BI', '报表'], status: '规划中', statusColor: 'purple', time: '2天前', views: 654 },
+          { id: 5, icon: '🎓', title: '在线学习管理系统 LMS', desc: '课程管理、学员跟踪、作业批改一体化，集成直播与录播功能模块', author: '陈教育', tags: ['教育', 'LMS', '直播'], status: '进行中', statusColor: 'blue', time: '3天前', views: 1102 },
+          { id: 6, icon: '🔧', title: 'DevOps 工具链集成方案', desc: 'CI/CD 流水线可视化配置，自动化测试报告聚合展示与告警推送', author: '吴开发', tags: ['DevOps', 'CI/CD'], status: '待启动', statusColor: 'gray', time: '4天前', views: 488 },
+          { id: 7, icon: '💬', title: '企业即时通讯 IM 产品', desc: '支持多层级组织架构、消息已读、文件共享与视频会议的企业IM', author: '赵通讯', tags: ['IM', '企业', '通讯'], status: '进行中', statusColor: 'blue', time: '5天前', views: 1567 },
+          { id: 8, icon: '🏥', title: '医疗预约挂号小程序', desc: '在线预约、智能导诊、电子病历查询一体化，对接医院HIS系统', author: '孙医疗', tags: ['医疗', '小程序', '预约'], status: '评审中', statusColor: 'orange', time: '1周前', views: 923 }
+        ])
+
+        return { pageTitle, activePage, pageState, searchVal, filterType, filterStatus, sortBy, activeCategory, viewMode, categories, items }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

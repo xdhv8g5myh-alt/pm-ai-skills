@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小程序原型 — 导航总览</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    body {
+      margin: 0;
+      background: #f0f2f5;
+      min-height: 100vh;
+      padding: 40px 16px 80px;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    }
+    .nav-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .nav-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .nav-header-badge {
+      display: inline-block;
+      background: #07c160;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .nav-header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #191919;
+    }
+    .nav-header p {
+      margin: 0;
+      color: #86909c;
+      font-size: 14px;
+    }
+    .nav-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #86909c;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 24px 0 8px;
+      padding: 0 4px;
+    }
+    .nav-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      transition: box-shadow .2s, transform .15s;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+    }
+    .nav-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,.1);
+      transform: translateY(-1px);
+      border-color: #07c160;
+    }
+    .nav-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .nav-card-body { flex: 1; }
+    .nav-card-title { font-size: 15px; font-weight: 600; color: #191919; margin-bottom: 3px; }
+    .nav-card-desc { font-size: 13px; color: #86909c; }
+    .nav-card-arrow { font-size: 18px; color: #c0c4cc; }
+    .nav-card-filename {
+      font-size: 11px;
+      color: #bbb;
+      font-family: monospace;
+      margin-top: 2px;
+    }
+    .tip-box {
+      background: #fff7ed;
+      border: 1px solid #ffd591;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #7d4e00;
+      margin-top: 24px;
+      line-height: 1.7;
+    }
+    .tip-box strong { color: #d46b08; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="nav-container">
+      <div class="nav-header">
+        <div class="nav-header-badge">PROTOTYPE</div>
+        <h1>小程序原型导航</h1>
+        <p>AI 产品协作平台 · 微信小程序端 · 共 5 个页面</p>
+      </div>
+
+      <div class="nav-section-title">小程序页面</div>
+
+      <a href="./home.html" class="nav-card">
+        <div class="nav-card-icon" style="background:#e8f7ee">🏠</div>
+        <div class="nav-card-body">
+          <div class="nav-card-title">首页</div>
+          <div class="nav-card-desc">Banner + 快捷入口 + 最新内容，带 TabBar 导航</div>
+          <div class="nav-card-filename">home.html</div>
+        </div>
+        <div class="nav-card-arrow">›</div>
+      </a>
+
+      <a href="./list.html" class="nav-card">
+        <div class="nav-card-icon" style="background:#e8f3ff">🧭</div>
+        <div class="nav-card-body">
+          <div class="nav-card-title">发现 / 列表页</div>
+          <div class="nav-card-desc">搜索 + 分类 Tab + 内容列表，支持三态切换</div>
+          <div class="nav-card-filename">list.html</div>
+        </div>
+        <div class="nav-card-arrow">›</div>
+      </a>
+
+      <a href="./detail.html" class="nav-card">
+        <div class="nav-card-icon" style="background:#fff3e8">📋</div>
+        <div class="nav-card-body">
+          <div class="nav-card-title">详情页</div>
+          <div class="nav-card-desc">信息卡 + 内容详情 + 字段信息 + 底部操作栏</div>
+          <div class="nav-card-filename">detail.html</div>
+        </div>
+        <div class="nav-card-arrow">›</div>
+      </a>
+
+      <a href="./form.html" class="nav-card">
+        <div class="nav-card-icon" style="background:#f3f0ff">✏️</div>
+        <div class="nav-card-body">
+          <div class="nav-card-title">发布 / 表单页</div>
+          <div class="nav-card-desc">表单输入 + 发布成功态，带返回逻辑</div>
+          <div class="nav-card-filename">form.html</div>
+        </div>
+        <div class="nav-card-arrow">›</div>
+      </a>
+
+      <div class="nav-section-title">模板文件</div>
+
+      <a href="./_base.html" class="nav-card">
+        <div class="nav-card-icon" style="background:#f2f3f5">🗂️</div>
+        <div class="nav-card-body">
+          <div class="nav-card-title">基础布局模板</div>
+          <div class="nav-card-desc">完整小程序外壳，可复制扩展</div>
+          <div class="nav-card-filename">_base.html</div>
+        </div>
+        <div class="nav-card-arrow">›</div>
+      </a>
+
+      <div class="tip-box">
+        <strong>使用说明：</strong> 直接用浏览器打开 <code>file://</code> 协议访问。
+        每个页面右下角有 <strong>PROTO 工具栏</strong>，可切换 loading / empty / error / normal 四种状态预览。
+        页面宽 375px，模拟微信小程序外壳，桌面居中显示。
+      </div>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('导航总览')
+        return { pageTitle }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

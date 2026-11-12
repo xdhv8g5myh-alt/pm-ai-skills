@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>首页 — 小程序原型</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    body { margin: 0; background: #e8e8e8; display: flex; justify-content: center; align-items: flex-start; padding: 24px 0 80px; min-height: 100vh; }
+    .mp-shell {
+      width: 375px; min-height: 700px; background: #fff;
+      border-radius: 40px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,.25), 0 0 0 2px #d0d0d0;
+      display: flex; flex-direction: column; position: relative;
+    }
+    .mp-statusbar {
+      height: 44px; background: #000; color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; font-size: 13px; flex-shrink: 0;
+    }
+    .mp-navbar {
+      height: 44px; background: #fff; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; flex-shrink: 0;
+    }
+    .mp-navbar-back { position: absolute; left: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; }
+    .mp-navbar-title { font-size: 16px; font-weight: 600; color: #191919; }
+    .mp-navbar-more { position: absolute; right: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; }
+    .mp-content { flex: 1; overflow-y: auto; background: #f7f8fa; }
+    .mp-tabbar {
+      height: 56px; background: #fff; border-top: 1px solid #e8e8e8;
+      display: flex; flex-shrink: 0;
+    }
+    .mp-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; text-decoration: none; }
+    .mp-tab-icon { font-size: 22px; line-height: 1; }
+    .mp-tab-label { font-size: 10px; color: #999; }
+    .mp-tab.active .mp-tab-label { color: #07c160; }
+    .mp-section { background: #fff; border-radius: 10px; margin: 10px; overflow: hidden; }
+    .mp-section-title { font-size: 14px; font-weight: 600; color: #333; padding: 14px 16px 8px; }
+    .mp-cell { display: flex; align-items: center; padding: 14px 16px; border-bottom: 1px solid #f5f5f5; gap: 12px; }
+    .mp-cell:last-child { border-bottom: none; }
+    .mp-cell-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .mp-cell-body { flex: 1; }
+    .mp-cell-title { font-size: 14px; color: #191919; }
+    .mp-cell-desc { font-size: 12px; color: #999; margin-top: 2px; }
+    .mp-cell-right { font-size: 13px; color: #bbb; }
+    .mp-banner { margin: 10px; border-radius: 10px; background: linear-gradient(135deg,#07c160,#10aeff); color: #fff; padding: 20px; }
+    .mp-banner-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .mp-banner-sub { font-size: 13px; opacity: .85; }
+    .mp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; background: #fff; border-radius: 10px; margin: 10px; overflow: hidden; }
+    .mp-grid-item { display: flex; flex-direction: column; align-items: center; padding: 16px 8px; gap: 6px; cursor: pointer; }
+    .mp-grid-item:active { background: #f5f5f5; }
+    .mp-grid-icon { font-size: 24px; }
+    .mp-grid-label { font-size: 12px; color: #333; }
+    .mp-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+    .mp-tag-green { background: #e8f7ee; color: #07c160; }
+    .mp-tag-blue { background: #e8f3ff; color: #1677ff; }
+    .mp-tag-orange { background: #fff3e8; color: #ff7d00; }
+    .mp-tag-gray { background: #f2f3f5; color: #86909c; }
+    .mp-banner-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .mp-banner-btn {
+      padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: none;
+    }
+    .mp-banner-btn-primary { background: #fff; color: #07c160; }
+    .mp-banner-btn-ghost { background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.6); }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="mp-shell">
+      <!-- 状态栏 -->
+      <div class="mp-statusbar">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:12px">
+          <span>●●●</span><span>WiFi</span><span>🔋</span>
+        </span>
+      </div>
+
+      <!-- 导航栏 -->
+      <div class="mp-navbar">
+        <span class="mp-navbar-title">首页</span>
+        <span class="mp-navbar-more">🔍</span>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="mp-content">
+        <!-- loading 态 -->
+        <div v-if="pageState==='loading'" style="display:flex;justify-content:center;align-items:center;height:300px">
+          <a-spin tip="加载中..." size="large"></a-spin>
+        </div>
+
+        <!-- empty 态 -->
+        <div v-else-if="pageState==='empty'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
+          <div style="font-size:48px">📭</div>
+          <div style="font-size:14px">暂无内容</div>
+          <div style="font-size:12px;color:#ccc">快去创建第一条需求吧</div>
+        </div>
+
+        <!-- error 态 -->
+        <div v-else-if="pageState==='error'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
+          <div style="font-size:48px">⚠️</div>
+          <div style="font-size:14px;color:#f53f3f">加载失败</div>
+          <a-button type="primary" size="small" @click="pageState='normal'">点击重试</a-button>
+        </div>
+
+        <!-- normal 态 -->
+        <div v-else>
+          <!-- Banner -->
+          <div class="mp-banner">
+            <div class="mp-banner-title">AI 产品协作</div>
+            <div class="mp-banner-sub">智能驱动每一步 · 需求到交付全链路</div>
+            <div class="mp-banner-actions">
+              <button class="mp-banner-btn mp-banner-btn-primary" @click="()=>{}">立即体验</button>
+              <button class="mp-banner-btn mp-banner-btn-ghost" @click="()=>{}">了解更多</button>
+            </div>
+          </div>
+
+          <!-- 快捷入口 Grid -->
+          <div class="mp-grid">
+            <a href="./form.html" class="mp-grid-item" style="text-decoration:none">
+              <div class="mp-grid-icon">📝</div>
+              <div class="mp-grid-label">需求</div>
+            </a>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">🖼️</div>
+              <div class="mp-grid-label">原型</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">📄</div>
+              <div class="mp-grid-label">文档</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">🚀</div>
+              <div class="mp-grid-label">交付</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">📊</div>
+              <div class="mp-grid-label">数据</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">💬</div>
+              <div class="mp-grid-label">消息</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">⭐</div>
+              <div class="mp-grid-label">收藏</div>
+            </div>
+            <div class="mp-grid-item">
+              <div class="mp-grid-icon">👤</div>
+              <div class="mp-grid-label">我的</div>
+            </div>
+          </div>
+
+          <!-- 最新内容 -->
+          <div class="mp-section">
+            <div class="mp-section-title">最新动态</div>
+            <a href="./detail.html" class="mp-cell" style="text-decoration:none" v-for="item in feedList" :key="item.id">
+              <div class="mp-cell-icon" :style="{background: item.iconBg}">{{ item.icon }}</div>
+              <div class="mp-cell-body">
+                <div class="mp-cell-title">{{ item.title }}</div>
+                <div class="mp-cell-desc" style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                  <span class="mp-tag" :class="item.tagClass">{{ item.tag }}</span>
+                  <span>{{ item.desc }}</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                <div class="mp-cell-right" style="font-size:11px">{{ item.time }}</div>
+                <div class="mp-cell-right">›</div>
+              </div>
+            </a>
+          </div>
+
+          <!-- 我的项目 -->
+          <div class="mp-section">
+            <div class="mp-section-title" style="display:flex;justify-content:space-between;align-items:center;padding-right:16px">
+              <span>我的项目</span>
+              <span style="font-size:12px;color:#07c160;font-weight:400;cursor:pointer">全部 ›</span>
+            </div>
+            <div class="mp-cell" v-for="proj in projectList" :key="proj.id">
+              <div class="mp-cell-icon" :style="{background: proj.color}">{{ proj.icon }}</div>
+              <div class="mp-cell-body">
+                <div class="mp-cell-title">{{ proj.name }}</div>
+                <div class="mp-cell-desc">{{ proj.count }} 个需求 · {{ proj.members }} 人协作</div>
+              </div>
+              <div class="mp-cell-right">›</div>
+            </div>
+          </div>
+
+          <div style="height:16px"></div>
+        </div>
+      </div>
+
+      <!-- TabBar -->
+      <div class="mp-tabbar">
+        <a href="./home.html" class="mp-tab active">
+          <div class="mp-tab-icon">🏠</div>
+          <div class="mp-tab-label" style="color:#07c160">首页</div>
+        </a>
+        <a href="./list.html" class="mp-tab">
+          <div class="mp-tab-icon">🧭</div>
+          <div class="mp-tab-label">发现</div>
+        </a>
+        <a href="./form.html" class="mp-tab">
+          <div class="mp-tab-icon">✏️</div>
+          <div class="mp-tab-label">发布</div>
+        </a>
+        <a href="#" class="mp-tab">
+          <div class="mp-tab-icon">👤</div>
+          <div class="mp-tab-label">我的</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Proto Toolbar -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">小程序</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳</button>
+      <button @click="pageState='empty'">📭</button>
+      <button @click="pageState='error'">⚠️</button>
+      <button @click="pageState='normal'">✅</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('首页')
+        const activeTab = ref('home')
+        const pageState = ref('normal')
+
+        const feedList = ref([
+          { id:1, icon:'📝', iconBg:'#e8f7ee', title:'用户中心改版需求评审通过', tag:'需求', tagClass:'mp-tag-green', desc:'产品 · 张明华', time:'10分钟前' },
+          { id:2, icon:'🖼️', iconBg:'#e8f3ff', title:'登录流程原型 v2.3 已更新', tag:'原型', tagClass:'mp-tag-blue', desc:'设计 · 李晓雨', time:'1小时前' },
+          { id:3, icon:'🚀', iconBg:'#fff3e8', title:'支付模块已发布测试环境', tag:'交付', tagClass:'mp-tag-orange', desc:'研发 · 陈伟明', time:'3小时前' },
+          { id:4, icon:'📄', iconBg:'#f2f3f5', title:'API 文档第三版归档完成', tag:'文档', tagClass:'mp-tag-gray', desc:'研发 · 王芳', time:'昨天' },
+          { id:5, icon:'📊', iconBg:'#f3f0ff', title:'Q3 用户增长数据报告已发布', tag:'数据', tagClass:'mp-tag-blue', desc:'数据 · 刘思琪', time:'2天前' },
+        ])
+
+        const projectList = ref([
+          { id:1, icon:'🛒', color:'#e8f7ee', name:'电商 2.0 改版', count:32, members:8 },
+          { id:2, icon:'🏥', color:'#e8f3ff', name:'健康管理小程序', count:18, members:5 },
+          { id:3, icon:'📱', color:'#fff3e8', name:'APP 体验优化专项', count:24, members:11 },
+        ])
+
+        return { pageTitle, activeTab, pageState, feedList, projectList }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

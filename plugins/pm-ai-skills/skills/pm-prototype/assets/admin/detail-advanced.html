@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>高级详情 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <!-- 左侧边栏 -->
+  <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
+    <div class="pro-brand">
+      <div class="pro-brand-icon">⚡</div>
+      <span v-show="!collapsed" class="pro-brand-name">管理系统</span>
+    </div>
+    <a-menu
+      :collapsed="collapsed"
+      :selected-keys="selectedKeys"
+      :open-keys="openKeys"
+      @menu-item-click="onMenuClick"
+      @sub-menu-click="onSubMenuClick"
+      style="border:none;width:100%;flex:1"
+    >
+      <a-menu-item key="dashboard">
+        <template #icon><icon-home></icon-home></template>
+        <a href="./dashboard.html">数据概览</a>
+      </a-menu-item>
+      <a-sub-menu key="list-group">
+        <template #icon><icon-apps></icon-apps></template>
+        <template #title>业务管理</template>
+        <a-menu-item key="list"><a href="./list.html">数据列表</a></a-menu-item>
+        <a-menu-item key="form-add"><a href="./form-add.html">新增数据</a></a-menu-item>
+        <a-menu-item key="form-grouped"><a href="./form-grouped.html">分组表单</a></a-menu-item>
+        <a-menu-item key="detail"><a href="./detail.html">数据详情</a></a-menu-item>
+        <a-menu-item key="detail-advanced"><a href="./detail-advanced.html">高级详情</a></a-menu-item>
+        <a-menu-item key="detail-split"><a href="./detail-split.html">分栏详情</a></a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="system">
+        <template #icon><icon-settings></icon-settings></template>
+        <template #title>系统管理</template>
+        <a-menu-item key="user-mgmt"><a href="./user-role.html">用户管理</a></a-menu-item>
+        <a-menu-item key="role-mgmt"><a href="./permission-tree.html">角色权限</a></a-menu-item>
+        <a-menu-item key="log"><a href="./log-list.html">操作日志</a></a-menu-item>
+      </a-sub-menu>
+      <a-menu-item key="help">
+        <template #icon><icon-question-circle></icon-question-circle></template>
+        帮助中心
+      </a-menu-item>
+    </a-menu>
+  </aside>
+
+  <!-- 顶部导航栏 -->
+  <header class="pro-navbar" :style="{ left: collapsed ? '48px' : '220px' }">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a-button type="text" style="color:var(--color-text-2)" @click="collapsed = !collapsed">
+        <template #icon>
+          <icon-menu-fold v-if="!collapsed"></icon-menu-fold>
+          <icon-menu-unfold v-else></icon-menu-unfold>
+        </template>
+      </a-button>
+      <a-breadcrumb>
+        <a-breadcrumb-item>
+          <a href="./dashboard.html" style="color:var(--color-text-3)">首页</a>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>
+          <a href="./list.html" style="color:var(--color-text-3)">数据列表</a>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>{{ pageTitle }}</a-breadcrumb-item>
+      </a-breadcrumb>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <div style="display:flex;align-items:center;gap:8px;width:200px;height:32px;padding:0 12px;border:1px solid var(--proto-border);border-radius:20px;background:rgba(0,0,0,.04);color:var(--color-text-3);cursor:pointer;font-size:13px;margin-right:8px">
+        <icon-search style="font-size:14px;flex-shrink:0"></icon-search>
+        <span>搜索页面...</span>
+      </div>
+      <a-tooltip content="消息通知">
+        <a-badge :count="noticeCount" :offset="[-2,4]">
+          <a-button type="text" style="color:var(--color-text-2)">
+            <template #icon><icon-notification style="font-size:18px"></icon-notification></template>
+          </a-button>
+        </a-badge>
+      </a-tooltip>
+      <a-tooltip content="全屏">
+        <a-button type="text" style="color:var(--color-text-2)">
+          <template #icon><icon-fullscreen style="font-size:18px"></icon-fullscreen></template>
+        </a-button>
+      </a-tooltip>
+      <!-- 主题色选择 -->
+      <div style="display:flex;align-items:center;gap:4px;padding:0 6px">
+        <span
+          v-for="t in themePresets" :key="t.key"
+          :title="t.name"
+          @click="applyTheme(t.key)"
+          :style="{
+            display:'inline-block', width:'14px', height:'14px',
+            borderRadius:'50%', background:t.color, cursor:'pointer',
+            boxShadow: themeKey===t.key ? '0 0 0 2px #fff,0 0 0 4px '+t.color : 'none',
+            transition:'box-shadow .15s'
+          }"
+        ></span>
+      </div>
+
+      <a-tooltip :content="isDark ? '切换浅色' : '切换深色'">
+        <a-button type="text" style="color:var(--color-text-2);font-size:16px;padding:0 8px;line-height:1" @click="toggleTheme">
+          {{ isDark ? '☀️' : '🌙' }}
+        </a-button>
+      </a-tooltip>
+      <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
+      <a-dropdown trigger="click">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseenter="this.style.background='rgba(0,0,0,.04)'" onmouseleave="this.style.background=''">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);font-size:14px" :size="32">管</a-avatar>
+          <span style="font-size:14px;color:var(--color-text-1)">管理员</span>
+          <icon-down style="font-size:12px;color:var(--color-text-3)"></icon-down>
+        </div>
+        <template #content>
+          <a-doption>个人信息</a-doption>
+          <a-doption>修改密码</a-doption>
+          <a-doption disabled>系统设置</a-doption>
+          <a-divider style="margin:4px 0"></a-divider>
+          <a-doption><a href="./login.html" style="color:inherit">退出登录</a></a-doption>
+        </template>
+      </a-dropdown>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="pro-main" :style="{ marginLeft: collapsed ? '48px' : '220px' }">
+    <div class="pro-content">
+
+      <!-- loading 态 -->
+      <div v-if="pageState === 'loading'" style="display:flex;align-items:center;justify-content:center;min-height:400px">
+        <a-spin tip="加载中..." :size="32"></a-spin>
+      </div>
+
+      <!-- error 态 -->
+      <a-result v-else-if="pageState === 'error'" status="500" title="加载失败" subtitle="请求数据时出现错误，请稍后重试" style="padding:80px 0">
+        <template #extra>
+          <a-button type="primary" @click="pageState='normal'">重新加载</a-button>
+        </template>
+      </a-result>
+
+      <!-- empty 态 -->
+      <a-card v-else-if="pageState === 'empty'" class="general-card" style="padding:60px 0;text-align:center">
+        <a-empty description="记录不存在" style="padding:40px 0"></a-empty>
+      </a-card>
+
+      <!-- 正常内容 -->
+      <template v-else>
+
+        <!-- 顶部区：左侧标题 + 右侧提示 -->
+        <div style="display:flex;gap:16px;margin-bottom:16px">
+          <!-- 左侧：主内容（a-card + a-tabs）-->
+          <div style="flex:1">
+            <!-- 标题栏 -->
+            <a-card class="general-card" :body-style="{ padding: '20px 24px' }" style="margin-bottom:16px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <h2 style="margin:0 0 6px;font-size:20px;font-weight:600;color:var(--color-text-1)">订单详情 · #ORD2025918</h2>
+                  <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--color-text-3)">
+                    <a-tag color="green" size="small">已完成</a-tag>
+                    <span>下单人：张伟</span>
+                    <span>·</span>
+                    <span>2025-09-18 14:30:22</span>
+                  </div>
+                </div>
+                <a-button type="primary">
+                  <template #icon><icon-edit></icon-edit></template>
+                  编辑
+                </a-button>
+              </div>
+            </a-card>
+
+            <!-- Tabs 详情 -->
+            <a-card class="general-card" :body-style="{ padding: '0 24px' }">
+              <a-tabs default-active-key="basic" :animation="true">
+                <!-- Tab 1：基本信息 -->
+                <a-tab-pane key="basic" title="基本信息">
+                  <a-descriptions :column="2" bordered style="margin-top:8px">
+                    <a-descriptions-item label="订单编号">ORD2025918</a-descriptions-item>
+                    <a-descriptions-item label="订单金额">¥ 2,680.00</a-descriptions-item>
+                    <a-descriptions-item label="下单用户">张伟 (zhangwei@company.com)</a-descriptions-item>
+                    <a-descriptions-item label="支付方式">微信支付</a-descriptions-item>
+                    <a-descriptions-item label="创建时间">2025-09-18 14:30:22</a-descriptions-item>
+                    <a-descriptions-item label="完成时间">2025-09-18 14:35:10</a-descriptions-item>
+                    <a-descriptions-item label="收货地址">
+                      北京市朝阳区建国路 88 号
+                    </a-descriptions-item>
+                    <a-descriptions-item label="备注信息">
+                      <span style="color:var(--color-text-3)">加急处理，注意包装</span>
+                    </a-descriptions-item>
+                  </a-descriptions>
+                </a-tab-pane>
+
+                <!-- Tab 2：操作日志 -->
+                <a-tab-pane key="log" title="操作日志">
+                  <a-timeline style="margin-top:16px">
+                    <a-timeline-item label="2025-09-18 14:35:10">
+                      订单完成 · 系统自动确认收货
+                    </a-timeline-item>
+                    <a-timeline-item label="2025-09-18 14:32:05">
+                      发货处理 · 快递单号：SF1234567890
+                    </a-timeline-item>
+                    <a-timeline-item label="2025-09-18 14:30:45">
+                      订单已支付 · 微信支付成功 ¥ 2,680.00
+                    </a-timeline-item>
+                    <a-timeline-item label="2025-09-18 14:30:22">
+                      用户创建订单 · 商品：高级会员年卡 × 1
+                    </a-timeline-item>
+                  </a-timeline>
+                </a-tab-pane>
+
+                <!-- Tab 3：关联数据 -->
+                <a-tab-pane key="related" title="关联数据">
+                  <a-table
+                    :data="relatedData"
+                    :pagination="false"
+                    :bordered="{ cell: true }"
+                    style="margin-top:16px"
+                  >
+                    <template #columns>
+                      <a-table-column title="关联单号" data-index="id" width="160"/>
+                      <a-table-column title="类型" data-index="type" width="100">
+                        <template #cell="{ record }">
+                          <a-tag :color="record.tagColor" size="small">{{ record.type }}</a-tag>
+                        </template>
+                      </a-table-column>
+                      <a-table-column title="金额" data-index="amount" width="120"/>
+                      <a-table-column title="关联时间" data-index="time"/>
+                      <a-table-column title="状态" data-index="status" width="100">
+                        <template #cell="{ record }">
+                          <a-tag color="green" size="small">{{ record.status }}</a-tag>
+                        </template>
+                      </a-table-column>
+                    </template>
+                  </a-table>
+                </a-tab-pane>
+              </a-tabs>
+            </a-card>
+          </div>
+
+          <!-- 右侧：提示 + 快捷操作 -->
+          <div style="width:280px;flex-shrink:0">
+            <a-alert type="info" class="general-card" style="margin-bottom:16px">
+              <template #title>
+                <span style="font-weight:500">温馨提示</span>
+              </template>
+              <div style="font-size:13px;line-height:1.6">
+                该订单已完成所有流程。如需退款或修改，请先联系用户确认。
+              </div>
+            </a-alert>
+
+            <a-card class="general-card" :body-style="{ padding: '16px' }">
+              <div style="font-size:14px;font-weight:600;color:var(--color-text-1);margin-bottom:12px">快捷操作</div>
+              <a-space direction="vertical" fill>
+                <a-button type="primary" long>
+                  <template #icon><icon-edit></icon-edit></template>
+                  编辑订单
+                </a-button>
+                <a-button long>
+                  <template #icon><icon-refresh></icon-refresh></template>
+                  导出详情
+                </a-button>
+                <a-popconfirm content="确认执行该操作？" type="warning">
+                  <a-button status="warning" long>
+                    <template #icon><icon-edit></icon-edit></template>
+                    发起退款
+                  </a-button>
+                </a-popconfirm>
+                <a-popconfirm content="确认删除？此操作不可撤销。" type="danger">
+                  <a-button status="danger" long>
+                    <template #icon><icon-delete></icon-delete></template>
+                    删除订单
+                  </a-button>
+                </a-popconfirm>
+              </a-space>
+            </a-card>
+          </div>
+        </div>
+
+      </template>
+    </div>
+  </main>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <button @click="setPageState('loading')">⏳ 加载中</button>
+    <button @click="setPageState('empty')">📭 空数据</button>
+    <button @click="setPageState('error')">⚠️ 出错</button>
+    <button @click="setPageState('normal')">✅ 正常</button>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+
+const MOCK_DATA = {
+  relatedData: [
+    { id: 'PAY2025918', type: '支付记录', tagColor: 'arcoblue', amount: '¥ 2,680.00', time: '2025-09-18 14:30:45', status: '成功' },
+    { id: 'SHIP2025918', type: '物流单据', tagColor: 'orangered', amount: '—',           time: '2025-09-18 14:32:05', status: '已签收' },
+    { id: 'INV2025918', type: '发票申请', tagColor: 'green',    amount: '¥ 2,680.00', time: '2025-09-20 09:15:00', status: '已开具' },
+  ]
+}
+
+createApp({
+  setup() {
+    const collapsed    = ref(false)
+    const selectedKeys = ref(['detail-advanced'])
+    const openKeys     = ref(['list-group'])
+    const pageTitle    = ref('高级详情')
+    const noticeCount  = ref(3)
+    const pageState    = ref('normal')
+
+    const relatedData = ref(MOCK_DATA.relatedData)
+
+    const isDark = ref(localStorage.getItem('proto-theme') === 'dark')
+    function toggleTheme() {
+      isDark.value = !isDark.value
+      if (isDark.value) {
+        document.body.setAttribute('arco-theme', 'dark')
+        localStorage.setItem('proto-theme', 'dark')
+      } else {
+        document.body.removeAttribute('arco-theme')
+        localStorage.setItem('proto-theme', 'light')
+      }
+    }
+    if (isDark.value) document.body.setAttribute('arco-theme', 'dark')
+
+    const THEMES = {
+      blue:     { name:'品牌蓝', color:'#165dff', p1:'233 241 255', p5:'61 126 255',  p6:'22 93 255',   p7:'18 72 199'  },
+      techBlue: { name:'科技蓝', color:'#4080ff', p1:'232 240 255', p5:'90 155 255',  p6:'64 128 255',  p7:'50 100 200' },
+      green:    { name:'生机绿', color:'#00b42a', p1:'235 255 239', p5:'0 210 50',    p6:'0 180 42',    p7:'0 140 33'   },
+      cyan:     { name:'清新青', color:'#0fc6c2', p1:'228 254 253', p5:'40 215 212',  p6:'15 198 194',  p7:'11 153 150' },
+      orange:   { name:'活力橙', color:'#ff7d00', p1:'255 247 232', p5:'255 158 0',   p6:'255 125 0',   p7:'200 95 0'   },
+    }
+    const themePresets = Object.entries(THEMES).map(([key, v]) => ({ key, ...v }))
+    const themeKey = ref(localStorage.getItem('proto-theme-color') || 'blue')
+
+    function applyTheme(key) {
+      const t = THEMES[key]; if (!t) return
+      themeKey.value = key
+      const r = document.documentElement
+      r.style.setProperty('--primary-1', t.p1)
+      r.style.setProperty('--primary-5', t.p5)
+      r.style.setProperty('--primary-6', t.p6)
+      r.style.setProperty('--primary-7', t.p7)
+      localStorage.setItem('proto-theme-color', key)
+    }
+    applyTheme(themeKey.value)
+
+    function setPageState(s) { pageState.value = s }
+
+    const NAV_MAP = {
+      dashboard: './dashboard.html', list: './list.html', 'form-add': './form-add.html',
+      'form-grouped': './form-grouped.html', detail: './detail.html',
+      'detail-advanced': './detail-advanced.html', 'detail-split': './detail-split.html',
+      'list-filter': './list-filter.html', 'list-card': './list-card.html',
+      'form-step': './form-step.html', profile: './profile.html',
+      'result-success': './result-success.html', 'result-waiting': './result-waiting.html',
+      'result-warning': './result-warning.html', 'result-fail': './result-fail.html',
+      'exception-404': './exception-404.html', 'user-role': './user-role.html',
+      'permission-tree': './permission-tree.html', 'log-list': './log-list.html',
+      'message-center': './message-center.html',
+      'user-mgmt': './user-role.html', 'role-mgmt': './permission-tree.html',
+      log: './log-list.html', help: './index.html',
+      index: './index.html', login: './login.html'
+    }
+    function onMenuClick(key) {
+      selectedKeys.value = [key]
+      if (NAV_MAP[key]) window.location.href = NAV_MAP[key]
+    }
+    function onSubMenuClick(key, openedKeys) { openKeys.value = openedKeys }
+
+    window.__protoApp = { pageState }
+    return {
+      collapsed, selectedKeys, openKeys, pageTitle, noticeCount, pageState,
+      relatedData, setPageState, onMenuClick, onSubMenuClick,
+      isDark, toggleTheme, themePresets, themeKey, applyTheme
+    }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>发布需求 — 小程序原型</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    body { margin: 0; background: #e8e8e8; display: flex; justify-content: center; align-items: flex-start; padding: 24px 0 80px; min-height: 100vh; }
+    .mp-shell {
+      width: 375px; min-height: 700px; background: #fff;
+      border-radius: 40px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,.25), 0 0 0 2px #d0d0d0;
+      display: flex; flex-direction: column; position: relative;
+    }
+    .mp-statusbar {
+      height: 44px; background: #000; color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; font-size: 13px; flex-shrink: 0;
+    }
+    .mp-navbar {
+      height: 44px; background: #fff; border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; flex-shrink: 0;
+    }
+    .mp-navbar-back { position: absolute; left: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; text-decoration: none; display: flex; align-items: center; color: #333; }
+    .mp-navbar-title { font-size: 16px; font-weight: 600; color: #191919; }
+    .mp-navbar-more { position: absolute; right: 12px; font-size: 20px; color: #333; cursor: pointer; padding: 8px; }
+    .mp-content { flex: 1; overflow-y: auto; background: #f7f8fa; padding-bottom: 72px; }
+    .mp-section { background: #fff; border-radius: 10px; margin: 10px; overflow: hidden; }
+    .mp-section-title { font-size: 14px; font-weight: 600; color: #333; padding: 14px 16px 8px; }
+    .mp-form-item { padding: 12px 16px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: flex-start; gap: 12px; }
+    .mp-form-item:last-child { border-bottom: none; }
+    .mp-form-label { width: 72px; font-size: 14px; color: #333; flex-shrink: 0; padding-top: 2px; }
+    .mp-form-label.required::before { content: '*'; color: #f53f3f; margin-right: 2px; }
+    .mp-form-input { flex: 1; border: none; outline: none; font-size: 14px; color: #191919; background: transparent; }
+    .mp-form-input::placeholder { color: #c0c4cc; }
+    .mp-form-input-area { flex: 1; border: none; outline: none; font-size: 14px; color: #191919; background: transparent; min-height: 80px; resize: none; font-family: inherit; line-height: 1.6; }
+    .mp-form-input-area::placeholder { color: #c0c4cc; }
+    /* 底部操作栏 */
+    .mp-action-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+    }
+    .mp-action-btn {
+      flex: 1;
+      height: 40px;
+      border-radius: 20px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mp-action-btn-ghost { background: #f2f3f5; color: #333; flex: 0 0 auto; width: 100px; }
+    .mp-action-btn-primary { background: #07c160; color: #fff; }
+    /* 成功态 */
+    .success-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      gap: 16px;
+    }
+    .success-icon { font-size: 60px; }
+    .success-title { font-size: 20px; font-weight: 700; color: #191919; }
+    .success-desc { font-size: 14px; color: #86909c; text-align: center; line-height: 1.6; }
+    .success-btn {
+      margin-top: 8px;
+      width: 160px;
+      height: 44px;
+      border-radius: 22px;
+      background: #07c160;
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* arco 组件适配 */
+    .arco-select-view { border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }
+    .arco-select-view-input { font-size: 14px !important; color: #191919 !important; }
+    .arco-input-wrapper { border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }
+    .arco-textarea-wrapper { border: none !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }
+    /* 字数统计 */
+    .char-count { font-size: 11px; color: #bbb; margin-left: auto; padding-top: 2px; flex-shrink: 0; }
+    /* 选择样式 */
+    .mp-select-trigger {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      flex: 1;
+    }
+    .mp-select-value { font-size: 14px; color: #191919; }
+    .mp-select-placeholder { font-size: 14px; color: #c0c4cc; }
+    .mp-select-arrow { font-size: 12px; color: #bbb; margin-left: auto; }
+    /* 选项 sheet */
+    .mp-sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+    }
+    .mp-sheet {
+      background: #fff;
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      overflow: hidden;
+    }
+    .mp-sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .mp-sheet-title { font-size: 15px; font-weight: 600; color: #191919; }
+    .mp-sheet-close { font-size: 18px; color: #999; cursor: pointer; padding: 4px; }
+    .mp-sheet-option {
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #191919;
+      border-bottom: 1px solid #f5f5f5;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mp-sheet-option:last-child { border-bottom: none; }
+    .mp-sheet-option.selected { color: #07c160; font-weight: 600; }
+    .mp-sheet-option:active { background: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <div class="mp-shell">
+      <!-- 状态栏 -->
+      <div class="mp-statusbar">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:4px;font-size:12px">
+          <span>●●●</span><span>WiFi</span><span>🔋</span>
+        </span>
+      </div>
+
+      <!-- 导航栏 -->
+      <div class="mp-navbar">
+        <a href="./home.html" class="mp-navbar-back">‹</a>
+        <span class="mp-navbar-title">发布需求</span>
+      </div>
+
+      <!-- 内容区 -->
+      <div class="mp-content">
+        <!-- 成功态 -->
+        <div v-if="submitted" class="success-screen">
+          <div class="success-icon">✅</div>
+          <div class="success-title">发布成功！</div>
+          <div class="success-desc">
+            您的需求已成功提交，<br>
+            相关负责人将在 24 小时内安排评审。
+          </div>
+          <a href="./home.html" class="success-btn">返回首页</a>
+          <a href="./list.html" style="font-size:13px;color:#07c160;margin-top:4px;text-decoration:none">查看全部需求 ›</a>
+        </div>
+
+        <!-- 表单态 -->
+        <div v-else>
+          <div class="mp-section" style="margin-top:10px">
+            <div class="mp-section-title">基本信息</div>
+
+            <!-- 标题 -->
+            <div class="mp-form-item">
+              <div class="mp-form-label required">标题</div>
+              <input
+                class="mp-form-input"
+                v-model="form.title"
+                placeholder="请输入需求标题（10-50字）"
+                maxlength="50"
+              />
+              <span class="char-count">{{ form.title.length }}/50</span>
+            </div>
+
+            <!-- 类型 -->
+            <div class="mp-form-item" @click="openSheet('type')">
+              <div class="mp-form-label required">类型</div>
+              <div class="mp-select-trigger">
+                <span v-if="form.type" class="mp-select-value">{{ form.type }}</span>
+                <span v-else class="mp-select-placeholder">请选择需求类型</span>
+                <span class="mp-select-arrow">›</span>
+              </div>
+            </div>
+
+            <!-- 优先级 -->
+            <div class="mp-form-item" @click="openSheet('priority')">
+              <div class="mp-form-label required">优先级</div>
+              <div class="mp-select-trigger">
+                <span v-if="form.priority" class="mp-select-value">{{ form.priority }}</span>
+                <span v-else class="mp-select-placeholder">请选择优先级</span>
+                <span class="mp-select-arrow">›</span>
+              </div>
+            </div>
+
+            <!-- 截止日期 -->
+            <div class="mp-form-item">
+              <div class="mp-form-label">截止日期</div>
+              <input
+                class="mp-form-input"
+                v-model="form.deadline"
+                type="date"
+                style="color:#191919"
+              />
+            </div>
+          </div>
+
+          <!-- 详细描述 -->
+          <div class="mp-section">
+            <div class="mp-section-title">详细描述</div>
+            <div class="mp-form-item" style="align-items:flex-start">
+              <div class="mp-form-label" style="padding-top:0">描述</div>
+              <textarea
+                class="mp-form-input-area"
+                v-model="form.desc"
+                placeholder="请详细描述需求背景、目标和验收标准..."
+                maxlength="500"
+              ></textarea>
+              <span class="char-count" style="align-self:flex-end">{{ form.desc.length }}/500</span>
+            </div>
+          </div>
+
+          <!-- 标签提示 -->
+          <div style="margin:0 10px;padding:12px 14px;background:#fff7ed;border-radius:8px;font-size:12px;color:#7d4e00;line-height:1.6">
+            <strong>提示：</strong>需求提交后将自动通知相关评审人，请确保描述清晰完整。带 <span style="color:#f53f3f">*</span> 的字段为必填项。
+          </div>
+
+          <div style="height:16px"></div>
+        </div>
+      </div>
+
+      <!-- 底部操作栏（表单态） -->
+      <div class="mp-action-bar" v-if="!submitted">
+        <button class="mp-action-btn mp-action-btn-ghost" @click="clearDraft">取消草稿</button>
+        <button
+          class="mp-action-btn mp-action-btn-primary"
+          :style="!canSubmit ? {background:'#86909c'} : {}"
+          @click="handleSubmit"
+        >立即发布</button>
+      </div>
+
+      <!-- 选项 Sheet -->
+      <div class="mp-sheet-overlay" v-if="activeSheet" @click.self="activeSheet=''">
+        <div class="mp-sheet">
+          <div class="mp-sheet-header">
+            <span class="mp-sheet-title">{{ sheetTitle }}</span>
+            <span class="mp-sheet-close" @click="activeSheet=''">✕</span>
+          </div>
+          <div
+            class="mp-sheet-option"
+            v-for="opt in sheetOptions"
+            :key="opt"
+            :class="{ selected: currentSheetValue === opt }"
+            @click="selectSheetOption(opt)"
+          >
+            <span>{{ opt }}</span>
+            <span v-if="currentSheetValue === opt">✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proto Toolbar -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">小程序</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="submitted=false">📋 表单</button>
+      <button @click="submitted=true">✅ 成功</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref, computed } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('发布需求')
+        const submitted = ref(false)
+        const activeSheet = ref('')
+
+        const form = ref({
+          title: '',
+          type: '',
+          priority: '',
+          deadline: '',
+          desc: '',
+        })
+
+        const typeOptions = ['功能需求', '体验优化', '缺陷修复', '数据需求', '运营配置']
+        const priorityOptions = ['P0 紧急', 'P1 高优', 'P2 中优', 'P3 低优']
+
+        const sheetConfig = {
+          type:     { title: '选择需求类型', options: typeOptions, field: 'type' },
+          priority: { title: '选择优先级',   options: priorityOptions, field: 'priority' },
+        }
+
+        const sheetTitle = computed(() => activeSheet.value ? sheetConfig[activeSheet.value].title : '')
+        const sheetOptions = computed(() => activeSheet.value ? sheetConfig[activeSheet.value].options : [])
+        const currentSheetValue = computed(() => activeSheet.value ? form.value[sheetConfig[activeSheet.value].field] : '')
+
+        function openSheet(key) {
+          activeSheet.value = key
+        }
+        function selectSheetOption(opt) {
+          const field = sheetConfig[activeSheet.value].field
+          form.value[field] = opt
+          activeSheet.value = ''
+        }
+
+        const canSubmit = computed(() =>
+          form.value.title.trim().length >= 5 &&
+          form.value.type &&
+          form.value.priority
+        )
+
+        function handleSubmit() {
+          if (!canSubmit.value) return
+          submitted.value = true
+        }
+
+        function clearDraft() {
+          form.value = { title: '', type: '', priority: '', deadline: '', desc: '' }
+        }
+
+        return {
+          pageTitle, submitted, form, activeSheet,
+          sheetTitle, sheetOptions, currentSheetValue,
+          openSheet, selectSheetOption,
+          canSubmit, handleSubmit, clearDraft
+        }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

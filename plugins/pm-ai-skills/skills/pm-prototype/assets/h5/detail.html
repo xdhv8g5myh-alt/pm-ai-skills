@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>详情 · H5 原型</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  .detail-top-card {
+    margin: 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, #165dff 0%, #7b61ff 100%);
+    border-radius: 12px;
+    color: #fff;
+  }
+  .detail-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .detail-name {
+    font-size: 17px; font-weight: 700; margin-bottom: 6px;
+  }
+  .detail-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; opacity: .85;
+  }
+  .detail-bottom-bar {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border-top: 1px solid #f2f3f5;
+    flex-shrink: 0;
+  }
+  .paragraph-text {
+    font-size: 14px;
+    color: #4e5969;
+    line-height: 1.8;
+    padding: 0 12px;
+  }
+</style>
+</head>
+<body class="h5-body">
+<div id="app" v-cloak>
+  <div class="h5-phone">
+
+    <!-- 状态栏 -->
+    <div class="h5-status">
+      <span>9:41</span>
+      <span>🔋</span>
+    </div>
+
+    <!-- 顶部导航 -->
+    <div class="h5-navbar">
+      <a href="javascript:history.back()" class="h5-navbar-back">←</a>
+      <span class="h5-navbar-title">{{ pageTitle }}</span>
+      <span class="h5-navbar-action">⋮</span>
+    </div>
+
+    <!-- 内容区（需为底部操作栏留位置）-->
+    <div class="h5-content" style="padding-bottom:72px;">
+
+      <!-- 顶部信息卡片 -->
+      <div class="detail-top-card">
+        <div class="detail-avatar">👤</div>
+        <div class="detail-name">{{ detail.title }}</div>
+        <div class="detail-meta">
+          <a-tag color="orangered" size="mini" style="color:#fff;background:rgba(255,100,0,.45);border:none;">{{ detail.status }}</a-tag>
+          <span>{{ detail.creator }}</span>
+          <span>·</span>
+          <span>{{ detail.createDate }}</span>
+        </div>
+      </div>
+
+      <!-- 内容描述区 -->
+      <div class="h5-section">
+        <div class="h5-section-title">项目描述</div>
+        <p class="paragraph-text">
+          {{ detail.description }}
+        </p>
+        <p class="paragraph-text" style="margin-top:10px;">
+          {{ detail.descriptionExtra }}
+        </p>
+      </div>
+
+      <!-- 信息字段列表 -->
+      <div class="h5-section">
+        <div class="h5-section-title">基本信息</div>
+        <div class="h5-cell">
+          <div class="h5-cell-icon">📁</div>
+          <div class="h5-cell-body">
+            <div class="h5-cell-title">类型</div>
+            <div class="h5-cell-desc">{{ detail.type }}</div>
+          </div>
+          <div class="h5-cell-right">{{ detail.typeValue }}</div>
+        </div>
+        <div class="h5-cell">
+          <div class="h5-cell-icon">🚦</div>
+          <div class="h5-cell-body">
+            <div class="h5-cell-title">优先级</div>
+            <div class="h5-cell-desc">任务紧急程度</div>
+          </div>
+          <div class="h5-cell-right">
+            <a-tag :color="detail.priorityColor" size="mini">{{ detail.priority }}</a-tag>
+          </div>
+        </div>
+        <div class="h5-cell">
+          <div class="h5-cell-icon">📅</div>
+          <div class="h5-cell-body">
+            <div class="h5-cell-title">截止日期</div>
+            <div class="h5-cell-desc">预计完成时间</div>
+          </div>
+          <div class="h5-cell-right" style="font-size:13px;color:#1d2129;">{{ detail.deadline }}</div>
+        </div>
+        <div class="h5-cell">
+          <div class="h5-cell-icon">👤</div>
+          <div class="h5-cell-body">
+            <div class="h5-cell-title">负责人</div>
+            <div class="h5-cell-desc">主要责任人</div>
+          </div>
+          <div class="h5-cell-right">{{ detail.owner }}</div>
+        </div>
+        <div class="h5-cell">
+          <div class="h5-cell-icon">👥</div>
+          <div class="h5-cell-body">
+            <div class="h5-cell-title">协作人员</div>
+            <div class="h5-cell-desc">{{ detail.members }}</div>
+          </div>
+          <div class="h5-cell-right" style="color:#86909c;">3 人</div>
+        </div>
+        <div class="h5-cell">
+          <div class="h5-cell-icon">📎</div>
+          <div class="h5-cell-body">
+            <div class="h5-cell-title">附件</div>
+            <div class="h5-cell-desc">相关文档</div>
+          </div>
+          <div class="h5-cell-right" style="color:#165dff;font-size:13px;">2 个文件 ›</div>
+        </div>
+      </div>
+
+      <!-- 底部占位 -->
+      <div style="height:8px;"></div>
+    </div>
+
+    <!-- 底部固定操作栏 -->
+    <div class="detail-bottom-bar">
+      <a-button style="flex:1;" @click="onCancel">取消</a-button>
+      <a-button type="primary" style="flex:2;" @click="onConfirm">确认执行</a-button>
+    </div>
+
+    <!-- Proto 调试条 -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">H5 移动端</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+    </div>
+
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+createApp({
+  setup() {
+    const pageTitle = ref('详情')
+
+    const detail = ref({
+      title: '2024 年度产品规划评审',
+      status: '进行中',
+      creator: '张三',
+      createDate: '2024-01-15',
+      description: '本次评审旨在梳理 2024 年全年产品迭代路线，明确各业务线优先级，合理分配研发资源，确保核心功能按时交付。',
+      descriptionExtra: '评审将分为三个阶段：现状分析、目标规划、资源排期。各相关团队负责人需提前准备本部门数据，评审结束后 3 个工作日内完成报告归档。',
+      type: '项目类型',
+      typeValue: '产品规划',
+      priority: '高优先级',
+      priorityColor: 'red',
+      deadline: '2024-02-28',
+      owner: '王产品',
+      members: '张三、李四、王五'
+    })
+
+    function onCancel() {
+      if (confirm('确认取消该操作？')) window.history.back()
+    }
+    function onConfirm() {
+      alert('操作已确认！（原型演示）')
+    }
+
+    return { pageTitle, detail, onCancel, onConfirm }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

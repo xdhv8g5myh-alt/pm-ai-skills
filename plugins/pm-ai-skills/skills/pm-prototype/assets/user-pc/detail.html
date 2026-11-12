@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VibePM — 详情</title>
+  <link rel="stylesheet" href="../_shared/vendor/arco.css" />
+  <link rel="stylesheet" href="../_shared/theme.css" />
+  <style>
+    [v-cloak] { display: none }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif; }
+    .pc-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px; background: #fff; border-bottom: 1px solid #e5e6eb;
+      display: flex; align-items: center; padding: 0 40px; gap: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .pc-logo { font-size: 20px; font-weight: 700; color: var(--color-primary,#165dff); margin-right: 16px; white-space: nowrap; }
+    .pc-nav { display: flex; align-items: center; gap: 4px; flex: 1; }
+    .pc-nav-item { padding: 6px 14px; border-radius: 6px; font-size: 14px; color: #4e5969; cursor: pointer; text-decoration: none; transition: .15s; }
+    .pc-nav-item:hover, .pc-nav-item.active { color: var(--color-primary,#165dff); background: rgba(22,93,255,.06); }
+    .pc-header-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .pc-main { min-height: 100vh; padding-top: 64px; background: #f5f5f5; }
+    .pc-detail-card { background: #fff; border-radius: 10px; padding: 32px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 20px; }
+    .pc-footer { background: #1d2129; color: rgba(255,255,255,.6); text-align: center; padding: 24px; font-size: 13px; }
+
+    /* Detail layout */
+    .detail-wrap { max-width: 1200px; margin: 0 auto; padding: 24px; display: flex; gap: 20px; align-items: flex-start; }
+    .detail-main { flex: 1; min-width: 0; }
+    .detail-aside { width: 320px; flex-shrink: 0; }
+
+    /* Title card */
+    .detail-title { font-size: 26px; font-weight: 700; color: #1d2129; line-height: 1.4; margin-bottom: 14px; }
+    .detail-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+    .detail-author { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #4e5969; }
+    .detail-time { font-size: 13px; color: #86909c; }
+    .detail-actions { display: flex; gap: 8px; padding-top: 16px; border-top: 1px solid #f2f3f5; }
+
+    /* Content */
+    .detail-content p { font-size: 15px; color: #1d2129; line-height: 1.9; margin-bottom: 16px; }
+    .detail-content h3 { font-size: 17px; font-weight: 600; color: #1d2129; margin: 24px 0 12px; }
+
+    /* Comments */
+    .comment-item { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid #f2f3f5; }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-body { flex: 1; }
+    .comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .comment-name { font-size: 13px; font-weight: 600; color: #1d2129; }
+    .comment-time { font-size: 12px; color: #c9cdd4; }
+    .comment-text { font-size: 14px; color: #4e5969; line-height: 1.7; }
+
+    /* Aside cards */
+    .aside-card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 16px; }
+    .aside-card-title { font-size: 14px; font-weight: 600; color: #1d2129; margin-bottom: 14px; }
+    .info-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; font-size: 13px; }
+    .info-label { color: #86909c; width: 64px; flex-shrink: 0; }
+    .info-val { color: #1d2129; flex: 1; }
+    .recommend-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f2f3f5; cursor: pointer; transition: .12s; }
+    .recommend-item:last-child { border-bottom: none; }
+    .recommend-item:hover { color: #165dff; }
+    .recommend-icon { width: 32px; height: 32px; border-radius: 6px; background: linear-gradient(135deg,#165dff,#7b61ff); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .recommend-name { font-size: 13px; color: #1d2129; flex: 1; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <!-- Header -->
+    <header class="pc-header">
+      <div class="pc-logo">⚡ VibePM</div>
+      <nav class="pc-nav">
+        <a href="./home.html" class="pc-nav-item" :class="{active:activePage==='home'}">首页</a>
+        <a href="./list.html" class="pc-nav-item" :class="{active:activePage==='list'}">发现</a>
+        <a href="./detail.html" class="pc-nav-item" :class="{active:activePage==='detail'}">详情</a>
+        <a href="./checkout.html" class="pc-nav-item" :class="{active:activePage==='checkout'}">结算</a>
+      </nav>
+      <div class="pc-header-right">
+        <a-input-search placeholder="搜索..." style="width:200px"></a-input-search>
+        <a-button type="text">
+          <template #icon><icon-notification></icon-notification></template>
+        </a-button>
+        <a href="./profile.html">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);cursor:pointer" :size="32">U</a-avatar>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="pc-main">
+      <!-- Breadcrumb -->
+      <div style="background:#fff;border-bottom:1px solid #f2f3f5;padding:0 40px;">
+        <div style="max-width:1200px;margin:0 auto">
+          <a-breadcrumb style="padding:12px 0;font-size:13px">
+            <a-breadcrumb-item><a href="./home.html">首页</a></a-breadcrumb-item>
+            <a-breadcrumb-item><a href="./list.html">发现</a></a-breadcrumb-item>
+            <a-breadcrumb-item>家庭健康管理小程序 v2.0</a-breadcrumb-item>
+          </a-breadcrumb>
+        </div>
+      </div>
+
+      <div class="detail-wrap">
+        <!-- Left main -->
+        <div class="detail-main">
+          <!-- Title card -->
+          <div class="pc-detail-card">
+            <div class="detail-title">家庭健康管理小程序 v2.0 — 产品需求文档</div>
+            <div class="detail-meta">
+              <div class="detail-author">
+                <a-avatar :size="24" style="background:#165dff;font-size:11px">张</a-avatar>
+                张小明
+              </div>
+              <span class="detail-time">更新于 2025-01-20 14:30</span>
+              <a-tag color="blue">进行中</a-tag>
+              <a-tag>小程序</a-tag>
+              <a-tag>AI</a-tag>
+              <a-tag>健康管理</a-tag>
+            </div>
+            <div class="detail-actions">
+              <a-button :type="isFaved ? 'primary' : 'outline'" @click="isFaved = !isFaved">
+                <template #icon><icon-star></icon-star></template>
+                {{ isFaved ? '已收藏' : '收藏' }}
+              </a-button>
+              <a-button type="outline">
+                <template #icon><icon-share-alt></icon-share-alt></template>
+                分享
+              </a-button>
+              <a-dropdown>
+                <a-button type="text">
+                  <template #icon><icon-more></icon-more></template>
+                </a-button>
+                <template #content>
+                  <a-doption>下载 PDF</a-doption>
+                  <a-doption>导出 Word</a-doption>
+                  <a-doption style="color:#f53f3f">举报</a-doption>
+                </template>
+              </a-dropdown>
+            </div>
+          </div>
+
+          <!-- Content card -->
+          <div class="pc-detail-card">
+            <div class="detail-content">
+              <h3>一、产品背景</h3>
+              <p>随着居民健康意识的日益增强，家庭健康管理的需求愈发旺盛。传统的健康管理方式较为分散，缺乏系统化的工具支撑。本产品旨在通过数字化手段，帮助家庭成员建立完整的健康档案，实现用药提醒、体检记录、健康数据追踪等核心功能，让健康管理更简单、更高效。</p>
+              <h3>二、核心需求</h3>
+              <p>基于用户调研（访谈 50+ 家庭，问卷 2000+），主要痛点集中在：用药提醒遗忘（62%）、家庭成员健康信息分散（58%）、就医记录难以追溯（47%）、体检报告解读困难（41%）。本版本将优先解决前两个高频痛点，通过 AI 辅助实现智能提醒和数据聚合。</p>
+              <h3>三、功能模块</h3>
+              <p>核心模块包括：健康档案（支持添加多个家庭成员，记录基本信息、病史、过敏史）、用药管理（添加药品、设置服药时间和剂量、智能提醒、服药记录）、健康数据（血压/血糖/体重等指标录入与趋势图）、就医记录（挂号、诊断、处方、检查报告上传存储）、AI 健康助手（基于数据给出健康建议，不做诊断）。</p>
+              <h3>四、非功能性需求</h3>
+              <p>系统响应时间 ≤ 1.5s，首屏加载 ≤ 3s（4G 环境）；数据本地加密存储，敏感信息传输使用 HTTPS + 数据加密；支持离线使用基础功能（查看档案、查看用药计划）；日活用户 10 万时系统稳定运行，P99 延迟 ≤ 500ms。</p>
+            </div>
+          </div>
+
+          <!-- Comments -->
+          <div class="pc-detail-card">
+            <div style="font-size:17px;font-weight:600;color:#1d2129;margin-bottom:20px">评论 ({{ comments.length }})</div>
+
+            <div class="comment-item" v-for="c in comments" :key="c.id">
+              <a-avatar :size="36" :style="{background: c.avatarBg, fontSize:'14px'}">{{ c.name[0] }}</a-avatar>
+              <div class="comment-body">
+                <div class="comment-header">
+                  <span class="comment-name">{{ c.name }}</span>
+                  <span class="comment-time">{{ c.time }}</span>
+                </div>
+                <div class="comment-text">{{ c.text }}</div>
+                <div style="margin-top:8px;display:flex;gap:12px">
+                  <a-button type="text" size="mini" style="padding:0;font-size:12px;color:#86909c">
+                    <template #icon><icon-thumb-up></icon-thumb-up></template>
+                    {{ c.likes }}
+                  </a-button>
+                  <a-button type="text" size="mini" style="padding:0;font-size:12px;color:#86909c">回复</a-button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comment input -->
+            <div style="margin-top:20px;padding-top:20px;border-top:1px solid #f2f3f5">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <a-avatar :size="36" style="background:linear-gradient(135deg,#165dff,#7b61ff);flex-shrink:0;font-size:14px">我</a-avatar>
+                <div style="flex:1">
+                  <a-textarea
+                    v-model="commentInput"
+                    placeholder="写下你的评论..."
+                    :auto-size="{minRows:3, maxRows:6}"
+                    style="margin-bottom:10px"
+                  ></a-textarea>
+                  <div style="display:flex;justify-content:flex-end">
+                    <a-button type="primary" :disabled="!commentInput.trim()" @click="submitComment">发布评论</a-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right aside -->
+        <div class="detail-aside">
+          <!-- Status card -->
+          <div class="aside-card">
+            <div class="aside-card-title">项目状态</div>
+            <div style="margin-bottom:12px">
+              <a-tag color="blue" style="margin-bottom:10px">进行中</a-tag>
+              <div style="font-size:13px;color:#86909c;margin-bottom:6px">总体进度</div>
+              <a-progress :percent="65" color="#165dff"></a-progress>
+            </div>
+            <div class="info-row">
+              <span class="info-label">开始日期</span>
+              <span class="info-val">2025-01-10</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">预期完成</span>
+              <span class="info-val">2025-03-01</span>
+            </div>
+            <div class="info-row" style="margin-bottom:0">
+              <span class="info-label">剩余天数</span>
+              <span class="info-val" style="color:#165dff;font-weight:600">39 天</span>
+            </div>
+          </div>
+
+          <!-- Fields card -->
+          <div class="aside-card">
+            <div class="aside-card-title">项目信息</div>
+            <div class="info-row">
+              <span class="info-label">类型</span>
+              <span class="info-val"><a-tag size="small">需求文档</a-tag></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">优先级</span>
+              <span class="info-val"><a-tag size="small" color="red">P0 紧急</a-tag></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">负责人</span>
+              <div class="info-val" style="display:flex;align-items:center;gap:6px">
+                <a-avatar :size="20" style="background:#165dff;font-size:10px">张</a-avatar>
+                张小明
+              </div>
+            </div>
+            <div class="info-row" style="margin-bottom:0">
+              <span class="info-label">协作者</span>
+              <div class="info-val">
+                <a-avatar-group :size="22" :max-count="4">
+                  <a-avatar style="background:#7b61ff;font-size:10px">李</a-avatar>
+                  <a-avatar style="background:#ff7d00;font-size:10px">王</a-avatar>
+                  <a-avatar style="background:#00b42a;font-size:10px">陈</a-avatar>
+                </a-avatar-group>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommend card -->
+          <div class="aside-card">
+            <div class="aside-card-title">相关推荐</div>
+            <div class="recommend-item" v-for="rec in recommends" :key="rec.id">
+              <div class="recommend-icon">{{ rec.icon }}</div>
+              <div class="recommend-name">{{ rec.name }}</div>
+              <icon-right style="color:#c9cdd4;flex-shrink:0"></icon-right>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="pc-footer">© 2025 VibePM · 智能产品协作平台 · 用户前台原型</footer>
+
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">用户前台 PC</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+      <span class="proto-sep">|</span>
+      <button @click="pageState='loading'">⏳ 加载中</button>
+      <button @click="pageState='empty'">📭 空数据</button>
+      <button @click="pageState='error'">⚠️ 出错</button>
+      <button @click="pageState='normal'">✅ 正常</button>
+    </div>
+  </div>
+
+  <script src="../_shared/vendor/vue.global.prod.js"></script>
+  <script src="../_shared/vendor/arco-vue.min.js"></script>
+  <script src="../_shared/proto-utils.js"></script>
+  <script>
+    const { createApp, ref } = Vue
+    createApp({
+      setup() {
+        const pageTitle = ref('详情页')
+        const activePage = ref('detail')
+        const pageState = ref('normal')
+        const isFaved = ref(false)
+        const commentInput = ref('')
+
+        const comments = ref([
+          { id: 1, name: '李产品', avatarBg: '#7b61ff', time: '1小时前', text: '需求背景写得很清晰！建议在第三部分"就医记录"模块中，增加一个医生评价功能，这样用户可以根据历史就诊评价来选择医生，提升用户决策效率。', likes: 12 },
+          { id: 2, name: '王前端', avatarBg: '#ff7d00', time: '3小时前', text: 'AI 健康助手部分的"不做诊断"边界很重要，建议在需求文档中增加一个专门的免责声明设计规范，确保法律合规。另外离线功能的数据同步策略需要详细描述。', likes: 8 },
+          { id: 3, name: '陈测试', avatarBg: '#00b42a', time: '昨天 16:45', text: '非功能性需求写得很具体，赞！P99 延迟 500ms 这个指标有点严格，建议和后端同学确认一下在 10万 DAU 下的可行性，避免后期频繁修改需求。', likes: 5 },
+          { id: 4, name: '孙设计', avatarBg: '#f53f3f', time: '2天前', text: '整体方向很好，已经开始在 Figma 里做原型了，预计本周五可以出第一版交互稿。用药管理的交互流程可能需要和张小明再对齐一下细节。', likes: 3 }
+        ])
+
+        const recommends = ref([
+          { id: 1, icon: '💊', name: '用药管理模块详细设计规范' },
+          { id: 2, icon: '📊', name: '健康数据可视化方案' },
+          { id: 3, icon: '🤖', name: 'AI 健康助手交互设计规范' }
+        ])
+
+        function submitComment() {
+          if (!commentInput.value.trim()) return
+          comments.value.unshift({
+            id: Date.now(),
+            name: '我',
+            avatarBg: '#165dff',
+            time: '刚刚',
+            text: commentInput.value,
+            likes: 0
+          })
+          commentInput.value = ''
+        }
+
+        return { pageTitle, activePage, pageState, isFaved, commentInput, comments, recommends, submitComment }
+      }
+    }).use(ArcoVue).mount('#app')
+  </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>日历视图 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <!-- 左侧边栏 -->
+  <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
+    <div class="pro-brand">
+      <div class="pro-brand-icon">⚡</div>
+      <span v-show="!collapsed" class="pro-brand-name">管理系统</span>
+    </div>
+    <a-menu
+      :collapsed="collapsed"
+      :selected-keys="selectedKeys"
+      :open-keys="openKeys"
+      @menu-item-click="onMenuClick"
+      @sub-menu-click="onSubMenuClick"
+      style="border:none;width:100%;flex:1"
+    >
+      <a-menu-item key="dashboard">
+        <template #icon><icon-home></icon-home></template>
+        <a href="./dashboard.html">数据概览</a>
+      </a-menu-item>
+      <a-sub-menu key="list-group">
+        <template #icon><icon-apps></icon-apps></template>
+        <template #title>业务管理</template>
+        <a-menu-item key="list"><a href="./list.html">数据列表</a></a-menu-item>
+        <a-menu-item key="list-kanban"><a href="./list-kanban.html">任务看板</a></a-menu-item>
+        <a-menu-item key="list-calendar"><a href="./list-calendar.html">日历视图</a></a-menu-item>
+        <a-menu-item key="list-tree-table"><a href="./list-tree-table.html">左树右表</a></a-menu-item>
+        <a-menu-item key="list-filter-table"><a href="./list-filter-table.html">左筛右表</a></a-menu-item>
+        <a-menu-item key="list-inline-edit"><a href="./list-inline-edit.html">行内编辑</a></a-menu-item>
+        <a-menu-item key="file-manager"><a href="./file-manager.html">文件管理</a></a-menu-item>
+        <a-menu-item key="wizard-import"><a href="./wizard-import.html">导入向导</a></a-menu-item>
+        <a-menu-item key="form-add"><a href="./form-add.html">新增数据</a></a-menu-item>
+        <a-menu-item key="detail"><a href="./detail.html">数据详情</a></a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="system">
+        <template #icon><icon-settings></icon-settings></template>
+        <template #title>系统管理</template>
+        <a-menu-item key="user-mgmt">用户管理</a-menu-item>
+        <a-menu-item key="role-mgmt">角色权限</a-menu-item>
+        <a-menu-item key="log">操作日志</a-menu-item>
+      </a-sub-menu>
+      <a-menu-item key="help">
+        <template #icon><icon-question-circle></icon-question-circle></template>
+        帮助中心
+      </a-menu-item>
+    </a-menu>
+  </aside>
+
+  <!-- 顶部导航栏 -->
+  <header class="pro-navbar" :style="{ left: collapsed ? '48px' : '220px' }">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a-button type="text" style="color:var(--color-text-2)" @click="collapsed = !collapsed">
+        <template #icon>
+          <icon-menu-fold v-if="!collapsed"></icon-menu-fold>
+          <icon-menu-unfold v-else></icon-menu-unfold>
+        </template>
+      </a-button>
+      <a-breadcrumb>
+        <a-breadcrumb-item>
+          <a href="./dashboard.html" style="color:var(--color-text-3)">首页</a>
+        </a-breadcrumb-item>
+        <a-breadcrumb-item>业务管理</a-breadcrumb-item>
+        <a-breadcrumb-item>{{ pageTitle }}</a-breadcrumb-item>
+      </a-breadcrumb>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <div style="display:flex;align-items:center;gap:8px;width:200px;height:32px;padding:0 12px;border:1px solid var(--proto-border);border-radius:20px;background:rgba(0,0,0,.04);color:var(--color-text-3);cursor:pointer;font-size:13px;margin-right:8px">
+        <icon-search style="font-size:14px;flex-shrink:0"></icon-search>
+        <span>搜索页面...</span>
+      </div>
+      <a-tooltip content="消息通知">
+        <a-badge :count="noticeCount" :offset="[-2,4]">
+          <a-button type="text" style="color:var(--color-text-2)">
+            <template #icon><icon-notification style="font-size:18px"></icon-notification></template>
+          </a-button>
+        </a-badge>
+      </a-tooltip>
+      <a-tooltip content="全屏">
+        <a-button type="text" style="color:var(--color-text-2)">
+          <template #icon><icon-fullscreen style="font-size:18px"></icon-fullscreen></template>
+        </a-button>
+      </a-tooltip>
+      <!-- 主题色选择 -->
+      <div style="display:flex;align-items:center;gap:4px;padding:0 6px">
+        <span
+          v-for="t in themePresets" :key="t.key"
+          :title="t.name"
+          @click="applyTheme(t.key)"
+          :style="{
+            display:'inline-block', width:'14px', height:'14px',
+            borderRadius:'50%', background:t.color, cursor:'pointer',
+            boxShadow: themeKey===t.key ? '0 0 0 2px #fff,0 0 0 4px '+t.color : 'none',
+            transition:'box-shadow .15s'
+          }"
+        ></span>
+      </div>
+
+      <a-tooltip :content="isDark ? '切换浅色' : '切换深色'">
+        <a-button type="text" style="color:var(--color-text-2);font-size:16px;padding:0 8px;line-height:1" @click="toggleTheme">
+          {{ isDark ? '☀️' : '🌙' }}
+        </a-button>
+      </a-tooltip>
+      <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
+      <a-dropdown trigger="click">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseenter="this.style.background='rgba(0,0,0,.04)'" onmouseleave="this.style.background=''">
+          <a-avatar style="background:linear-gradient(135deg,#165dff,#7b61ff);font-size:14px" :size="32">管</a-avatar>
+          <span style="font-size:14px;color:var(--color-text-1)">管理员</span>
+          <icon-down style="font-size:12px;color:var(--color-text-3)"></icon-down>
+        </div>
+        <template #content>
+          <a-doption>个人信息</a-doption>
+          <a-doption>修改密码</a-doption>
+          <a-doption disabled>系统设置</a-doption>
+          <a-divider style="margin:4px 0"></a-divider>
+          <a-doption><a href="./login.html" style="color:inherit">退出登录</a></a-doption>
+        </template>
+      </a-dropdown>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="pro-main" :style="{ marginLeft: collapsed ? '48px' : '220px' }">
+    <div class="pro-content">
+
+      <!-- loading 态 -->
+      <div v-if="pageState === 'loading'" style="display:flex;align-items:center;justify-content:center;min-height:400px">
+        <a-spin tip="加载中..." :size="32"></a-spin>
+      </div>
+
+      <!-- error 态 -->
+      <a-result v-else-if="pageState === 'error'" status="500" title="加载失败" subtitle="请求数据时出现错误，请稍后重试" style="padding:80px 0">
+        <template #extra>
+          <a-button type="primary" @click="pageState='normal'">重新加载</a-button>
+        </template>
+      </a-result>
+
+      <!-- empty 态 -->
+      <a-card v-else-if="pageState === 'empty'" class="general-card" style="padding:60px 0;text-align:center">
+        <a-empty description="暂无数据" style="padding:40px 0">
+          <template #extra>
+            <a-button type="primary">刷新数据</a-button>
+          </template>
+        </a-empty>
+      </a-card>
+
+      <!-- 正常内容 -->
+      <template v-else>
+
+        <a-card class="general-card" :body-style="{ padding: '24px' }">
+          <!-- 月份导航 -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <a-button type="text" @click="prevMonth">
+                <template #icon><icon-arrow-left></icon-arrow-left></template>
+              </a-button>
+              <div style="font-size:18px;font-weight:600">{{ currentYear }}年{{ currentMonth }}月</div>
+              <a-button type="text" @click="nextMonth">
+                <template #icon><icon-arrow-right></icon-arrow-right></template>
+              </a-button>
+              <a-button size="small" @click="goToday">今天</a-button>
+            </div>
+            <a-space>
+              <a-radio-group type="button" v-model="viewMode">
+                <a-radio value="month">月视图</a-radio>
+                <a-radio value="week">周视图</a-radio>
+                <a-radio value="list">列表</a-radio>
+              </a-radio-group>
+            </a-space>
+          </div>
+
+          <!-- 日历表头 -->
+          <div class="calendar-header">
+            <div v-for="d in weekDays" :key="d" class="calendar-header-cell">{{ d }}</div>
+          </div>
+
+          <!-- 日历网格 -->
+          <div class="calendar-grid">
+            <div
+              v-for="(day, idx) in calendarDays"
+              :key="idx"
+              class="calendar-day"
+              :class="{
+                'other-month': day.otherMonth,
+                'today': day.isToday
+              }"
+            >
+              <div class="calendar-day-num">{{ day.num }}</div>
+              <div v-for="(evt, ei) in day.events" :key="ei" class="calendar-event">{{ evt }}</div>
+            </div>
+          </div>
+        </a-card>
+
+      </template>
+    </div>
+  </main>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>{{ pageTitle }}</span>
+    <span class="proto-sep">|</span>
+    <button @click="setPageState('loading')">⏳ 加载中</button>
+    <button @click="setPageState('empty')">📭 空数据</button>
+    <button @click="setPageState('error')">⚠️ 出错</button>
+    <button @click="setPageState('normal')">✅ 正常</button>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref, computed } = Vue
+
+createApp({
+  setup() {
+    const collapsed    = ref(false)
+    const selectedKeys = ref(['list-calendar'])
+    const openKeys     = ref(['list-group'])
+    const pageTitle    = ref('日历视图')
+    const noticeCount  = ref(3)
+    const pageState    = ref('normal')
+
+    const currentDate = new Date()
+    const currentYear = ref(currentDate.getFullYear())
+    const currentMonth = ref(currentDate.getMonth() + 1)
+    const viewMode = ref('month')
+    const weekDays = ['日', '一', '二', '三', '四', '五', '六']
+
+    // 模拟事件数据（key: 'YYYY-MM-DD'）
+    const eventMap = {
+      '2026-11-05': ['项目评审会议', '产品同步会'],
+      '2026-11-08': ['技术方案评审'],
+      '2026-11-10': ['设计稿交付', '双周例会'],
+      '2026-11-12': ['🔥 演示日', '需求梳理'],
+      '2026-11-15': ['PRD 截止', '客户拜访'],
+      '2026-11-18': ['迭代规划会'],
+      '2026-11-20': ['上线发布'],
+      '2026-11-22': ['团建活动'],
+      '2026-11-25': ['季度总结'],
+      '2026-11-28': ['年度规划启动'],
+    }
+
+    const calendarDays = computed(() => {
+      const y = currentYear.value
+      const m = currentMonth.value - 1
+      const firstDay = new Date(y, m, 1).getDay()
+      const daysInMonth = new Date(y, m + 1, 0).getDate()
+      const daysInPrev = new Date(y, m, 0).getDate()
+
+      const today = new Date()
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
+
+      const days = []
+      // 上月尾部
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const num = daysInPrev - i
+        const pm = m === 0 ? 12 : m
+        const py = m === 0 ? y - 1 : y
+        const key = `${py}-${String(pm).padStart(2,'0')}-${String(num).padStart(2,'0')}`
+        days.push({ num, otherMonth: true, isToday: false, events: eventMap[key] || [] })
+      }
+      // 本月
+      for (let i = 1; i <= daysInMonth; i++) {
+        const key = `${y}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`
+        days.push({ num: i, otherMonth: false, isToday: key === todayStr, events: eventMap[key] || [] })
+      }
+      // 下月补齐到 42 格（6行）
+      let nextNum = 1
+      while (days.length < 42) {
+        const nm = m === 11 ? 1 : m + 2
+        const ny = m === 11 ? y + 1 : y
+        const key = `${ny}-${String(nm).padStart(2,'0')}-${String(nextNum).padStart(2,'0')}`
+        days.push({ num: nextNum++, otherMonth: true, isToday: false, events: eventMap[key] || [] })
+      }
+      return days
+    })
+
+    function prevMonth() {
+      if (currentMonth.value === 1) { currentMonth.value = 12; currentYear.value-- }
+      else currentMonth.value--
+    }
+    function nextMonth() {
+      if (currentMonth.value === 12) { currentMonth.value = 1; currentYear.value++ }
+      else currentMonth.value++
+    }
+    function goToday() {
+      const d = new Date()
+      currentYear.value = d.getFullYear()
+      currentMonth.value = d.getMonth() + 1
+    }
+
+    const isDark = ref(localStorage.getItem('proto-theme') === 'dark')
+    function toggleTheme() {
+      isDark.value = !isDark.value
+      if (isDark.value) {
+        document.body.setAttribute('arco-theme', 'dark')
+        localStorage.setItem('proto-theme', 'dark')
+      } else {
+        document.body.removeAttribute('arco-theme')
+        localStorage.setItem('proto-theme', 'light')
+      }
+    }
+    if (isDark.value) document.body.setAttribute('arco-theme', 'dark')
+
+    const THEMES = {
+      blue:     { name:'品牌蓝', color:'#165dff', p1:'233 241 255', p5:'61 126 255',  p6:'22 93 255',   p7:'18 72 199'  },
+      techBlue: { name:'科技蓝', color:'#4080ff', p1:'232 240 255', p5:'90 155 255',  p6:'64 128 255',  p7:'50 100 200' },
+      green:    { name:'生机绿', color:'#00b42a', p1:'235 255 239', p5:'0 210 50',    p6:'0 180 42',    p7:'0 140 33'   },
+      cyan:     { name:'清新青', color:'#0fc6c2', p1:'228 254 253', p5:'40 215 212',  p6:'15 198 194',  p7:'11 153 150' },
+      orange:   { name:'活力橙', color:'#ff7d00', p1:'255 247 232', p5:'255 158 0',   p6:'255 125 0',   p7:'200 95 0'   },
+    }
+    const themePresets = Object.entries(THEMES).map(([key, v]) => ({ key, ...v }))
+    const themeKey = ref(localStorage.getItem('proto-theme-color') || 'blue')
+
+    function applyTheme(key) {
+      const t = THEMES[key]; if (!t) return
+      themeKey.value = key
+      const r = document.documentElement
+      r.style.setProperty('--primary-1', t.p1)
+      r.style.setProperty('--primary-5', t.p5)
+      r.style.setProperty('--primary-6', t.p6)
+      r.style.setProperty('--primary-7', t.p7)
+      localStorage.setItem('proto-theme-color', key)
+    }
+    applyTheme(themeKey.value)
+
+    function setPageState(s) { pageState.value = s }
+
+    const NAV_MAP = {
+      dashboard: './dashboard.html', list: './list.html', 'form-add': './form-add.html',
+      detail: './detail.html', 'list-filter': './list-filter.html', 'list-card': './list-card.html',
+      'form-step': './form-step.html', profile: './profile.html', 'result-success': './result-success.html',
+      'exception-404': './exception-404.html', 'user-role': './user-role.html',
+      'permission-tree': './permission-tree.html', 'log-list': './log-list.html',
+      'user-mgmt': './user-role.html', 'role-mgmt': './permission-tree.html',
+      log: './log-list.html', help: './index.html',
+      index: './index.html', login: './login.html',
+      'list-kanban': './list-kanban.html', 'list-calendar': './list-calendar.html',
+      'list-tree-table': './list-tree-table.html', 'list-filter-table': './list-filter-table.html',
+      'list-inline-edit': './list-inline-edit.html', 'file-manager': './file-manager.html',
+      'wizard-import': './wizard-import.html'
+    }
+    function onMenuClick(key) {
+      selectedKeys.value = [key]
+      if (NAV_MAP[key]) window.location.href = NAV_MAP[key]
+    }
+    function onSubMenuClick(key, openedKeys) { openKeys.value = openedKeys }
+
+    window.__protoApp = { pageState }
+    return {
+      collapsed, selectedKeys, openKeys,
+      pageTitle, noticeCount, pageState,
+      currentYear, currentMonth, viewMode, weekDays, calendarDays,
+      prevMonth, nextMonth, goToday,
+      setPageState, onMenuClick, onSubMenuClick,
+      isDark, toggleTheme,
+      themePresets, themeKey, applyTheme
+    }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

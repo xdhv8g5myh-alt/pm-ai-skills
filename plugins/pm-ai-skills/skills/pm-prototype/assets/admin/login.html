@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>登录 · 管理后台</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+
+  body { margin:0; font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif; }
+
+  .login-container {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #e8f0fe 0%, #f0e8ff 50%, #e8f4fe 100%);
+    position: relative;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-container::before {
+    content: '';
+    position: absolute;
+    top: -20%; left: -10%;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(22,93,255,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .login-container::after {
+    content: '';
+    position: absolute;
+    bottom: -20%; right: -10%;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,97,255,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .login-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-form-card {
+    position: relative; z-index: 1;
+    width: 400px; padding: 40px 36px 32px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 16px 48px rgba(22,93,255,.12), 0 2px 8px rgba(0,0,0,.06);
+  }
+
+  .login-logo {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .login-brand-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #165dff, #7b61ff);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 20px;
+  }
+
+  .login-brand-name {
+    font-size: 18px; font-weight: 700; color: #1d2129;
+  }
+
+  .login-title {
+    font-size: 24px; font-weight: 900; color: #1d2129;
+    margin-bottom: 6px; margin-top: 0;
+  }
+
+  .login-subtitle {
+    font-size: 15px; color: #86909c;
+    margin-bottom: 28px; margin-top: 0;
+  }
+
+  .login-fields {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .login-footer {
+    position: fixed; bottom: 24px; left: 0; right: 0;
+    text-align: center; font-size: 12px;
+    color: rgba(100,100,120,.6);
+  }
+
+  .login-demo-hint {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 16px; padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(22,93,255,.05);
+    border: 1px solid rgba(22,93,255,.1);
+    font-size: 12px; color: #86909c;
+  }
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <div class="login-container">
+    <div class="login-content">
+      <div class="login-form-card">
+
+        <!-- Logo -->
+        <div class="login-logo">
+          <div class="login-brand-icon">⚡</div>
+          <span class="login-brand-name">管理系统</span>
+        </div>
+
+        <!-- 标题 -->
+        <h2 class="login-title">欢迎回来</h2>
+        <p class="login-subtitle">请输入您的账号和密码登录</p>
+
+        <!-- 表单 -->
+        <div class="login-fields">
+          <a-input
+            v-model="userName"
+            placeholder="请输入账号"
+            allow-clear
+            :style="{ height: '45px' }"
+          >
+            <template #prefix><icon-user></icon-user></template>
+          </a-input>
+
+          <a-input-password
+            v-model="password"
+            placeholder="请输入密码"
+            allow-clear
+            :style="{ height: '45px' }"
+          >
+            <template #prefix><icon-lock></icon-lock></template>
+          </a-input-password>
+
+          <!-- 记住我 + 忘记密码 -->
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <a-checkbox v-model="rememberMe">记住我</a-checkbox>
+            <a-link>忘记密码？</a-link>
+          </div>
+
+          <!-- 登录按钮 -->
+          <a-button
+            type="primary"
+            long
+            :loading="loading"
+            :style="{ height: '45px', borderRadius: '10px', fontSize: '16px', fontWeight: '600' }"
+            @click="handleLogin"
+          >登 录</a-button>
+
+          <!-- 注册按钮 -->
+          <a-button
+            type="text"
+            long
+            :style="{ color: '#86909c' }"
+          >还没有账号？立即注册</a-button>
+
+          <!-- 演示提示 -->
+          <div class="login-demo-hint">
+            <icon-info-circle style="color:#165dff;font-size:14px;flex-shrink:0"></icon-info-circle>
+            <span>演示账号：<strong>admin</strong> &nbsp;/&nbsp; 密码：<strong>123456</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="login-footer">
+        © 2025 管理系统 · 仅供原型演示使用
+      </footer>
+    </div>
+  </div>
+
+  <!-- 原型调试工具条 -->
+  <div class="proto-toolbar">
+    <span class="proto-badge">PROTO</span>
+    <span style="color:rgba(255,255,255,.5)">管理后台</span>
+    <span class="proto-sep">·</span>
+    <span>登录页</span>
+    <span class="proto-sep">|</span>
+    <button @click="fillDemo">填充演示账号</button>
+    <button onclick="window.location.href='./dashboard.html'">直接进入后台</button>
+    <span class="proto-sep">|</span>
+    <span style="opacity:.4;font-size:11px">仅原型调试用</span>
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+
+createApp({
+  setup() {
+    const userName   = ref('')
+    const password   = ref('')
+    const rememberMe = ref(false)
+    const loading    = ref(false)
+
+    function fillDemo() {
+      userName.value = 'admin'
+      password.value = '123456'
+    }
+
+    function handleLogin() {
+      loading.value = true
+      setTimeout(() => {
+        loading.value = false
+        window.location.href = './dashboard.html'
+      }, 1000)
+    }
+
+    return { userName, password, rememberMe, loading, fillDemo, handleLogin }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Debug Test</title>
+<style>
+  body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+  .ok { color: green; }
+  .err { color: red; font-weight: bold; }
+  #log { background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #ddd; margin-top: 16px; }
+  #app { background: #e6f0ff; padding: 20px; border-radius: 8px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<h2>原型库 Debug 测试</h2>
+<div id="log">
+  <div id="step-vue">⏳ 检查 Vue...</div>
+  <div id="step-arco">⏳ 检查 ArcoVue...</div>
+  <div id="step-mount">⏳ 尝试 mount...</div>
+</div>
+
+<div id="app" v-cloak>
+  <p>{{ msg }}</p>
+  <button @click="msg='点击成功！'">点我测试</button>
+</div>
+
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  document.body.innerHTML += '<div class="err">❌ JS错误: ' + msg + ' (行' + line + ')</div>';
+};
+</script>
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script>
+(function(){
+  var el = document.getElementById('step-vue');
+  if (typeof Vue !== 'undefined') {
+    el.innerHTML = '<span class="ok">✅ Vue 加载成功: ' + Vue.version + '</span>';
+  } else {
+    el.innerHTML = '<span class="err">❌ Vue 未定义</span>';
+  }
+})();
+</script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script>
+(function(){
+  var el = document.getElementById('step-arco');
+  if (typeof ArcoVue !== 'undefined') {
+    el.innerHTML = '<span class="ok">✅ ArcoVue 加载成功，keys: ' + Object.keys(ArcoVue).slice(0,5).join(', ') + '...</span>';
+  } else {
+    el.innerHTML = '<span class="err">❌ ArcoVue 未定义</span>';
+  }
+})();
+</script>
+<script>
+(function(){
+  var el = document.getElementById('step-mount');
+  try {
+    var app = Vue.createApp({
+      setup() {
+        var msg = Vue.ref('Vue + ArcoVue 挂载成功！');
+        return { msg };
+      }
+    });
+    app.use(ArcoVue);
+    app.mount('#app');
+    el.innerHTML = '<span class="ok">✅ mount 成功</span>';
+  } catch(e) {
+    el.innerHTML = '<span class="err">❌ mount 失败: ' + e.message + '</span>';
+    document.body.innerHTML += '<pre class="err">' + e.stack + '</pre>';
+  }
+})();
+</script>
+</body>
+</html>

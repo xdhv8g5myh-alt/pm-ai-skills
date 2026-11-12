@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>填写信息 · H5 原型</title>
+<link rel="stylesheet" href="../_shared/vendor/arco.css"/>
+<link rel="stylesheet" href="../_shared/theme.css"/>
+<style>
+  [v-cloak] { display:none }
+  .form-bottom-bar {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border-top: 1px solid #f2f3f5;
+    flex-shrink: 0;
+  }
+  .upload-placeholder {
+    border: 2px dashed #e5e6eb;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    color: #86909c;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .upload-placeholder:hover {
+    border-color: #165dff;
+    color: #165dff;
+  }
+  .upload-icon {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+  .priority-opt {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .priority-opt label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #e5e6eb;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .15s;
+  }
+  .priority-opt label.selected {
+    border-color: #165dff;
+    background: #e8f3ff;
+    color: #165dff;
+  }
+</style>
+</head>
+<body class="h5-body">
+<div id="app" v-cloak>
+  <div class="h5-phone">
+
+    <!-- 状态栏 -->
+    <div class="h5-status">
+      <span>9:41</span>
+      <span>🔋</span>
+    </div>
+
+    <!-- 顶部导航 -->
+    <div class="h5-navbar">
+      <a href="javascript:history.back()" class="h5-navbar-back">←</a>
+      <span class="h5-navbar-title">{{ pageTitle }}</span>
+    </div>
+
+    <!-- 内容区（留底部栏位置）-->
+    <div class="h5-content" style="padding-bottom:72px;">
+
+      <!-- 基本信息表单 -->
+      <div class="h5-section">
+        <div class="h5-section-title">基本信息</div>
+
+        <!-- 标题 -->
+        <div class="h5-form-field">
+          <div class="h5-form-label">
+            <span style="color:#f53f3f;">*</span> 标题
+          </div>
+          <div class="h5-form-input">
+            <a-input
+              v-model="form.title"
+              placeholder="请输入标题（最多 50 字）"
+              :max-length="50"
+              show-word-limit
+            ></a-input>
+          </div>
+        </div>
+
+        <!-- 类型 -->
+        <div class="h5-form-field">
+          <div class="h5-form-label">
+            <span style="color:#f53f3f;">*</span> 类型
+          </div>
+          <div class="h5-form-input">
+            <a-select v-model="form.type" placeholder="请选择类型" allow-clear style="width:100%;">
+              <a-option value="project">项目规划</a-option>
+              <a-option value="task">任务分配</a-option>
+              <a-option value="report">数据报告</a-option>
+              <a-option value="notice">通知公告</a-option>
+              <a-option value="other">其他</a-option>
+            </a-select>
+          </div>
+        </div>
+
+        <!-- 优先级 -->
+        <div class="h5-form-field">
+          <div class="h5-form-label">优先级</div>
+          <div class="h5-form-input">
+            <div class="priority-opt">
+              <label
+                v-for="opt in priorityOptions"
+                :key="opt.value"
+                :class="{ selected: form.priority === opt.value }"
+                @click="form.priority = opt.value"
+              >
+                {{ opt.emoji }} {{ opt.label }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 截止日期 -->
+        <div class="h5-form-field">
+          <div class="h5-form-label">截止日期</div>
+          <div class="h5-form-input">
+            <a-input v-model="form.deadline" type="date" placeholder="请选择截止日期"></a-input>
+          </div>
+        </div>
+      </div>
+
+      <!-- 详细信息 -->
+      <div class="h5-section">
+        <div class="h5-section-title">详细信息</div>
+
+        <!-- 描述 -->
+        <div class="h5-form-field">
+          <div class="h5-form-label">描述</div>
+          <div class="h5-form-input">
+            <a-textarea
+              v-model="form.description"
+              placeholder="请输入详细描述（选填）"
+              :max-length="500"
+              show-word-limit
+              :auto-size="{ minRows: 3, maxRows: 6 }"
+            ></a-textarea>
+          </div>
+        </div>
+
+        <!-- 附件 -->
+        <div class="h5-form-field">
+          <div class="h5-form-label">附件</div>
+          <div class="h5-form-input">
+            <div class="upload-placeholder" @click="onUpload">
+              <div class="upload-icon">📎</div>
+              <div>点击上传附件</div>
+              <div style="font-size:11px;margin-top:4px;color:#c9cdd4;">支持 PDF、Word、图片，最大 10MB</div>
+            </div>
+            <!-- 已上传文件列表 -->
+            <div v-if="form.files.length > 0" style="margin-top:8px;">
+              <div
+                v-for="(file, idx) in form.files"
+                :key="idx"
+                style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#f7f8fa;border-radius:6px;margin-bottom:4px;font-size:13px;"
+              >
+                <span>📄</span>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ file }}</span>
+                <a-button type="text" size="mini" style="color:#f53f3f;" @click="removeFile(idx)">删除</a-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部占位 -->
+      <div style="height:8px;"></div>
+    </div>
+
+    <!-- 底部固定操作栏 -->
+    <div class="form-bottom-bar">
+      <a-button style="flex:1;" @click="onSaveDraft">保存草稿</a-button>
+      <a-button type="primary" style="flex:2;" :loading="submitting" @click="onSubmit">提交</a-button>
+    </div>
+
+    <!-- Proto 调试条 -->
+    <div class="proto-toolbar">
+      <span class="proto-badge">PROTO</span>
+      <span style="color:rgba(255,255,255,.5)">H5 移动端</span>
+      <span class="proto-sep">·</span>
+      <span>{{ pageTitle }}</span>
+    </div>
+
+  </div>
+</div>
+
+<script src="../_shared/vendor/vue.global.prod.js"></script>
+<script src="../_shared/vendor/arco-vue.min.js"></script>
+<script src="../_shared/proto-utils.js"></script>
+<script>
+const { createApp, ref } = Vue
+createApp({
+  setup() {
+    const pageTitle = ref('填写信息')
+    const submitting = ref(false)
+
+    const form = ref({
+      title: '',
+      type: '',
+      priority: 'medium',
+      deadline: '',
+      description: '',
+      files: []
+    })
+
+    const priorityOptions = ref([
+      { value: 'high', label: '高', emoji: '🔴' },
+      { value: 'medium', label: '中', emoji: '🟡' },
+      { value: 'low', label: '低', emoji: '🟢' },
+    ])
+
+    function onUpload() {
+      // 原型演示：模拟添加文件
+      const mockFiles = ['需求文档_v2.3.pdf', '设计稿_最终版.png', '会议纪要.docx']
+      const unused = mockFiles.filter(f => !form.value.files.includes(f))
+      if (unused.length > 0) {
+        form.value.files.push(unused[0])
+      }
+    }
+
+    function removeFile(idx) {
+      form.value.files.splice(idx, 1)
+    }
+
+    function onSaveDraft() {
+      alert('草稿已保存（原型演示）')
+    }
+
+    function onSubmit() {
+      if (!form.value.title.trim()) {
+        alert('请填写标题')
+        return
+      }
+      if (!form.value.type) {
+        alert('请选择类型')
+        return
+      }
+      submitting.value = true
+      setTimeout(() => {
+        submitting.value = false
+        window.location.href = './success.html'
+      }, 1200)
+    }
+
+    return {
+      pageTitle, form, priorityOptions, submitting,
+      onUpload, removeFile, onSaveDraft, onSubmit
+    }
+  }
+}).use(ArcoVue).mount('#app')
+</script>
+</body>
+</html>
