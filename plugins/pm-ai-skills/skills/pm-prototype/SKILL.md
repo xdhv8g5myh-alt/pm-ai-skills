@@ -19,7 +19,7 @@ description: 当用户意图涉及生成原型、做原型、画原型、H5原�
 1. **产物依赖门禁**：启动前必须检查 `output/[项目名]/需求分析/需求分析报告.md` 是否存在，不存在则停止并提示"请先执行 pm-analyze 完成需求分析"；同时检查 `.pm-state.json` 中 pm-analyze 的 status 是否为 `completed`
 2. **Blocker 门禁**：检查 需求分析报告.md 第 7 章待澄清问题，如有风险等级=高且状态为"待确认"的问题（Blocker 遗留），提示用户"存在 N 个 Blocker 未解决，建议先澄清再生成原型"；用户确认"继续"后方可执行
 3. **规范引用铁律**：执行前必须读取 `项目规范.md`（如存在），提取组件约定、设计规范作为生成约束
-4. **必须先 Read 基础模板**：生成任何页面前必须读取目标端的 `${CLAUDE_SKILL_DIR}/assets/_base-[端].html`，在其基础上替换内容区，禁止从头写布局；该模板是**参考模板，不复制进项目**
+4. **优先参考完整模板，其次用空壳**：生成页面前优先 Read `${CLAUDE_SKILL_DIR}/assets/[端]/` 下功能最匹配的完整模板（如 list.html / list-kanban.html / detail-advanced.html 等 56 个现成模板），直接替换内容；无匹配时再用 `${CLAUDE_SKILL_DIR}/assets/_shells/_base-[端].html` 空壳骨架；**禁止从头写布局**
 5. **v-cloak 在 #app 上**：`[v-cloak]{display:none}` 必须在 `<style>` 中，`v-cloak` 必须挂在 `<div id="app">` 上，不能在 `<body>` 上
 6. **自定义元素不自闭合**：含连字符的标签（icon-home、a-menu 等）必须用完整闭合，禁止 `<icon-home/>`
 7. **a-* 前缀**：组件必须用 `<a-button>` 等 Arco 前缀，禁止 `<arco-button>`
@@ -42,7 +42,7 @@ Blocker 门禁：需求分析报告.md 中 Blocker 遗留 = 0？【Blocker 门�
     ↓
 确认生成参数（项目名、端类型、页面列表）
     ↓
-Read 目标端 ${CLAUDE_SKILL_DIR}/assets/_base-[端].html
+Read 最匹配的完整模板 `${CLAUDE_SKILL_DIR}/assets/[端]/[功能匹配模板].html`（无匹配则用 `_shells/_base-[端].html`）
     ↓
 按 prompt.md 中的生成规则逐页生成，分配 P 编号
     ↓

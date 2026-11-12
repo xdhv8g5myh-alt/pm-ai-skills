@@ -114,12 +114,14 @@ proto-toolbar 按钮切换这四个状态。
 ## 步骤 3：读取基础模板
 
 使用 Read 工具读取目标端的参考模板（**来自插件资产，不复制进项目**）：
-- admin：`${CLAUDE_SKILL_DIR}/assets/_base-admin.html`
-- h5：`${CLAUDE_SKILL_DIR}/assets/_base-h5.html`
-- user-pc：`${CLAUDE_SKILL_DIR}/assets/_base-user-pc.html`
-- miniapp：`${CLAUDE_SKILL_DIR}/assets/_base-miniapp.html`
+- admin：`${CLAUDE_SKILL_DIR}/assets/_shells/_base-admin.html`
+- h5：`${CLAUDE_SKILL_DIR}/assets/_shells/_base-h5.html`
+- user-pc：`${CLAUDE_SKILL_DIR}/assets/_shells/_base-user-pc.html`
+- miniapp：`${CLAUDE_SKILL_DIR}/assets/_shells/_base-miniapp.html`
 
-> `_base-*.html` 是**参考模板，不复制进项目**；生成页面时把资源引用统一改写为 `../../_公共资源/...`。
+> `_shells/_base-*.html` 是**参考空壳模板**，用于 AI 动态生成新页面时复制骨架。
+> 
+> **同时，也可以直接参考 `assets/[端]/` 下已有的完整模板**（如 `assets/admin/list-kanban.html`），按功能匹配读取最接近的现成模板，替换内容即可。
 
 根据目标端，还需读取对应的端规格文件：
 - `${CLAUDE_SKILL_DIR}/prompts/admin-spec.md`（管理后台）
@@ -138,7 +140,9 @@ proto-toolbar 按钮切换这四个状态。
 
 ## 步骤 4：生成页面规则
 
-1. **基于 `_base.html` 生成**：必须先 Read 目标端的 `${CLAUDE_SKILL_DIR}/assets/_base-[端].html`，复制其结构（**不复制进项目**），只替换内容区（`PAGE_CONTENT_SLOT` 注释位置）
+1. **优先参考完整模板，其次用空壳**：
+   - **优先生效**：Read `${CLAUDE_SKILL_DIR}/assets/[端]/` 下功能最匹配的完整模板（如需要列表页就读 `list.html`/`list-kanban.html`/`list-calendar.html`），直接替换内容即可
+   - **其次**：Read `${CLAUDE_SKILL_DIR}/assets/_shells/_base-[端].html` 空壳，复制结构（**不复制进项目**），替换内容区（`PAGE_CONTENT_SLOT` 注释位置）
 2. **Mock 数据真实感**：数据内容要贴合项目业务，不要用 item1/item2 这样的占位
 3. **交互完整性**：表单字段要有 v-model 绑定，按钮要有 @click 处理函数（即使只是改状态）
 4. **导航连通**：页面间跳转用相对路径，`index.html` 要能跳到所有功能页
