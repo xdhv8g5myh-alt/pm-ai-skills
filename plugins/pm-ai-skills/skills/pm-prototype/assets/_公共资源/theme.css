@@ -1,6 +1,13 @@
 /* PM 原型库 · 设计 Token（Arco Design 对齐版）
    紫色主题 VibePM · #6C5CE7（默认）
-   蓝 / 绿 / 青 / 橙 可切换 */
+   蓝 / 绿 / 青 / 橙 可切换
+
+   🔗 同源设计系统：
+     - pm-deliver 母板 style.css 是此文件的消费副本
+     - FontAwesome 图标：vendor/fontawesome/css/fontawesome.min.css
+     - 主题预设：JavaScript applyTheme() 里的 THEMES 对象（紫色/靛蓝/蓝/绿/橙）
+     - 修改此文件时，请同步更新 pm-deliver 母板 src/theme/style.css
+*/
 
 /* ── Arco Design CSS 变量别名（方便跨端统一引用）── */
 :root {

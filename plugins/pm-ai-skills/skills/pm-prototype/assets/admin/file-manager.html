@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>文件管理 · 管理后台</title>
 <link rel="stylesheet" href="../_公共资源/vendor/arco.css"/>
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
 <link rel="stylesheet" href="../_公共资源/theme.css"/>
 <style>
   [v-cloak] { display:none }
@@ -15,7 +16,7 @@
   <!-- 左侧边栏 -->
   <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
     <div class="pro-brand">
-      <div class="pro-brand-icon">⚡</div>
+      <div class="pro-brand-icon"><span class="fas fa-bolt"></span></div>
       <span v-show="!collapsed" class="pro-brand-name">管理系统</span>
     </div>
     <a-menu
@@ -109,7 +110,7 @@
 
       <a-tooltip :content="isDark ? '切换浅色' : '切换深色'">
         <a-button type="text" style="color:var(--color-text-2);font-size:16px;padding:0 8px;line-height:1" @click="toggleTheme">
-          {{ isDark ? '☀️' : '🌙' }}
+          {{ isDark ? '<span class="fas fa-sun"></span>' : '<span class="fas fa-moon"></span>' }}
         </a-button>
       </a-tooltip>
       <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
@@ -195,7 +196,7 @@
           <div class="file-grid">
             <!-- 文件夹 -->
             <div v-for="f in folders" :key="f.name" class="file-card">
-              <div class="file-icon">📁</div>
+              <div class="file-icon"><span class="fas fa-folder"></span></div>
               <div class="file-name">{{ f.name }}</div>
               <div class="file-meta">{{ f.count }} 项 · {{ f.modified }}</div>
             </div>
@@ -221,8 +222,8 @@
     <span class="proto-sep">|</span>
     <button @click="setPageState('loading')">⏳ 加载中</button>
     <button @click="setPageState('empty')">📭 空数据</button>
-    <button @click="setPageState('error')">⚠️ 出错</button>
-    <button @click="setPageState('normal')">✅ 正常</button>
+    <button @click="setPageState('error')"><span class="fas fa-triangle-exclamation"></span> 出错</button>
+    <button @click="setPageState('normal')"><span class="fas fa-check"></span> 正常</button>
     <span class="proto-sep">|</span>
     <span style="opacity:.4;font-size:11px">仅原型调试用</span>
   </div>
@@ -250,9 +251,9 @@ createApp({
     ])
 
     const files = ref([
-      { name: 'VibePM-产品需求文档-v2.3.docx', icon: '📝', size: '2.4 MB', modified: '2 小时前' },
+      { name: 'VibePM-产品需求文档-v2.3.docx', icon: '<span class="fas fa-pen"></span>', size: '2.4 MB', modified: '2 小时前' },
       { name: '竞品分析报告.pdf', icon: '📕', size: '5.8 MB', modified: '昨天' },
-      { name: '技术方案评审.pptx', icon: '📊', size: '3.1 MB', modified: '3 天前' },
+      { name: '技术方案评审.pptx', icon: '<span class="fas fa-chart-column"></span>', size: '3.1 MB', modified: '3 天前' },
       { name: '用户画像.png', icon: '🖼️', size: '860 KB', modified: '3 天前' },
       { name: '埋点清单.xlsx', icon: '📗', size: '420 KB', modified: '5 天前' },
       { name: '接口文档.yaml', icon: '📄', size: '12 KB', modified: '1 周前' },

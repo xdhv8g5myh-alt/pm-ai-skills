@@ -26,7 +26,7 @@
 
 <script>
 window.onerror = function(msg, src, line, col, err) {
-  document.body.innerHTML += '<div class="err">❌ JS错误: ' + msg + ' (行' + line + ')</div>';
+  document.body.innerHTML += '<div class="err"><span class="fas fa-xmark"></span> JS错误: ' + msg + ' (行' + line + ')</div>';
 };
 </script>
 <script src="../_公共资源/vendor/vue.global.prod.js"></script>
@@ -34,9 +34,9 @@ window.onerror = function(msg, src, line, col, err) {
 (function(){
   var el = document.getElementById('step-vue');
   if (typeof Vue !== 'undefined') {
-    el.innerHTML = '<span class="ok">✅ Vue 加载成功: ' + Vue.version + '</span>';
+    el.innerHTML = '<span class="ok"><span class="fas fa-check"></span> Vue 加载成功: ' + Vue.version + '</span>';
   } else {
-    el.innerHTML = '<span class="err">❌ Vue 未定义</span>';
+    el.innerHTML = '<span class="err"><span class="fas fa-xmark"></span> Vue 未定义</span>';
   }
 })();
 </script>
@@ -45,9 +45,9 @@ window.onerror = function(msg, src, line, col, err) {
 (function(){
   var el = document.getElementById('step-arco');
   if (typeof ArcoVue !== 'undefined') {
-    el.innerHTML = '<span class="ok">✅ ArcoVue 加载成功，keys: ' + Object.keys(ArcoVue).slice(0,5).join(', ') + '...</span>';
+    el.innerHTML = '<span class="ok"><span class="fas fa-check"></span> ArcoVue 加载成功，keys: ' + Object.keys(ArcoVue).slice(0,5).join(', ') + '...</span>';
   } else {
-    el.innerHTML = '<span class="err">❌ ArcoVue 未定义</span>';
+    el.innerHTML = '<span class="err"><span class="fas fa-xmark"></span> ArcoVue 未定义</span>';
   }
 })();
 </script>
@@ -63,9 +63,9 @@ window.onerror = function(msg, src, line, col, err) {
     });
     app.use(ArcoVue);
     app.mount('#app');
-    el.innerHTML = '<span class="ok">✅ mount 成功</span>';
+    el.innerHTML = '<span class="ok"><span class="fas fa-check"></span> mount 成功</span>';
   } catch(e) {
-    el.innerHTML = '<span class="err">❌ mount 失败: ' + e.message + '</span>';
+    el.innerHTML = '<span class="err"><span class="fas fa-xmark"></span> mount 失败: ' + e.message + '</span>';
     document.body.innerHTML += '<pre class="err">' + e.stack + '</pre>';
   }
 })();

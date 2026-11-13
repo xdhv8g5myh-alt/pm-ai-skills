@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>发布需求 — 小程序原型</title>
   <link rel="stylesheet" href="../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
   <link rel="stylesheet" href="../_公共资源/theme.css" />
   <style>
     [v-cloak] { display: none }
@@ -173,7 +174,7 @@
       <div class="mp-content">
         <!-- 成功态 -->
         <div v-if="submitted" class="success-screen">
-          <div class="success-icon">✅</div>
+          <div class="success-icon"><span class="fas fa-check"></span></div>
           <div class="success-title">发布成功！</div>
           <div class="success-desc">
             您的需求已成功提交，<br>
@@ -294,8 +295,8 @@
       <span class="proto-sep">·</span>
       <span>{{ pageTitle }}</span>
       <span class="proto-sep">|</span>
-      <button @click="submitted=false">📋 表单</button>
-      <button @click="submitted=true">✅ 成功</button>
+      <button @click="submitted=false"><span class="fas fa-clipboard-list"></span> 表单</button>
+      <button @click="submitted=true"><span class="fas fa-check"></span> 成功</button>
     </div>
   </div>
 

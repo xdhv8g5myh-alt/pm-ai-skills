@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>首页 — 小程序原型</title>
   <link rel="stylesheet" href="../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
   <link rel="stylesheet" href="../_公共资源/theme.css" />
   <style>
     [v-cloak] { display: none }
@@ -81,7 +82,7 @@
       <!-- 导航栏 -->
       <div class="mp-navbar">
         <span class="mp-navbar-title">首页</span>
-        <span class="mp-navbar-more">🔍</span>
+        <span class="mp-navbar-more"><span class="fas fa-magnifying-glass"></span></span>
       </div>
 
       <!-- 内容区 -->
@@ -100,7 +101,7 @@
 
         <!-- error 态 -->
         <div v-else-if="pageState==='error'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
-          <div style="font-size:48px">⚠️</div>
+          <div style="font-size:48px"><span class="fas fa-triangle-exclamation"></span></div>
           <div style="font-size:14px;color:#f53f3f">加载失败</div>
           <a-button type="primary" size="small" @click="pageState='normal'">点击重试</a-button>
         </div>
@@ -120,7 +121,7 @@
           <!-- 快捷入口 Grid -->
           <div class="mp-grid">
             <a href="./form.html" class="mp-grid-item" style="text-decoration:none">
-              <div class="mp-grid-icon">📝</div>
+              <div class="mp-grid-icon"><span class="fas fa-pen"></span></div>
               <div class="mp-grid-label">需求</div>
             </a>
             <div class="mp-grid-item">
@@ -132,15 +133,15 @@
               <div class="mp-grid-label">文档</div>
             </div>
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">🚀</div>
+              <div class="mp-grid-icon"><span class="fas fa-rocket"></span></div>
               <div class="mp-grid-label">交付</div>
             </div>
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">📊</div>
+              <div class="mp-grid-icon"><span class="fas fa-chart-column"></span></div>
               <div class="mp-grid-label">数据</div>
             </div>
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">💬</div>
+              <div class="mp-grid-icon"><span class="fas fa-comments"></span></div>
               <div class="mp-grid-label">消息</div>
             </div>
             <div class="mp-grid-item">
@@ -148,7 +149,7 @@
               <div class="mp-grid-label">收藏</div>
             </div>
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">👤</div>
+              <div class="mp-grid-icon"><span class="fas fa-user"></span></div>
               <div class="mp-grid-label">我的</div>
             </div>
           </div>
@@ -199,15 +200,15 @@
           <div class="mp-tab-label" style="color:#07c160">首页</div>
         </a>
         <a href="./list.html" class="mp-tab">
-          <div class="mp-tab-icon">🧭</div>
+          <div class="mp-tab-icon"><span class="fas fa-compass"></span></div>
           <div class="mp-tab-label">发现</div>
         </a>
         <a href="./form.html" class="mp-tab">
-          <div class="mp-tab-icon">✏️</div>
+          <div class="mp-tab-icon"><span class="fas fa-pen"></span></div>
           <div class="mp-tab-label">发布</div>
         </a>
         <a href="#" class="mp-tab">
-          <div class="mp-tab-icon">👤</div>
+          <div class="mp-tab-icon"><span class="fas fa-user"></span></div>
           <div class="mp-tab-label">我的</div>
         </a>
       </div>
@@ -222,8 +223,8 @@
       <span class="proto-sep">|</span>
       <button @click="pageState='loading'">⏳</button>
       <button @click="pageState='empty'">📭</button>
-      <button @click="pageState='error'">⚠️</button>
-      <button @click="pageState='normal'">✅</button>
+      <button @click="pageState='error'"><span class="fas fa-triangle-exclamation"></span></button>
+      <button @click="pageState='normal'"><span class="fas fa-check"></span></button>
     </div>
   </div>
 
@@ -239,17 +240,17 @@
         const pageState = ref('normal')
 
         const feedList = ref([
-          { id:1, icon:'📝', iconBg:'#e8f7ee', title:'用户中心改版需求评审通过', tag:'需求', tagClass:'mp-tag-green', desc:'产品 · 张明华', time:'10分钟前' },
+          { id:1, icon:'<span class="fas fa-pen"></span>', iconBg:'#e8f7ee', title:'用户中心改版需求评审通过', tag:'需求', tagClass:'mp-tag-green', desc:'产品 · 张明华', time:'10分钟前' },
           { id:2, icon:'🖼️', iconBg:'#e8f3ff', title:'登录流程原型 v2.3 已更新', tag:'原型', tagClass:'mp-tag-blue', desc:'设计 · 李晓雨', time:'1小时前' },
-          { id:3, icon:'🚀', iconBg:'#fff3e8', title:'支付模块已发布测试环境', tag:'交付', tagClass:'mp-tag-orange', desc:'研发 · 陈伟明', time:'3小时前' },
+          { id:3, icon:'<span class="fas fa-rocket"></span>', iconBg:'#fff3e8', title:'支付模块已发布测试环境', tag:'交付', tagClass:'mp-tag-orange', desc:'研发 · 陈伟明', time:'3小时前' },
           { id:4, icon:'📄', iconBg:'#f2f3f5', title:'API 文档第三版归档完成', tag:'文档', tagClass:'mp-tag-gray', desc:'研发 · 王芳', time:'昨天' },
-          { id:5, icon:'📊', iconBg:'#f3f0ff', title:'Q3 用户增长数据报告已发布', tag:'数据', tagClass:'mp-tag-blue', desc:'数据 · 刘思琪', time:'2天前' },
+          { id:5, icon:'<span class="fas fa-chart-column"></span>', iconBg:'#f3f0ff', title:'Q3 用户增长数据报告已发布', tag:'数据', tagClass:'mp-tag-blue', desc:'数据 · 刘思琪', time:'2天前' },
         ])
 
         const projectList = ref([
-          { id:1, icon:'🛒', color:'#e8f7ee', name:'电商 2.0 改版', count:32, members:8 },
+          { id:1, icon:'<span class="fas fa-cart-shopping"></span>', color:'#e8f7ee', name:'电商 2.0 改版', count:32, members:8 },
           { id:2, icon:'🏥', color:'#e8f3ff', name:'健康管理小程序', count:18, members:5 },
-          { id:3, icon:'📱', color:'#fff3e8', name:'APP 体验优化专项', count:24, members:11 },
+          { id:3, icon:'<span class="fas fa-mobile-screen"></span>', color:'#fff3e8', name:'APP 体验优化专项', count:24, members:11 },
         ])
 
         return { pageTitle, activeTab, pageState, feedList, projectList }

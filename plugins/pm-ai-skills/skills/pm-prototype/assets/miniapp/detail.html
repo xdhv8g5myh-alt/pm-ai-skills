@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>详情 — 小程序原型</title>
   <link rel="stylesheet" href="../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
   <link rel="stylesheet" href="../_公共资源/theme.css" />
   <style>
     [v-cloak] { display: none }
@@ -220,7 +221,7 @@
 
         <!-- error 态 -->
         <div v-else-if="pageState==='error'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
-          <div style="font-size:48px">⚠️</div>
+          <div style="font-size:48px"><span class="fas fa-triangle-exclamation"></span></div>
           <div style="font-size:14px;color:#f53f3f">加载失败</div>
           <a-button type="primary" size="small" @click="pageState='normal'" style="background:#07c160;border-color:#07c160">点击重试</a-button>
         </div>
@@ -231,7 +232,7 @@
           <div class="mp-section" style="margin-top:10px">
             <div class="detail-info-card">
               <div class="detail-avatar-row">
-                <div class="detail-avatar">📝</div>
+                <div class="detail-avatar"><span class="fas fa-pen"></span></div>
                 <div class="detail-author-info">
                   <div class="detail-author-name">张明华</div>
                   <div class="detail-author-role">产品经理 · 电商事业部</div>
@@ -328,8 +329,8 @@
       <span class="proto-sep">|</span>
       <button @click="pageState='loading'">⏳</button>
       <button @click="pageState='empty'">📭</button>
-      <button @click="pageState='error'">⚠️</button>
-      <button @click="pageState='normal'">✅</button>
+      <button @click="pageState='error'"><span class="fas fa-triangle-exclamation"></span></button>
+      <button @click="pageState='normal'"><span class="fas fa-check"></span></button>
     </div>
   </div>
 

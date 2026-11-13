@@ -28,6 +28,8 @@ description: 当用户意图涉及生成原型、做原型、画原型、H5原�
 10. **Mock 数据集中**：所有 mock 数据放在 `const MOCK_DATA = {}`，不散落在模板里
 11. **单页模式不生成多页**：用户说"改一个页面"或"新增一个功能页"，只生成一个 HTML 文件，不生成完整原型站
 12. **维护产物索引**：执行完毕后必须更新 `output/[项目名]/README.md` 和 `.pm-state.json`
+13. **统一设计系统（FA 图标 + 紫色主题 + Arco）**：必须引用 `vendor/fontawesome/css/fontawesome.min.css`，图标使用 `<span class="fas fa-xxx"></span>`（禁止 emoji / CSS content:伪元素）；主题 CSS 复制 `_公共资源/theme.css`（默认紫色 #6C5CE7）；此设计系统与 pm-deliver 母板完全同源，改一处要同步另一处
+14. **公共资源整目录复制**：每次生成原型必须从 `_公共资源/` 整目录复制到项目（vendor + theme.css + proto-utils.js + fontawesome 子目录），禁止只复制部分文件
 
 ## 执行流程概览
 

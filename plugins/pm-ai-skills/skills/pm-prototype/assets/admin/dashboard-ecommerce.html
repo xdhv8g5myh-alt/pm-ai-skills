@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>电商运营 · 管理后台</title>
 <link rel="stylesheet" href="../_公共资源/vendor/arco.css"/>
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
 <link rel="stylesheet" href="../_公共资源/theme.css"/>
 <style>
   [v-cloak] { display:none }
@@ -15,7 +16,7 @@
   <!-- 左侧边栏 -->
   <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
     <div class="pro-brand">
-      <div class="pro-brand-icon">⚡</div>
+      <div class="pro-brand-icon"><span class="fas fa-bolt"></span></div>
       <span v-show="!collapsed" class="pro-brand-name">管理系统</span>
     </div>
     <a-menu
@@ -109,7 +110,7 @@
 
       <a-tooltip :content="isDark ? '切换浅色' : '切换深色'">
         <a-button type="text" style="color:var(--color-text-2);font-size:16px;padding:0 8px;line-height:1" @click="toggleTheme">
-          {{ isDark ? '☀️' : '🌙' }}
+          {{ isDark ? '<span class="fas fa-sun"></span>' : '<span class="fas fa-moon"></span>' }}
         </a-button>
       </a-tooltip>
       <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
@@ -196,7 +197,7 @@
             <a-card class="general-card" :body-style="{ padding: '20px' }">
               <div class="pro-block-title">销售趋势（近 30 天）</div>
               <div class="chart-placeholder" style="height:280px">
-                <div class="chart-placeholder-icon">📈</div>
+                <div class="chart-placeholder-icon"><span class="fas fa-chart-line"></span></div>
                 <div>近 30 天销售额趋势</div>
                 <div style="font-size:11px;color:#c2c7d0">折线图占位区域 · 实际开发时替换为 ECharts</div>
               </div>
@@ -206,7 +207,7 @@
             <a-card class="general-card" :body-style="{ padding: '20px' }">
               <div class="pro-block-title">品类销售排行</div>
               <div class="chart-placeholder" style="height:280px">
-                <div class="chart-placeholder-icon">📊</div>
+                <div class="chart-placeholder-icon"><span class="fas fa-chart-column"></span></div>
                 <div>TOP 8 品类销售额</div>
                 <div style="font-size:11px;color:#c2c7d0">柱状图占位区域 · 实际开发时替换为 ECharts</div>
               </div>
@@ -216,7 +217,7 @@
             <a-card class="general-card" :body-style="{ padding: '20px' }">
               <div class="pro-block-title">渠道来源占比</div>
               <div class="chart-placeholder" style="height:280px">
-                <div class="chart-placeholder-icon">🥧</div>
+                <div class="chart-placeholder-icon"><span class="fas fa-chart-pie"></span></div>
                 <div>流量渠道来源分布</div>
                 <div style="font-size:11px;color:#c2c7d0">饼图占位区域</div>
               </div>
@@ -294,8 +295,8 @@
     <span class="proto-sep">|</span>
     <button @click="setPageState('loading')">⏳ 加载中</button>
     <button @click="setPageState('empty')">📭 空数据</button>
-    <button @click="setPageState('error')">⚠️ 出错</button>
-    <button @click="setPageState('normal')">✅ 正常</button>
+    <button @click="setPageState('error')"><span class="fas fa-triangle-exclamation"></span> 出错</button>
+    <button @click="setPageState('normal')"><span class="fas fa-check"></span> 正常</button>
     <span class="proto-sep">|</span>
     <span style="opacity:.4;font-size:11px">仅原型调试用</span>
   </div>

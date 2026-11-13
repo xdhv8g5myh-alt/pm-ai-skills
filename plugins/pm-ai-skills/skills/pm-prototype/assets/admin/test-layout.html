@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Admin 布局 Debug</title>
 <link rel="stylesheet" href="../_公共资源/vendor/arco.css"/>
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
 <link rel="stylesheet" href="../_公共资源/theme.css"/>
 <style>
   [v-cloak] { display:none }
@@ -17,7 +18,7 @@
 <div id="app" v-cloak>
   <aside class="pro-sider" :style="{ width: collapsed ? '48px' : '220px' }">
     <div class="pro-brand">
-      <div class="pro-brand-icon">⚡</div>
+      <div class="pro-brand-icon"><span class="fas fa-bolt"></span></div>
       <span v-show="!collapsed" class="pro-brand-name">测试系统</span>
     </div>
     <arco-menu :collapsed="collapsed" :selected-keys="['home']" style="border:none;width:100%">
@@ -39,7 +40,7 @@
   <main class="pro-main" :style="{ marginLeft: collapsed ? '48px' : '220px' }">
     <div class="pro-content">
       <arco-card class="general-card">
-        <p>✅ 布局渲染成功！collapsed={{ collapsed }}</p>
+        <p><span class="fas fa-check"></span> 布局渲染成功！collapsed={{ collapsed }}</p>
         <arco-button type="primary" @click="collapsed=!collapsed">切换侧边栏</arco-button>
       </arco-card>
     </div>
@@ -60,16 +61,16 @@ try {
   });
   app.use(ArcoVue);
   app.config.errorHandler = (err, vm, info) => {
-    log.innerHTML = '<span class="err">❌ Vue错误:<br>' + err.message + '<br>' + info + '</span>';
+    log.innerHTML = '<span class="err"><span class="fas fa-xmark"></span> Vue错误:<br>' + err.message + '<br>' + info + '</span>';
     console.error(err);
   };
   app.config.warnHandler = (msg) => {
     log.innerHTML += '<br><span style="color:orange">⚠ ' + msg.slice(0,80) + '</span>';
   };
   app.mount('#app');
-  log.innerHTML = '<span class="ok">✅ mount成功</span>';
+  log.innerHTML = '<span class="ok"><span class="fas fa-check"></span> mount成功</span>';
 } catch(e) {
-  log.innerHTML = '<span class="err">❌ ' + e.message + '</span>';
+  log.innerHTML = '<span class="err"><span class="fas fa-xmark"></span> ' + e.message + '</span>';
 }
 </script>
 </body>

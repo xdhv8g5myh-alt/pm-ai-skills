@@ -2,6 +2,11 @@
  * Vibe Design Pro · 主题 CSS
  * 复刻 layout.css + arco-theme-pro.css 核心层
  * 所有 --primary-* 变量被 applyTheme() 动态覆盖
+ *
+ * 🔗 同源设计系统：
+ *   此文件与 pm-prototype assets/_公共资源/theme.css 完全同源
+ *   修改原型 theme.css 时，此文件需要同步更新
+ *   主题预设：src/theme/presets.ts（与原型 applyTheme 里的 THEMES 对象对齐）
  */
 
 /* ===== 设计 Token ===== */

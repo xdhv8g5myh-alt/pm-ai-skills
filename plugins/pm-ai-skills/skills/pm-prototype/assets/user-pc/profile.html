@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VibePM — 个人中心</title>
   <link rel="stylesheet" href="../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
   <link rel="stylesheet" href="../_公共资源/theme.css" />
   <style>
     [v-cloak] { display: none }
@@ -57,7 +58,7 @@
   <div id="app" v-cloak>
     <!-- Header -->
     <header class="pc-header">
-      <div class="pc-logo">⚡ VibePM</div>
+      <div class="pc-logo"><span class="fas fa-bolt"></span> VibePM</div>
       <nav class="pc-nav">
         <a href="./home.html" class="pc-nav-item" :class="{active:activePage==='home'}">首页</a>
         <a href="./list.html" class="pc-nav-item" :class="{active:activePage==='list'}">发现</a>
@@ -210,8 +211,8 @@
       <span class="proto-sep">|</span>
       <button @click="pageState='loading'">⏳ 加载中</button>
       <button @click="pageState='empty'">📭 空数据</button>
-      <button @click="pageState='error'">⚠️ 出错</button>
-      <button @click="pageState='normal'">✅ 正常</button>
+      <button @click="pageState='error'"><span class="fas fa-triangle-exclamation"></span> 出错</button>
+      <button @click="pageState='normal'"><span class="fas fa-check"></span> 正常</button>
     </div>
   </div>
 
@@ -237,19 +238,19 @@
         })
 
         const myProjects = ref([
-          { id: 1, icon: '📱', name: '家庭健康管理小程序 v2.0', desc: '基于 AI 的家庭用药提醒与健康档案管理，支持多成员共享', status: '进行中', statusColor: 'blue', time: '今天更新' },
+          { id: 1, icon: '<span class="fas fa-mobile-screen"></span>', name: '家庭健康管理小程序 v2.0', desc: '基于 AI 的家庭用药提醒与健康档案管理，支持多成员共享', status: '进行中', statusColor: 'blue', time: '今天更新' },
           { id: 2, icon: '🏥', name: '医疗预约挂号小程序', desc: '在线预约、智能导诊、电子病历查询一体化平台', status: '评审中', statusColor: 'orange', time: '昨天更新' },
-          { id: 3, icon: '🛒', name: '电商后台管理系统 v3', desc: '商品/订单/用户管理，内置多维数据看板', status: '已完成', statusColor: 'green', time: '3天前' },
-          { id: 4, icon: '📊', name: '数据分析平台原型', desc: '多数据源接入，拖拽式报表搭建，BI 可视化', status: '规划中', statusColor: 'purple', time: '1周前' },
+          { id: 3, icon: '<span class="fas fa-cart-shopping"></span>', name: '电商后台管理系统 v3', desc: '商品/订单/用户管理，内置多维数据看板', status: '已完成', statusColor: 'green', time: '3天前' },
+          { id: 4, icon: '<span class="fas fa-chart-column"></span>', name: '数据分析平台原型', desc: '多数据源接入，拖拽式报表搭建，BI 可视化', status: '规划中', statusColor: 'purple', time: '1周前' },
           { id: 5, icon: '🎓', name: '在线学习 LMS 系统', desc: '课程/学员/作业一体化管理，集成直播录播', status: '进行中', statusColor: 'blue', time: '2周前' },
-          { id: 6, icon: '💬', name: '企业 IM 产品设计稿', desc: '支持多层级组织架构、消息已读、视频会议', status: '已归档', statusColor: 'gray', time: '1个月前' }
+          { id: 6, icon: '<span class="fas fa-comments"></span>', name: '企业 IM 产品设计稿', desc: '支持多层级组织架构、消息已读、视频会议', status: '已归档', statusColor: 'gray', time: '1个月前' }
         ])
 
         const favorites = ref([
-          { id: 1, icon: '🔧', name: 'DevOps 工具链集成方案', desc: 'CI/CD 流水线可视化配置，自动化测试报告聚合', status: '进行中', statusColor: 'blue', time: '2天前' },
-          { id: 2, icon: '🏢', name: '集团线索平台重构方案', desc: 'B2B 销售线索全生命周期管理，接入 AI 评分', status: '评审中', statusColor: 'orange', time: '3天前' },
-          { id: 3, icon: '🎯', name: '用户增长实验平台', desc: 'A/B 测试管理、流量分配、实验结果分析一站式', status: '已完成', statusColor: 'green', time: '1周前' },
-          { id: 4, icon: '🌐', name: '多语言内容管理系统', desc: '支持 12 种语言，翻译工作流与版本管理', status: '规划中', statusColor: 'purple', time: '2周前' },
+          { id: 1, icon: '<span class="fas fa-wrench"></span>', name: 'DevOps 工具链集成方案', desc: 'CI/CD 流水线可视化配置，自动化测试报告聚合', status: '进行中', statusColor: 'blue', time: '2天前' },
+          { id: 2, icon: '<span class="fas fa-building"></span>', name: '集团线索平台重构方案', desc: 'B2B 销售线索全生命周期管理，接入 AI 评分', status: '评审中', statusColor: 'orange', time: '3天前' },
+          { id: 3, icon: '<span class="fas fa-bullseye"></span>', name: '用户增长实验平台', desc: 'A/B 测试管理、流量分配、实验结果分析一站式', status: '已完成', statusColor: 'green', time: '1周前' },
+          { id: 4, icon: '<span class="fas fa-globe"></span>', name: '多语言内容管理系统', desc: '支持 12 种语言，翻译工作流与版本管理', status: '规划中', statusColor: 'purple', time: '2周前' },
           { id: 5, icon: '🔐', name: '企业单点登录 SSO 方案', desc: 'OAuth2 + SAML 双协议支持，统一身份认证', status: '进行中', statusColor: 'blue', time: '3周前' }
         ])
 

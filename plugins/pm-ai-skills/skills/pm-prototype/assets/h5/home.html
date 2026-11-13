@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>首页 · H5 原型</title>
 <link rel="stylesheet" href="../_公共资源/vendor/arco.css"/>
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
 <link rel="stylesheet" href="../_公共资源/theme.css"/>
 <style>
   [v-cloak] { display:none }
@@ -23,7 +24,7 @@
     <!-- 顶部导航 -->
     <div class="h5-navbar">
       <span class="h5-navbar-title">首页</span>
-      <span class="h5-navbar-action">🔔</span>
+      <span class="h5-navbar-action"><span class="fas fa-bell"></span></span>
     </div>
 
     <!-- 内容区 -->
@@ -40,11 +41,11 @@
         <div class="h5-section-title">快捷入口</div>
         <div class="h5-grid">
           <a href="./list.html" class="h5-grid-item">
-            <div class="h5-grid-icon">📝</div>
+            <div class="h5-grid-icon"><span class="fas fa-pen"></span></div>
             <div class="h5-grid-label">待办</div>
           </a>
           <div class="h5-grid-item">
-            <div class="h5-grid-icon">💬</div>
+            <div class="h5-grid-icon"><span class="fas fa-comments"></span></div>
             <div class="h5-grid-label">消息</div>
           </div>
           <div class="h5-grid-item">
@@ -56,15 +57,15 @@
             <div class="h5-grid-label">历史</div>
           </div>
           <div class="h5-grid-item">
-            <div class="h5-grid-icon">📊</div>
+            <div class="h5-grid-icon"><span class="fas fa-chart-column"></span></div>
             <div class="h5-grid-label">报告</div>
           </div>
           <div class="h5-grid-item">
-            <div class="h5-grid-icon">📈</div>
+            <div class="h5-grid-icon"><span class="fas fa-chart-line"></span></div>
             <div class="h5-grid-label">统计</div>
           </div>
           <div class="h5-grid-item">
-            <div class="h5-grid-icon">⚙️</div>
+            <div class="h5-grid-icon"><span class="fas fa-gear"></span></div>
             <div class="h5-grid-label">设置</div>
           </div>
           <div class="h5-grid-item">
@@ -102,15 +103,15 @@
         <span class="h5-tab-label">首页</span>
       </a>
       <a href="./list.html" class="h5-tab" :class="{active: activeTab==='list'}">
-        <span class="h5-tab-icon">📋</span>
+        <span class="h5-tab-icon"><span class="fas fa-clipboard-list"></span></span>
         <span class="h5-tab-label">发现</span>
       </a>
       <a href="./form.html" class="h5-tab">
-        <span class="h5-tab-icon">✏️</span>
+        <span class="h5-tab-icon"><span class="fas fa-pen"></span></span>
         <span class="h5-tab-label">发布</span>
       </a>
       <a href="#" class="h5-tab">
-        <span class="h5-tab-icon">👤</span>
+        <span class="h5-tab-icon"><span class="fas fa-user"></span></span>
         <span class="h5-tab-label">我的</span>
       </a>
     </div>
@@ -144,25 +145,25 @@ createApp({
         tag: '进行中', tagColor: 'arcoblue'
       },
       {
-        id: 2, icon: '✅',
+        id: 2, icon: '<span class="fas fa-check"></span>',
         title: '季度报告已完成审核',
         desc: '财务部 · 2 小时前',
         tag: '已完成', tagColor: 'green'
       },
       {
-        id: 3, icon: '⚡',
+        id: 3, icon: '<span class="fas fa-bolt"></span>',
         title: '系统升级通知',
         desc: '本周六凌晨 2:00 停机维护',
         tag: '通知', tagColor: 'orange'
       },
       {
-        id: 4, icon: '📊',
+        id: 4, icon: '<span class="fas fa-chart-column"></span>',
         title: '本月数据汇总报告',
         desc: '运营部 · 今日 09:30',
         tag: '新建', tagColor: 'purple'
       },
       {
-        id: 5, icon: '🔔',
+        id: 5, icon: '<span class="fas fa-bell"></span>',
         title: '待审批事项提醒',
         desc: '您有 3 条待处理事项',
         tag: '待处理', tagColor: 'red'

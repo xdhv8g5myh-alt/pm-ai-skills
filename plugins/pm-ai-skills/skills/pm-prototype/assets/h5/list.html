@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>发现 · H5 原型</title>
 <link rel="stylesheet" href="../_公共资源/vendor/arco.css"/>
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
 <link rel="stylesheet" href="../_公共资源/theme.css"/>
 <style>
   [v-cloak] { display:none }
@@ -70,7 +71,7 @@
           allow-clear
           style="border-radius:20px;"
         >
-          <template #prefix>🔍</template>
+          <template #prefix><span class="fas fa-magnifying-glass"></span></template>
         </a-input>
       </div>
 
@@ -138,15 +139,15 @@
         <span class="h5-tab-label">首页</span>
       </a>
       <a href="./list.html" class="h5-tab" :class="{active: activeTab==='list'}">
-        <span class="h5-tab-icon">📋</span>
+        <span class="h5-tab-icon"><span class="fas fa-clipboard-list"></span></span>
         <span class="h5-tab-label">发现</span>
       </a>
       <a href="./form.html" class="h5-tab">
-        <span class="h5-tab-icon">✏️</span>
+        <span class="h5-tab-icon"><span class="fas fa-pen"></span></span>
         <span class="h5-tab-label">发布</span>
       </a>
       <a href="#" class="h5-tab">
-        <span class="h5-tab-icon">👤</span>
+        <span class="h5-tab-icon"><span class="fas fa-user"></span></span>
         <span class="h5-tab-label">我的</span>
       </a>
     </div>
@@ -161,7 +162,7 @@
       <button @click="pageState='loading'">⏳ 加载中</button>
       <button @click="pageState='empty'">📭 空数据</button>
       <button @click="pageState='error'">⚠ 出错</button>
-      <button @click="pageState='normal'">✅ 正常</button>
+      <button @click="pageState='normal'"><span class="fas fa-check"></span> 正常</button>
     </div>
 
   </div>
@@ -188,37 +189,37 @@ createApp({
         owner: '张三', time: '10分钟前'
       },
       {
-        id: 2, icon: '✅',
+        id: 2, icon: '<span class="fas fa-check"></span>',
         title: 'App 3.0 版本需求文档',
         status: '已完成', statusKey: 'done', tagColor: 'green',
         owner: '李四', time: '1小时前'
       },
       {
-        id: 3, icon: '🚀',
+        id: 3, icon: '<span class="fas fa-rocket"></span>',
         title: '用户增长专项方案',
         status: '进行中', statusKey: 'ongoing', tagColor: 'arcoblue',
         owner: '王五', time: '2小时前'
       },
       {
-        id: 4, icon: '📊',
+        id: 4, icon: '<span class="fas fa-chart-column"></span>',
         title: 'Q3 运营数据汇总报告',
         status: '已完成', statusKey: 'done', tagColor: 'green',
         owner: '赵六', time: '昨天'
       },
       {
-        id: 5, icon: '⚡',
+        id: 5, icon: '<span class="fas fa-bolt"></span>',
         title: '支付模块性能优化方案',
         status: '已取消', statusKey: 'cancelled', tagColor: 'gray',
         owner: '孙七', time: '昨天'
       },
       {
-        id: 6, icon: '🎨',
+        id: 6, icon: '<span class="fas fa-palette"></span>',
         title: 'UI 设计规范 v2.0',
         status: '进行中', statusKey: 'ongoing', tagColor: 'arcoblue',
         owner: '周八', time: '前天'
       },
       {
-        id: 7, icon: '🔔',
+        id: 7, icon: '<span class="fas fa-bell"></span>',
         title: '消息推送功能改版计划',
         status: '已完成', statusKey: 'done', tagColor: 'green',
         owner: '吴九', time: '3天前'

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>详情 · H5 原型</title>
 <link rel="stylesheet" href="../_公共资源/vendor/arco.css"/>
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
 <link rel="stylesheet" href="../_公共资源/theme.css"/>
 <style>
   [v-cloak] { display:none }
@@ -68,7 +69,7 @@
 
       <!-- 顶部信息卡片 -->
       <div class="detail-top-card">
-        <div class="detail-avatar">👤</div>
+        <div class="detail-avatar"><span class="fas fa-user"></span></div>
         <div class="detail-name">{{ detail.title }}</div>
         <div class="detail-meta">
           <a-tag color="orangered" size="mini" style="color:#fff;background:rgba(255,100,0,.45);border:none;">{{ detail.status }}</a-tag>
@@ -93,7 +94,7 @@
       <div class="h5-section">
         <div class="h5-section-title">基本信息</div>
         <div class="h5-cell">
-          <div class="h5-cell-icon">📁</div>
+          <div class="h5-cell-icon"><span class="fas fa-folder"></span></div>
           <div class="h5-cell-body">
             <div class="h5-cell-title">类型</div>
             <div class="h5-cell-desc">{{ detail.type }}</div>
@@ -111,7 +112,7 @@
           </div>
         </div>
         <div class="h5-cell">
-          <div class="h5-cell-icon">📅</div>
+          <div class="h5-cell-icon"><span class="fas fa-calendar-days"></span></div>
           <div class="h5-cell-body">
             <div class="h5-cell-title">截止日期</div>
             <div class="h5-cell-desc">预计完成时间</div>
@@ -119,7 +120,7 @@
           <div class="h5-cell-right" style="font-size:13px;color:#1d2129;">{{ detail.deadline }}</div>
         </div>
         <div class="h5-cell">
-          <div class="h5-cell-icon">👤</div>
+          <div class="h5-cell-icon"><span class="fas fa-user"></span></div>
           <div class="h5-cell-body">
             <div class="h5-cell-title">负责人</div>
             <div class="h5-cell-desc">主要责任人</div>
@@ -127,7 +128,7 @@
           <div class="h5-cell-right">{{ detail.owner }}</div>
         </div>
         <div class="h5-cell">
-          <div class="h5-cell-icon">👥</div>
+          <div class="h5-cell-icon"><span class="fas fa-users"></span></div>
           <div class="h5-cell-body">
             <div class="h5-cell-title">协作人员</div>
             <div class="h5-cell-desc">{{ detail.members }}</div>

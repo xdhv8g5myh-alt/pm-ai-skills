@@ -104,7 +104,7 @@
 
         <!-- error 态 -->
         <div v-else-if="pageState==='error'" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;color:#bbb;gap:12px">
-          <div style="font-size:48px">⚠️</div>
+          <div style="font-size:48px"><span class="fas fa-triangle-exclamation"></span></div>
           <div style="font-size:14px;color:#f53f3f">加载失败，请重试</div>
           <a-button type="primary" size="small" @click="pageState='normal'" style="background:#07c160;border-color:#07c160">重新加载</a-button>
         </div>
@@ -122,11 +122,11 @@
           <!-- 功能入口示例 -->
           <div class="mp-grid">
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">📝</div>
+              <div class="mp-grid-icon"><span class="fas fa-pen"></span></div>
               <div class="mp-grid-label">功能 1</div>
             </div>
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">📊</div>
+              <div class="mp-grid-icon"><span class="fas fa-chart-column"></span></div>
               <div class="mp-grid-label">功能 2</div>
             </div>
             <div class="mp-grid-item">
@@ -134,7 +134,7 @@
               <div class="mp-grid-label">功能 3</div>
             </div>
             <div class="mp-grid-item">
-              <div class="mp-grid-icon">⚙️</div>
+              <div class="mp-grid-icon"><span class="fas fa-gear"></span></div>
               <div class="mp-grid-label">功能 4</div>
             </div>
           </div>
@@ -190,15 +190,15 @@
           <div class="mp-tab-label">首页</div>
         </a>
         <a href="./list.html" class="mp-tab">
-          <div class="mp-tab-icon">🧭</div>
+          <div class="mp-tab-icon"><span class="fas fa-compass"></span></div>
           <div class="mp-tab-label">发现</div>
         </a>
         <a href="./form.html" class="mp-tab">
-          <div class="mp-tab-icon">✏️</div>
+          <div class="mp-tab-icon"><span class="fas fa-pen"></span></div>
           <div class="mp-tab-label">发布</div>
         </a>
         <a href="#" class="mp-tab active">
-          <div class="mp-tab-icon">👤</div>
+          <div class="mp-tab-icon"><span class="fas fa-user"></span></div>
           <div class="mp-tab-label" style="color:#07c160">我的</div>
         </a>
       </div>
@@ -213,8 +213,8 @@
       <span class="proto-sep">|</span>
       <button @click="pageState='loading'">⏳</button>
       <button @click="pageState='empty'">📭</button>
-      <button @click="pageState='error'">⚠️</button>
-      <button @click="pageState='normal'">✅</button>
+      <button @click="pageState='error'"><span class="fas fa-triangle-exclamation"></span></button>
+      <button @click="pageState='normal'"><span class="fas fa-check"></span></button>
     </div>
   </div>
 
@@ -231,9 +231,9 @@
         const pageState = ref('normal')
 
         const demoItems = ref([
-          { id:1, icon:'📝', bg:'#e8f7ee', title:'列表项标题一', desc:'副标题或描述信息' },
-          { id:2, icon:'📊', bg:'#e8f3ff', title:'列表项标题二', desc:'副标题或描述信息' },
-          { id:3, icon:'🚀', bg:'#fff3e8', title:'列表项标题三', desc:'副标题或描述信息' },
+          { id:1, icon:'<span class="fas fa-pen"></span>', bg:'#e8f7ee', title:'列表项标题一', desc:'副标题或描述信息' },
+          { id:2, icon:'<span class="fas fa-chart-column"></span>', bg:'#e8f3ff', title:'列表项标题二', desc:'副标题或描述信息' },
+          { id:3, icon:'<span class="fas fa-rocket"></span>', bg:'#fff3e8', title:'列表项标题三', desc:'副标题或描述信息' },
           { id:4, icon:'📄', bg:'#f2f3f5', title:'列表项标题四', desc:'副标题或描述信息' },
           { id:5, icon:'⭐', bg:'#f3f0ff', title:'列表项标题五', desc:'副标题或描述信息' },
         ])

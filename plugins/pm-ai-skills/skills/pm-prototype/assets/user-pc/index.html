@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>用户前台 PC 原型导航</title>
   <link rel="stylesheet" href="../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
   <link rel="stylesheet" href="../_公共资源/theme.css" />
   <style>
     [v-cloak] { display: none }
@@ -35,7 +36,7 @@
     <div class="index-wrap">
       <div class="index-header">
         <div class="index-badge">PROTOTYPE</div>
-        <h1>⚡ VibePM 用户前台 PC</h1>
+        <h1><span class="fas fa-bolt"></span> VibePM 用户前台 PC</h1>
         <p>以下是所有用户端 PC 原型页面，点击"打开"可直接预览对应页面</p>
       </div>
 
@@ -83,7 +84,7 @@
           },
           {
             file: 'list.html',
-            icon: '🔍',
+            icon: '<span class="fas fa-magnifying-glass"></span>',
             name: '发现 / 列表页',
             desc: '左侧分类筛选侧栏 + 右侧内容列表，支持搜索、筛选、排序，含四种状态。'
           },
@@ -95,13 +96,13 @@
           },
           {
             file: 'profile.html',
-            icon: '👤',
+            icon: '<span class="fas fa-user"></span>',
             name: '个人中心',
             desc: '用户头像/统计信息 + Tabs（我的项目/收藏/动态），支持编辑资料弹窗。'
           },
           {
             file: 'checkout.html',
-            icon: '🛒',
+            icon: '<span class="fas fa-cart-shopping"></span>',
             name: '结算/确认页',
             desc: '左侧步骤条 + 表单，右侧订单摘要卡，点击提交跳转成功页或首页。'
           }

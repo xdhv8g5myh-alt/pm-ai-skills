@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VibePM — 详情</title>
   <link rel="stylesheet" href="../_公共资源/vendor/arco.css" />
+  <link rel="stylesheet" href="../_公共资源/vendor/fontawesome/css/fontawesome.min.css"/>
   <link rel="stylesheet" href="../_公共资源/theme.css" />
   <style>
     [v-cloak] { display: none }
@@ -67,7 +68,7 @@
   <div id="app" v-cloak>
     <!-- Header -->
     <header class="pc-header">
-      <div class="pc-logo">⚡ VibePM</div>
+      <div class="pc-logo"><span class="fas fa-bolt"></span> VibePM</div>
       <nav class="pc-nav">
         <a href="./home.html" class="pc-nav-item" :class="{active:activePage==='home'}">首页</a>
         <a href="./list.html" class="pc-nav-item" :class="{active:activePage==='list'}">发现</a>
@@ -270,8 +271,8 @@
       <span class="proto-sep">|</span>
       <button @click="pageState='loading'">⏳ 加载中</button>
       <button @click="pageState='empty'">📭 空数据</button>
-      <button @click="pageState='error'">⚠️ 出错</button>
-      <button @click="pageState='normal'">✅ 正常</button>
+      <button @click="pageState='error'"><span class="fas fa-triangle-exclamation"></span> 出错</button>
+      <button @click="pageState='normal'"><span class="fas fa-check"></span> 正常</button>
     </div>
   </div>
 
@@ -297,7 +298,7 @@
 
         const recommends = ref([
           { id: 1, icon: '💊', name: '用药管理模块详细设计规范' },
-          { id: 2, icon: '📊', name: '健康数据可视化方案' },
+          { id: 2, icon: '<span class="fas fa-chart-column"></span>', name: '健康数据可视化方案' },
           { id: 3, icon: '🤖', name: 'AI 健康助手交互设计规范' }
         ])
 
