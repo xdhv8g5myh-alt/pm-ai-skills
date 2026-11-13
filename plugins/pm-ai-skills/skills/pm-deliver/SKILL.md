@@ -26,6 +26,8 @@ description: 当用户意图涉及转Vue、前端交付、HTML转Vue、交付代
 8. **维护产物索引**：执行完毕后必须更新 `output/[项目名]/README.md` 和 `.pm-state.json`，标记交付完成
 9. **transition/keep-alive 位置正确**：layout 中 `<transition>`/`<keep-alive>` 必须包裹在 `<router-view>` 内层，禁止放在外层（多根组件会导致菜单点击空白、二次进入读到旧缓存）
 10. **编译修复上限 5 轮**：编译/类型检查报错的自动修复循环上限 5 轮，超限则停止并输出错误清单，禁止无限重试
+11. **全量模式优先复制 Vibe 母板**：全量转换时，先复制 `${CLAUDE_SKILL_DIR}/assets/_vibe-boilerplate/` 为项目骨架（含主题系统、Layout、Auth、通用组件），再将原型 HTML 逐页翻译填进 `src/views/` 和 `src/router/`；**禁止从零手写 package.json / vite.config / 主题变量 / ProLayout**
+12. **母板壳禁止修改**：母板中的 `src/theme/*`、`src/layouts/*`、`src/stores/*` 是设计系统核心，禁止重写；允许在 theme/style.css 追加自定义样式，但不得删除或覆盖 ProLayout / ProSidebar / ProNavbar 相关规则
 
 ## 执行流程概览
 

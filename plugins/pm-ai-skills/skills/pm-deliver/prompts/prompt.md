@@ -58,19 +58,55 @@
 - `${CLAUDE_SKILL_DIR}/prompts/html-to-vue-rules.md` —— HTML → Vue SFC 转换规则（结构 / JS / 组件库 / Mock 数据 / 路由，含常见陷阱）
 - `${CLAUDE_SKILL_DIR}/prompts/vue3-scaffold-spec.md` —— Vue3 工程脚手架规格（目录结构 + `package.json` / `vite.config.ts` / `main.ts` / `tsconfig.json` 模板）
 
-### 2.5.2 全量转换模式 —— 写出完整工程
+### 2.5.2 全量转换模式 —— 复制母板 + 翻译业务页面
 
-在 `output/[项目名]/前端交付/` 下落盘**完整可构建**的工程，产物清单（缺一不可）：
+**第一步：复制 Vibe 母板（铁律 11，不可跳过）**
 
-| 类别 | 产物 |
-|------|------|
-| 脚手架 | `package.json`、`vite.config.ts`、`tsconfig.json`、`index.html` |
-| 入口 | `src/main.ts`、`src/App.vue` |
-| 路由 | `src/router/index.ts` |
-| 页面 | `src/views/[PageName]View.vue`（每个（非标注版）原型页面一个，页面名由中文原型名映射） |
-| 复用逻辑 | `src/composables/use[功能名].ts` |
-| 接口 | `src/api/[module].ts` + `src/api/mock/[module].ts` |
-| 类型 | `src/types/index.ts` |
+```bash
+# 清空目标目录（如存在），然后复制母板
+cp -r "${CLAUDE_SKILL_DIR}/assets/_vibe-boilerplate/." output/[项目名]/前端交付/
+# 删除母板里的 node_modules 和 dist（如果有）
+rm -rf output/[项目名]/前端交付/node_modules output/[项目名]/前端交付/dist
+```
+
+**第二步：保留母板壳（铁律 12，禁止修改）**
+
+以下是**母板核心层**，复制后**保持不动**，只在其基础上填业务页面：
+
+| 母板层 | 文件 | 作用 | 可否改 |
+|--------|------|------|--------|
+| 配置层 | `package.json` / `vite.config.ts` / `tsconfig.json` | Vue3+Arco+FA 工程配置 | ⚠️ 可加依赖但禁止删已有 |
+| 入口 | `src/main.ts` / `src/App.vue` | Arco + Pinia + Router + 主题初始化 | ❌ 禁止改 |
+| **主题系统** | `src/theme/*` | 5 色切换 + 明暗 + localStorage 持久化 | ❌ 禁止重写 |
+| **布局** | `src/layouts/ProLayout.vue` + ProSidebar + ProNavbar | Shell 外壳 + 折叠 + 主题色选择器 | ❌ 禁止重写 |
+| **状态** | `src/stores/theme.ts` + `layout.ts` + `auth.ts` | Pinia 状态持久化 | ❌ 禁止重写 |
+| **路由骨架** | `src/router/index.ts` | 带 auth 守卫的基础路由 | ✅ 可追加 route |
+| **Login 页** | `src/views/login/LoginView.vue` | admin/123456 登录页 | ✅ 可改文案 |
+| 示例页 | `src/views/dashboard/*` / `src/views/system/*` | 占位示例 | ✅ 删或替换为业务页 |
+
+**第三步：翻译原型 HTML 填进业务层**
+
+| 原型类型 | → 母板目标位置 | 操作 |
+|----------|---------------|------|
+| 登录页（如有） | `src/views/login/LoginView.vue` | 替换母板默认登录页 |
+| Dashboard 首页 | `src/views/dashboard/DashboardView.vue` | 替换母板默认 Dashboard |
+| 业务列表页 | `src/views/[模块]/[PageName]View.vue` | 新建文件，翻译原型 |
+| 业务详情页 | `src/views/[模块]/[PageName]Detail.vue` | 新建文件 |
+| 其他页面 | 同上 | 新建 |
+
+**第四步：追加路由**
+
+在 `src/router/index.ts` 的 Layout children 里追加业务路由条目，复用母板 auth 守卫：
+
+```typescript
+// 在 ProLayout children 里追加
+{ path: '模块名/页面名', component: () => import('@/views/模块名/页面名View.vue'),
+  meta: { title: '页面中文名', icon: 'fa-solid fa-图标名' } },
+```
+
+**第五步：清理母板示例数据**
+
+删除母板预置的 `src/views/system/UserListView.vue`（如果原型里没有对应的用户管理页），或替换为业务内容。
 
 ### 2.5.3 增量模式 —— 只写新增文件
 

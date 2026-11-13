@@ -1,0 +1,142 @@
+/**
+ * Vibe Design Pro · 主题 CSS
+ * 复刻 layout.css + arco-theme-pro.css 核心层
+ * 所有 --primary-* 变量被 applyTheme() 动态覆盖
+ */
+
+/* ===== 设计 Token ===== */
+:root {
+  /* 主色（紫色 Vibe 默认，applyTheme 会覆盖 p5/p6/p7） */
+  --primary-1: 242 240 255;
+  --primary-5: 140 125 237;
+  --primary-6: 108 92 231;
+  --primary-7: 90 75 209;
+  --brand-color: #6C5CE7;
+
+  /* 语义色（Arco 默认 + 原型补全） */
+  --green-6: 0 180 42;
+  --orange-6: 255 125 0;
+  --red-6: 245 63 63;
+
+  /* 图表配色（紫色渐变） */
+  --chart-1: rgb(var(--primary-6));
+  --chart-2: rgb(var(--primary-5));
+  --chart-3: rgb(var(--primary-4, 175 164 243));
+  --chart-4: rgb(var(--primary-3, 205 198 248));
+  --chart-5: rgb(var(--primary-2, 230 226 252));
+
+  /* 原型通用变量 */
+  --proto-bg-gray: #f2f3f5;
+  --proto-white: #ffffff;
+  --proto-border: #e5e6eb;
+  --proto-border-2: #f2f3f5;
+  --proto-shadow-sm: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1);
+  --proto-shadow-md: 0 4px 10px rgba(0,0,0,.08);
+  --proto-shadow-lg: 0 8px 24px rgba(0,0,0,.1);
+}
+
+/* ===== ProLayout · 侧边栏通顶模式（side, 默认） ===== */
+.pro-layout { min-height: 100vh; background: var(--proto-bg-gray); }
+
+.pro-sider {
+  position: fixed !important; top: 0; left: 0; bottom: 0;
+  z-index: 200;
+  width: 220px;
+  background: #fff !important;
+  border-right: 1px solid var(--proto-border);
+  transition: width .2s cubic-bezier(.34,1.3,.64,1);
+  overflow: hidden;
+}
+.pro-sider.collapsed { width: 48px !important; }
+
+.pro-brand {
+  display: flex; align-items: center; gap: 10px;
+  height: 56px; padding: 0 16px;
+  border-bottom: 1px solid var(--proto-border);
+}
+.pro-brand-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, rgb(var(--primary-6)), rgb(var(--primary-5)));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px; font-weight: 700; flex-shrink: 0;
+}
+.pro-brand-name { font-size: 16px; font-weight: 700; white-space: nowrap; }
+
+/* Navbar */
+.pro-navbar {
+  position: fixed; top: 0; right: 0; z-index: 100;
+  height: 56px; background: #fff;
+  border-bottom: 1px solid var(--proto-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 0 16px;
+  transition: left .2s cubic-bezier(.34,1.3,.64,1);
+}
+.pro-navbar.side-mode:not(.collapsed) { left: 220px; }
+.pro-navbar.side-mode.collapsed        { left: 48px; }
+.pro-navbar.top-mode                    { left: 0; }
+
+.pro-main {
+  transition: margin-left .2s cubic-bezier(.34,1.3,.64,1);
+  padding-top: 56px;
+  min-height: 100vh;
+}
+.pro-main.side-mode:not(.collapsed) { margin-left: 220px; }
+.pro-main.side-mode.collapsed        { margin-left: 48px; }
+.pro-main.top-mode                    { margin-left: 0; }
+
+.pro-content { padding: 16px; }
+
+/* ===== ProLayout · 顶栏通栏模式（top） ===== */
+.pro-sider.top-mode {
+  top: 56px !important;
+}
+
+/* ===== 通用组件 ===== */
+.pro-block-title {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-bottom: 16px; font-size: 15px; font-weight: 600;
+}
+.pro-block-title::before {
+  content: ''; width: 3px; height: 16px; border-radius: 2px;
+  background: rgb(var(--primary-6));
+}
+
+.kpi-card {
+  padding: 24px; border-radius: 8px; background: #fff;
+  box-shadow: var(--proto-shadow-sm);
+}
+.kpi-value { font-size: 28px; font-weight: 700; line-height: 1.2; }
+.kpi-label { font-size: 13px; color: #86909c; margin-bottom: 6px; }
+.kpi-change.up   { color: rgb(var(--green-6)); }
+.kpi-change.down { color: rgb(var(--red-6)); }
+
+/* ===== 主题色选择器 ===== */
+.theme-color-picker {
+  display: flex; gap: 6px; align-items: center;
+}
+.theme-color-picker button {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer; padding: 0;
+  transition: transform .15s;
+}
+.theme-color-picker button:hover { transform: scale(1.15); }
+.theme-color-picker button.active { border-color: #333; transform: scale(1.15); }
+
+/* ===== 表格密度 ===== */
+.arco-table.density-small .arco-table-td { padding: 8px 12px !important; }
+.arco-table.density-mini  .arco-table-td { padding: 4px 8px  !important; font-size: 12px; }
+
+/* ===== Arco 暗色模式适配 ===== */
+body[arco-theme="dark"] .pro-sider   { background: var(--color-bg-2) !important; border-color: var(--color-border); }
+body[arco-theme="dark"] .pro-navbar  { background: var(--color-bg-2); border-color: var(--color-border); }
+body[arco-theme="dark"] .kpi-card    { background: var(--color-bg-2); }
+
+/* ===== 过渡动画 ===== */
+.fade-enter-active, .fade-leave-active { transition: opacity .2s ease; }
+.fade-enter-from,   .fade-leave-to     { opacity: 0; }
+
+/* FontAwesome */
+.fab, .fas, .far, .fal, .fa-duotone {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+}
