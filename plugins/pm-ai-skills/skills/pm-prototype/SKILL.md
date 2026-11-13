@@ -20,12 +20,14 @@ description: 当用户意图涉及生成原型、做原型、画原型、H5原�
 2. **Blocker 门禁**：检查 需求分析报告.md 第 7 章待澄清问题，如有风险等级=高且状态为"待确认"的问题（Blocker 遗留），提示用户"存在 N 个 Blocker 未解决，建议先澄清再生成原型"；用户确认"继续"后方可执行
 3. **规范引用铁律**：执行前必须读取 `项目规范.md`（如存在），提取组件约定、设计规范作为生成约束
 4. **优先参考完整模板，其次用空壳**：生成页面前优先 Read `${CLAUDE_SKILL_DIR}/assets/[端]/` 下功能最匹配的完整模板（如 list.html / list-kanban.html / detail-advanced.html 等 56 个现成模板），直接替换内容；无匹配时再用 `${CLAUDE_SKILL_DIR}/assets/_shells/_base-[端].html` 空壳骨架；**禁止从头写布局**
-5. **v-cloak 在 #app 上**：`[v-cloak]{display:none}` 必须在 `<style>` 中，`v-cloak` 必须挂在 `<div id="app">` 上，不能在 `<body>` 上
-6. **自定义元素不自闭合**：含连字符的标签（icon-home、a-menu 等）必须用完整闭合，禁止 `<icon-home/>`
-7. **a-* 前缀**：组件必须用 `<a-button>` 等 Arco 前缀，禁止 `<arco-button>`
-8. **Mock 数据集中**：所有 mock 数据放在 `const MOCK_DATA = {}`，不散落在模板里
-9. **单页模式不生成多页**：用户说"改一个页面"或"新增一个功能页"，只生成一个 HTML 文件，不生成完整原型站
-10. **维护产物索引**：执行完毕后必须更新 `output/[项目名]/README.md` 和 `.pm-state.json`
+5. **Shell 壳禁止修改**：模板分为 Shell（head + navbar + sidebar + script 全部）和 Content（主内容区），**只能替换 Content 区**，Shell 必须原样保留；详见 prompt.md 步骤 4.1
+6. **主题切换功能必须保留**：Shell 中的主题色选择（5 色）、明暗切换按钮、`THEMES` 对象、`applyTheme()` / `toggleTheme()` 函数**禁止删除或改写**，setup return 必须包含主题相关 ref；详见 prompt.md 步骤 4.3
+7. **v-cloak 在 #app 上**：`[v-cloak]{display:none}` 必须在 `<style>` 中，`v-cloak` 必须挂在 `<div id="app">` 上，不能在 `<body>` 上
+8. **自定义元素不自闭合**：含连字符的标签（icon-home、a-menu 等）必须用完整闭合，禁止 `<icon-home/>`
+9. **a-* 前缀**：组件必须用 `<a-button>` 等 Arco 前缀，禁止 `<arco-button>`
+10. **Mock 数据集中**：所有 mock 数据放在 `const MOCK_DATA = {}`，不散落在模板里
+11. **单页模式不生成多页**：用户说"改一个页面"或"新增一个功能页"，只生成一个 HTML 文件，不生成完整原型站
+12. **维护产物索引**：执行完毕后必须更新 `output/[项目名]/README.md` 和 `.pm-state.json`
 
 ## 执行流程概览
 

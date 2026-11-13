@@ -140,13 +140,38 @@ proto-toolbar 按钮切换这四个状态。
 
 ## 步骤 4：生成页面规则
 
-1. **优先参考完整模板，其次用空壳**：
-   - **优先生效**：Read `${CLAUDE_SKILL_DIR}/assets/[端]/` 下功能最匹配的完整模板（如需要列表页就读 `list.html`/`list-kanban.html`/`list-calendar.html`），直接替换内容即可
-   - **其次**：Read `${CLAUDE_SKILL_DIR}/assets/_shells/_base-[端].html` 空壳，复制结构（**不复制进项目**），替换内容区（`PAGE_CONTENT_SLOT` 注释位置）
-2. **Mock 数据真实感**：数据内容要贴合项目业务，不要用 item1/item2 这样的占位
-3. **交互完整性**：表单字段要有 v-model 绑定，按钮要有 @click 处理函数（即使只是改状态）
-4. **导航连通**：页面间跳转用相对路径，`index.html` 要能跳到所有功能页
-5. **注释清晰**：每个主要功能块前加简短注释说明用途
+### 4.1 Shell vs Content 边界（铁律）
+
+每个模板分为两部分，**Shell 部分禁止修改**，只能替换 Content 部分：
+
+| 区域 | 范围 | 内容 | 可否修改 |
+|------|------|------|---------|
+| **Shell 壳** | `<head>` 全部 + `<body>` 内 `#app` 的 navbar/sidebar + `<script>` 全部（含 setup） | 主题切换按钮、sidebar 菜单、navbar 面包屑、THEMES 5 色定义、applyTheme、toggleTheme、proto-toolbar、Arco/Vue CDN 引用 | ❌ **禁止修改** |
+| **Content 内容** | `<body>` 内面包屑之后、proto-toolbar 之前的区域 | 页面主内容（列表/表单/详情/Dashboard 卡片等） | ✅ 自由替换 |
+
+**判断方法**：
+- 读空壳时：`<!-- ====== 各页面替换此处 PAGE_CONTENT_SLOT ====== -->` 注释之后、`proto-toolbar` 之前 = Content 区
+- 读完整模板时：找到面包屑 + 右侧操作按钮那一行之后、页面底部 `proto-toolbar` 之前 = Content 区
+
+### 4.2 优先匹配完整模板，其次用空壳
+
+- **优先生效**：Read `${CLAUDE_SKILL_DIR}/assets/[端]/` 下功能最匹配的完整模板（如需要列表页就读 `list.html`/`list-kanban.html`/`list-calendar.html`），替换 Content 区即可
+- **其次**：Read `${CLAUDE_SKILL_DIR}/assets/_shells/_base-[端].html` 空壳，替换 `PAGE_CONTENT_SLOT` 位置
+
+### 4.3 主题切换功能（必须保留）
+
+Shell 中的主题切换相关代码**必须原样保留**，不得删除或改写：
+- Navbar 中的主题色选择按钮（5 个色卡）和明暗切换按钮（🌙/☀️）
+- `<script>` 中的 `THEMES` 对象（5 色定义）、`applyTheme()` 函数、`toggleTheme()` 函数、`themePresets`/`themeKey`/`isDark` 三个 ref
+- setup() 的 return 对象中必须包含 `themePresets, themeKey, applyTheme, isDark, toggleTheme`
+
+### 4.4 其他生成规则
+
+1. **Mock 数据真实感**：数据内容要贴合项目业务，不要用 item1/item2 这样的占位
+2. **交互完整性**：表单字段要有 v-model 绑定，按钮要有 @click 处理函数（即使只是改状态）
+3. **导航连通**：页面间跳转用相对路径，`index.html` 要能跳到所有功能页
+4. **注释清晰**：每个主要功能块前加简短注释说明用途
+5. **资源引用路径**：生成的页面 CSS/JS 引用统一写 `../../_公共资源/...`
 
 **单页模式**：只生成用户指定的那一个 HTML 文件，不生成 index.html 和其他页面。
 
