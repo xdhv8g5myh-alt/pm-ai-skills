@@ -9,11 +9,21 @@ import { PRESETS, DEFAULT_THEME_KEY, STORAGE } from './presets'
 export function applyTheme(key: string) {
   const preset = PRESETS.find(p => p.key === key) ?? PRESETS[0]
   const root = document.documentElement
+  const body = document.body
 
+  // :root 层（自定义组件 + 原型 Shell）
   root.style.setProperty('--primary-5', preset.p5)
   root.style.setProperty('--primary-6', preset.p6)
   root.style.setProperty('--primary-7', preset.p7)
   root.style.setProperty('--brand-color', preset.color)
+
+  // body 层（Arco Design 组件必须覆盖 body {} 下的变量）
+  body.style.setProperty('--primary-5', preset.p5)
+  body.style.setProperty('--primary-6', preset.p6)
+  body.style.setProperty('--primary-7', preset.p7)
+  body.style.setProperty('--arcoblue-5', preset.p5)
+  body.style.setProperty('--arcoblue-6', preset.p6)
+  body.style.setProperty('--arcoblue-7', preset.p7)
 
   localStorage.setItem(STORAGE.themeColor, key)
 }
