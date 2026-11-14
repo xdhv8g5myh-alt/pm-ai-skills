@@ -31,17 +31,17 @@
         <template #icon><icon-home></icon-home></template>
         <a href="./dashboard.html">数据概览</a>
       </a-menu-item>
-      <a-sub-menu key="biz-dashboards">
-        <template #icon><icon-dashboard></icon-dashboard></template>
-        <template #title>业务看板</template>
-        <a-menu-item key="ecommerce"><a href="./dashboard-ecommerce.html">电商运营</a></a-menu-item>
-        <a-menu-item key="crm"><a href="./dashboard-crm.html">CRM 客户</a></a-menu-item>
-        <a-menu-item key="finance"><a href="./dashboard-finance.html">财务管理</a></a-menu-item>
-      </a-sub-menu>
       <a-sub-menu key="list-group">
         <template #icon><icon-apps></icon-apps></template>
         <template #title>业务管理</template>
         <a-menu-item key="list"><a href="./list.html">数据列表</a></a-menu-item>
+        <a-menu-item key="list-kanban"><a href="./list-kanban.html">任务看板</a></a-menu-item>
+        <a-menu-item key="list-calendar"><a href="./list-calendar.html">日历视图</a></a-menu-item>
+        <a-menu-item key="list-tree-table"><a href="./list-tree-table.html">左树右表</a></a-menu-item>
+        <a-menu-item key="list-filter-table"><a href="./list-filter-table.html">左筛右表</a></a-menu-item>
+        <a-menu-item key="list-inline-edit"><a href="./list-inline-edit.html">行内编辑</a></a-menu-item>
+        <a-menu-item key="file-manager"><a href="./file-manager.html">文件管理</a></a-menu-item>
+        <a-menu-item key="wizard-import"><a href="./wizard-import.html">导入向导</a></a-menu-item>
         <a-menu-item key="form-add"><a href="./form-add.html">新增数据</a></a-menu-item>
         <a-menu-item key="detail"><a href="./detail.html">数据详情</a></a-menu-item>
       </a-sub-menu>
@@ -326,8 +326,8 @@ const { createApp, ref } = Vue
 createApp({
   setup() {
     const collapsed    = ref(false)
-    const selectedKeys = ref(['crm'])
-    const openKeys     = ref(['biz-dashboards'])
+    const selectedKeys = ref(['dashboard-crm'])
+    const openKeys = ref(['list-group'])
     const pageTitle    = ref('CRM 客户关系')
     const noticeCount  = ref(3)
     const pageState    = ref('normal')
@@ -399,7 +399,10 @@ createApp({
       'user-mgmt': './user-role.html', 'role-mgmt': './permission-tree.html',
       log: './log-list.html', help: './index.html',
       index: './index.html', login: './login.html',
-      ecommerce: './dashboard-ecommerce.html', crm: './dashboard-crm.html', finance: './dashboard-finance.html'
+      'list-kanban': './list-kanban.html', 'list-calendar': './list-calendar.html',
+      'list-tree-table': './list-tree-table.html', 'list-filter-table': './list-filter-table.html',
+      'list-inline-edit': './list-inline-edit.html', 'file-manager': './file-manager.html',
+      'wizard-import': './wizard-import.html'
     }
     function onMenuClick(key) {
       selectedKeys.value = [key]

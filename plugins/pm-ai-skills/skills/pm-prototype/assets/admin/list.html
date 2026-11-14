@@ -35,6 +35,13 @@
         <template #icon><icon-apps></icon-apps></template>
         <template #title>业务管理</template>
         <a-menu-item key="list"><a href="./list.html">数据列表</a></a-menu-item>
+        <a-menu-item key="list-kanban"><a href="./list-kanban.html">任务看板</a></a-menu-item>
+        <a-menu-item key="list-calendar"><a href="./list-calendar.html">日历视图</a></a-menu-item>
+        <a-menu-item key="list-tree-table"><a href="./list-tree-table.html">左树右表</a></a-menu-item>
+        <a-menu-item key="list-filter-table"><a href="./list-filter-table.html">左筛右表</a></a-menu-item>
+        <a-menu-item key="list-inline-edit"><a href="./list-inline-edit.html">行内编辑</a></a-menu-item>
+        <a-menu-item key="file-manager"><a href="./file-manager.html">文件管理</a></a-menu-item>
+        <a-menu-item key="wizard-import"><a href="./wizard-import.html">导入向导</a></a-menu-item>
         <a-menu-item key="form-add"><a href="./form-add.html">新增数据</a></a-menu-item>
         <a-menu-item key="detail"><a href="./detail.html">数据详情</a></a-menu-item>
       </a-sub-menu>
@@ -316,8 +323,8 @@ const MOCK_DATA = {
 createApp({
   setup() {
     const collapsed     = ref(false)
-    const selectedKeys  = ref(['list'])
-    const openKeys      = ref(['list-group'])
+    const selectedKeys = ref(['list'])
+    const openKeys = ref(['list-group'])
     const pageTitle     = ref('数据列表')
     const noticeCount   = ref(3)
     const pageState     = ref('normal')
@@ -399,7 +406,11 @@ createApp({
       'permission-tree': './permission-tree.html', 'log-list': './log-list.html',
       'user-mgmt': './user-role.html', 'role-mgmt': './permission-tree.html',
       log: './log-list.html', help: './index.html',
-      index: './index.html', login: './login.html'
+      index: './index.html', login: './login.html',
+      'list-kanban': './list-kanban.html', 'list-calendar': './list-calendar.html',
+      'list-tree-table': './list-tree-table.html', 'list-filter-table': './list-filter-table.html',
+      'list-inline-edit': './list-inline-edit.html', 'file-manager': './file-manager.html',
+      'wizard-import': './wizard-import.html'
     }
     function onMenuClick(key) {
       selectedKeys.value = [key]
