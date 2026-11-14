@@ -22,6 +22,16 @@
   --primary-8: 83 53 165;
 
   /* 主色 */
+  
+  /* 覆盖 Arco Design CSS 变量 — 让 a-button/a-tag/a-link 跟随主题 */
+  --arcoblue-1: 242 240 255;
+  --arcoblue-2: 230 226 252;
+  --arcoblue-3: 175 164 243;
+  --arcoblue-4: 140 125 237;
+  --arcoblue-5: 140 125 237;
+  --arcoblue-6: 108 92 231;
+  --arcoblue-7: 90 75 209;
+  --arcoblue-8: 83 53 165;
   --color-primary:     rgb(var(--primary-6, 108 92 231));
   --color-success:     rgb(var(--green-6, 0 180 42));
   --color-warning:     rgb(var(--orange-6, 255 125 0));

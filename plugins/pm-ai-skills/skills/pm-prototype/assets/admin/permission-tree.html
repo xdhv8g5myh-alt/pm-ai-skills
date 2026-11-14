@@ -109,7 +109,7 @@
 
       <a-tooltip :content="isDark ? '切换浅色' : '切换深色'">
         <a-button type="text" style="color:var(--color-text-2);font-size:16px;padding:0 8px;line-height:1" @click="toggleTheme">
-          {{ isDark ? '<span class="fas fa-sun"></span>' : '<span class="fas fa-moon"></span>' }}
+          <i v-if="isDark" class="fas fa-sun"></i><i v-else class="fas fa-moon"></i>
         </a-button>
       </a-tooltip>
       <a-divider direction="vertical" style="height:20px;margin:0 8px"></a-divider>
@@ -325,6 +325,16 @@ createApp({
       r.style.setProperty('--primary-5', t.p5)
       r.style.setProperty('--primary-6', t.p6)
       r.style.setProperty('--primary-7', t.p7)
+      /* 同步覆盖 Arco Design --arcoblue-* 变量（按钮/标签/链接等组件跟随主题色变）*/
+      r.style.setProperty('--arcoblue-1', t.p1)
+      r.style.setProperty('--arcoblue-2', t.p1)
+      r.style.setProperty('--arcoblue-3', t.p5)
+      r.style.setProperty('--arcoblue-4', t.p5)
+      r.style.setProperty('--arcoblue-5', t.p5)
+      r.style.setProperty('--arcoblue-6', t.p6)
+      r.style.setProperty('--arcoblue-7', t.p7)
+      r.style.setProperty('--arcoblue-8', t.p7)
+      r.style.setProperty('--color-primary', 'rgb(' + t.p6 + ')')
       localStorage.setItem('proto-theme-color', key)
     }
     applyTheme(themeKey.value)
