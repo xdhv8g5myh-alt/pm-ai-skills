@@ -33,7 +33,7 @@ async function handleLogin() {
       <h2 style="margin:0 0 4px;font-size:22px">Vibe Admin</h2>
       <p style="margin:0 0 24px;color:#86909c;font-size:13px">pm-deliver 中后台母板 · 请登录</p>
 
-      <a-form layout="vertical" @submit="handleLogin">
+      <a-form :model="form" layout="vertical" @submit="handleLogin">
         <a-form-item field="username" label="用户名">
           <a-input v-model="form.username" placeholder="admin" allow-clear />
         </a-form-item>

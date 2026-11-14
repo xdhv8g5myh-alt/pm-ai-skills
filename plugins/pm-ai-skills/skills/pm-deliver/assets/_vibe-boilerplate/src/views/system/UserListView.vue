@@ -34,7 +34,7 @@ function onReset() {
     <!-- 筛选面板 -->
     <a-col :xs="24" :lg="6">
       <a-card title="筛选条件">
-        <a-form layout="vertical">
+        <a-form :model="filters" layout="vertical">
           <a-form-item label="关键词">
             <a-input v-model="filters.keyword" placeholder="姓名 / 邮箱" allow-clear />
           </a-form-item>
