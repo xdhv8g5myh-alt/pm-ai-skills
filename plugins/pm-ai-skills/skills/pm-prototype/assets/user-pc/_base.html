@@ -206,16 +206,16 @@ createApp({
         const showGuide = ref(false)
 
         const demoCards = ref([
-          { icon: '<span class="fas fa-palette"></span>', title: '组件 A', desc: '这是一个示例卡片，展示 .pc-card 的基本样式和 hover 效果。' },
-          { icon: '<span class="fas fa-clipboard-list"></span>', title: '组件 B', desc: '复制此卡片结构，替换图标、标题和描述即可生成新卡片。' },
-          { icon: '<span class="fas fa-wrench"></span>', title: '组件 C', desc: '卡片网格基于 CSS Grid，自动响应列数，最小宽度 280px。' },
-          { icon: '<span class="fas fa-rocket"></span>', title: '组件 D', desc: '可在 .pc-card 内添加操作按钮或扩展更多内容字段。' }
+          { icon: '🎨', title: '组件 A', desc: '这是一个示例卡片，展示 .pc-card 的基本样式和 hover 效果。' },
+          { icon: '📋', title: '组件 B', desc: '复制此卡片结构，替换图标、标题和描述即可生成新卡片。' },
+          { icon: '🔧', title: '组件 C', desc: '卡片网格基于 CSS Grid，自动响应列数，最小宽度 280px。' },
+          { icon: '🚀', title: '组件 D', desc: '可在 .pc-card 内添加操作按钮或扩展更多内容字段。' }
         ])
 
         const demoList = ref([
-          { id: 1, icon: '<span class="fas fa-mobile-screen"></span>', title: '列表项示例 1', desc: '这是列表项的描述文字，展示 .pc-list-item 的基本结构和布局', tag: '进行中', color: 'blue', time: '今天 14:30' },
-          { id: 2, icon: '<span class="fas fa-building"></span>', title: '列表项示例 2', desc: '右侧可放标签、时间、统计数据等内容，hover 时有上浮动画', tag: '已完成', color: 'green', time: '昨天 10:00' },
-          { id: 3, icon: '<span class="fas fa-chart-column"></span>', title: '列表项示例 3', desc: '左侧图标区域使用渐变背景，可替换为 emoji 或 SVG 图标', tag: '规划中', color: 'purple', time: '2天前' }
+          { id: 1, icon: '📱', title: '列表项示例 1', desc: '这是列表项的描述文字，展示 .pc-list-item 的基本结构和布局', tag: '进行中', color: 'blue', time: '今天 14:30' },
+          { id: 2, icon: '🏢', title: '列表项示例 2', desc: '右侧可放标签、时间、统计数据等内容，hover 时有上浮动画', tag: '已完成', color: 'green', time: '昨天 10:00' },
+          { id: 3, icon: '📊', title: '列表项示例 3', desc: '左侧图标区域使用渐变背景，可替换为 emoji 或 SVG 图标', tag: '规划中', color: 'purple', time: '2天前' }
         ])
 
         return { pageTitle, activePage, pageState, showGuide, demoCards, demoList }

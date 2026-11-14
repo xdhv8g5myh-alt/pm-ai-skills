@@ -189,13 +189,13 @@ const app = createApp({
   setup() {
     const pages = ref([
       {
-        icon: '<span class="fas fa-chart-column"></span>',
+        icon: '📊',
         title: '数据概览',
         desc: '仪表盘页面，KPI 卡片、折线图/饼图占位、最新动态 Timeline。',
         href: './dashboard.html'
       },
       {
-        icon: '<span class="fas fa-clipboard-list"></span>',
+        icon: '📋',
         title: '数据列表',
         desc: '带搜索筛选、行选择、批量操作和分页的数据表格页面。',
         href: './list.html'
@@ -207,13 +207,13 @@ const app = createApp({
         href: './detail.html'
       },
       {
-        icon: '<span class="fas fa-plus"></span>',
+        icon: '➕',
         title: '新增表单',
         desc: '横向布局表单，含基本信息与高级设置两个区块，保存/提交操作。',
         href: './form-add.html'
       },
       {
-        icon: '<span class="fas fa-lock"></span>',
+        icon: '🔒',
         title: '登录页面',
         desc: '全屏渐变背景登录卡片，含账密输入、记住我、演示账号提示。',
         href: './login.html'
@@ -225,7 +225,7 @@ const app = createApp({
         href: './_base.html'
       },
       {
-        icon: '<span class="fas fa-magnifying-glass"></span>',
+        icon: '🔍',
         title: '高级筛选列表',
         desc: '左侧多维筛选面板 + 右侧表格，适合有复杂筛选条件的数据管理页面。',
         href: './list-filter.html'
@@ -243,13 +243,13 @@ const app = createApp({
         href: './form-step.html'
       },
       {
-        icon: '<span class="fas fa-user"></span>',
+        icon: '👤',
         title: '个人中心',
         desc: '用户个人资料、修改密码、操作记录三 Tab 布局。',
         href: './profile.html'
       },
       {
-        icon: '<span class="fas fa-check"></span>',
+        icon: '✅',
         title: '操作成功页',
         desc: '表单提交/审核通过后的结果引导页，包含后续操作入口。',
         href: './result-success.html'
@@ -261,7 +261,7 @@ const app = createApp({
         href: './exception-404.html'
       },
       {
-        icon: '<span class="fas fa-users"></span>',
+        icon: '👥',
         title: '用户权限管理',
         desc: '左侧角色列表 + 右侧用户表格，按角色分类管理用户权限。',
         href: './user-role.html'
@@ -280,29 +280,29 @@ const app = createApp({
       },
 
       // —— 业务 Dashboard（复刻 Vibe Design Pro）——
-      { icon: '<span class="fas fa-cart-shopping"></span>', title: '电商运营', desc: '电商专属 Dashboard：GMV/订单/访客/转化率 KPI + 销售趋势 + 品类排行 + 最新订单。', href: './dashboard-ecommerce.html' },
+      { icon: '🛒', title: '电商运营', desc: '电商专属 Dashboard：GMV/订单/访客/转化率 KPI + 销售趋势 + 品类排行 + 最新订单。', href: './dashboard-ecommerce.html' },
       { icon: '🤝', title: 'CRM 客户关系', desc: 'CRM 专属 Dashboard：新增/活跃/签约/跟进中 + 销售漏斗 + 业绩榜 + 待办跟进。', href: './dashboard-crm.html' },
       { icon: '💰', title: '财务管理', desc: '财务专属 Dashboard：收支利润现金流 KPI + 收支趋势面积图 + 支出结构 + 应收应付。', href: './dashboard-finance.html' },
 
       // —— 列表类扩展模板 ——
-      { icon: '<span class="fas fa-folder-open"></span>', title: '任务看板', desc: '4 列看板（待办/进行中/审核中/已完成），任务卡片可拖拽位置。', href: './list-kanban.html' },
-      { icon: '<span class="fas fa-calendar-days"></span>', title: '日历页面', desc: '月视图日历，支持事件标记、上/下月切换、今日高亮。', href: './list-calendar.html' },
+      { icon: '🗂️', title: '任务看板', desc: '4 列看板（待办/进行中/审核中/已完成），任务卡片可拖拽位置。', href: './list-kanban.html' },
+      { icon: '📅', title: '日历页面', desc: '月视图日历，支持事件标记、上/下月切换、今日高亮。', href: './list-calendar.html' },
       { icon: '🌳', title: '左树右表', desc: '左侧组织树 + 右侧人员表格，点击树节点联动过滤。', href: './list-tree-table.html' },
       { icon: '🔽', title: '左筛右表', desc: '左侧多维筛选面板（状态/日期/标签/部门）+ 右侧表格，一键重置。', href: './list-filter-table.html' },
-      { icon: '<span class="fas fa-pen"></span>', title: '行内编辑', desc: '表格行内直接编辑，点编辑按钮该行变输入框，保存/取消切换。', href: './list-inline-edit.html' },
-      { icon: '<span class="fas fa-folder"></span>', title: '文件管理', desc: '文件夹/文件网格展示，面包屑导航层级，支持新建/上传。', href: './file-manager.html' },
-      { icon: '<span class="fas fa-rocket"></span>', title: '导入向导', desc: '四步引导式导入：上传文件 → 字段映射 → 数据预览 → 导入完成。', href: './wizard-import.html' },
+      { icon: '✏️', title: '行内编辑', desc: '表格行内直接编辑，点编辑按钮该行变输入框，保存/取消切换。', href: './list-inline-edit.html' },
+      { icon: '📁', title: '文件管理', desc: '文件夹/文件网格展示，面包屑导航层级，支持新建/上传。', href: './file-manager.html' },
+      { icon: '🚀', title: '导入向导', desc: '四步引导式导入：上传文件 → 字段映射 → 数据预览 → 导入完成。', href: './wizard-import.html' },
 
       // —— 表单/详情扩展模板 ——
-      { icon: '<span class="fas fa-clipboard-list"></span>', title: '分组表单', desc: '3 卡片分组：基本信息 / 权限设置 / 安全设置，每组带数字角标。', href: './form-grouped.html' },
+      { icon: '📋', title: '分组表单', desc: '3 卡片分组：基本信息 / 权限设置 / 安全设置，每组带数字角标。', href: './form-grouped.html' },
       { icon: '📑', title: '高级详情页', desc: '多 Tab 详情页（基本信息/操作日志/关联数据）+ 右侧快捷操作面板。', href: './detail-advanced.html' },
       { icon: '📐', title: '分栏详情页', desc: '左右分栏布局：左侧大卡片详情 + 右侧状态流转 + 最近评论。', href: './detail-split.html' },
       { icon: '✉️', title: '消息管理', desc: '消息中心：全部/通知/系统/私信 Tab，未读高亮，标记已读/清空。', href: './message-center.html' },
 
       // —— 结果页补全 ——
       { icon: '⏳', title: '等待页面', desc: '处理中间态页面，旋转动画 + 预计时间 + 返回/查看进度。', href: './result-waiting.html' },
-      { icon: '<span class="fas fa-triangle-exclamation"></span>', title: '警告页面', desc: '异常提示页面，警告图标 + 异常详情 + 返回检查/仍要继续。', href: './result-warning.html' },
-      { icon: '<span class="fas fa-xmark"></span>', title: '失败页面', desc: '操作失败结果页，错误详情 + 重新尝试/返回上一页。', href: './result-fail.html' },
+      { icon: '⚠️', title: '警告页面', desc: '异常提示页面，警告图标 + 异常详情 + 返回检查/仍要继续。', href: './result-warning.html' },
+      { icon: '❌', title: '失败页面', desc: '操作失败结果页，错误详情 + 重新尝试/返回上一页。', href: './result-fail.html' },
     ])
 
     function goto(href) { window.location.href = href }
