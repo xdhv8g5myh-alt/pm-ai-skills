@@ -298,6 +298,17 @@ createApp({
       r.style.setProperty('--primary-5', t.p5)
       r.style.setProperty('--primary-6', t.p6)
       r.style.setProperty('--primary-7', t.p7)
+      /* 同时改 body.style — Arco CSS 变量定义在 body {} 下，必须覆盖 */
+      var b = document.body;
+      b.style.setProperty('--primary-1', t.p1);
+      b.style.setProperty('--primary-5', t.p5);
+      b.style.setProperty('--primary-6', t.p6);
+      b.style.setProperty('--primary-7', t.p7);
+      b.style.setProperty('--arcoblue-1', t.p1);
+      b.style.setProperty('--arcoblue-5', t.p5);
+      b.style.setProperty('--arcoblue-6', t.p6);
+      b.style.setProperty('--arcoblue-7', t.p7);
+      b.style.setProperty('--color-primary', 'rgb(' + t.p6 + ')')
       /* 同步覆盖 Arco Design --arcoblue-* 变量（按钮/标签/链接等组件跟随主题色变）*/
       r.style.setProperty('--arcoblue-1', t.p1)
       r.style.setProperty('--arcoblue-2', t.p1)

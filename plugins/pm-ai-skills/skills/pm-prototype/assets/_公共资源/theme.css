@@ -636,3 +636,36 @@ icon-arrow-down::before { content: '↓'; }
   margin-bottom: 24px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* 覆盖 Arco CSS body {} 层的变量（Arco 变量在 body 下定义，:root 覆盖不了）*/
+body {
+  --primary-1: 242 240 255;
+  --primary-2: 230 226 252;
+  --primary-3: 205 198 248;
+  --primary-4: 175 164 243;
+  --primary-5: 140 125 237;
+  --primary-6: 108 92 231;
+  --primary-7: 90 75 209;
+  --primary-8: 83 53 165;
+  --primary-9: 68 35 140;
+  --primary-10: 42 16 110;
+
+  --arcoblue-1: 242 240 255;
+  --arcoblue-2: 230 226 252;
+  --arcoblue-3: 205 198 248;
+  --arcoblue-4: 175 164 243;
+  --arcoblue-5: 140 125 237;
+  --arcoblue-6: 108 92 231;
+  --arcoblue-7: 90 75 209;
+  --arcoblue-8: 83 53 165;
+
+  --link-1: var(--primary-1);
+  --link-2: var(--primary-2);
+  --link-3: var(--primary-3);
+  --link-4: var(--primary-4);
+  --link-5: var(--primary-5);
+  --link-6: var(--primary-6);
+  --link-7: var(--primary-7);
+  --link-8: var(--primary-8);
+}
+
